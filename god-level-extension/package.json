@@ -1,0 +1,22 @@
+{
+  "name": "god-level-ai-extension",
+  "version": "1.0.0",
+  "description": "GOD LEVEL AI - 100% Power Unlocked Extension",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "langgraph": "python demos/01_langgraph_demo.py",
+    "crewai": "python demos/02_crewai_demo.py",
+    "agno": "python demos/03_agno_demo.py",
+    "autogen": "python demos/04_autogen_demo.py",
+    "llamaindex": "python demos/05_llamaindex_demo.py",
+    "chromadb": "python demos/06_chromadb_demo.py",
+    "deepeval": "python demos/07_deepeval_demo.py",
+    "phoenix": "python demos/08_phoenix_demo.py",
+    "weaviate": "python demos/09_weaviate_demo.py",
+    "all": "node server.js --run-all"
+  },
+  "keywords": ["ai", "agents", "langgraph", "crewai", "agno", "autogen", "llamaindex", "chromadb", "deepeval", "phoenix", "weaviate"],
+  "author": "SAI Rolotech",
+  "license": "MIT"
+}

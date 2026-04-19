@@ -1,0 +1,103 @@
+{
+  "name": "Task Scheduler Workflow",
+  "description": "Schedule tasks for future execution",
+  "nodes": [
+    {
+      "name": "Task Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [250, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "task-schedule"
+      }
+    },
+    {
+      "name": "Parse Task",
+      "type": "n8n-nodes-base.set",
+      "position": [450, 300],
+      "parameters": {
+        "values": {
+          "task_id": "={{ $json.body.task_id }}",
+          "action": "={{ $json.body.action }}",
+          "scheduled_at": "={{ $json.body.scheduled_at }}",
+          "chat_id": "={{ $json.body.chat_id }}"
+        }
+      }
+    },
+    {
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "position": [650, 300],
+      "parameters": {
+        "amount": 1,
+        "unit": "hours",
+        "resume": "scheduleTime",
+        "rescheduleAt": "={{ $json.scheduled_at }}"
+      }
+    },
+    {
+      "name": "Execute Task",
+      "type": "n8n-nodes-base.switch",
+      "position": [850, 300],
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.action }}",
+        "rules": {
+          "rules": [
+            {"value2": "reminder", "output": 0},
+            {"value2": "message", "output": 1},
+            {"value2": "report", "output": 2}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Send Reminder",
+      "type": "n8n-nodes-base.telegram",
+      "position": [1050, 150],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "={{ $json.chat_id }}",
+        "text": "=⏰ Reminder!\n\nTime to follow up with your leads!"
+      }
+    },
+    {
+      "name": "Send Message",
+      "type": "n8n-nodes-base.telegram",
+      "position": [1050, 300],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "={{ $json.chat_id }}",
+        "text": "=📨 Scheduled message sent!"
+      }
+    },
+    {
+      "name": "Generate Report",
+      "type": "n8n-nodes-base.telegram",
+      "position": [1050, 450],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "={{ $json.chat_id }}",
+        "text": "=📊 Scheduled Report\n\nFetching latest CRM data..."
+      }
+    }
+  ],
+  "connections": {
+    "Task Webhook": {
+      "main": [[{"node": "Parse Task", "type": "main", "index": 0}]]
+    },
+    "Parse Task": {
+      "main": [[{"node": "Wait", "type": "main", "index": 0}]]
+    },
+    "Wait": {
+      "main": [[{"node": "Execute Task", "type": "main", "index": 0}]]
+    },
+    "Execute Task": {
+      "main": [
+        [{"node": "Send Reminder", "type": "main", "index": 0}],
+        [{"node": "Send Message", "type": "main", "index": 0}],
+        [{"node": "Generate Report", "type": "main", "index": 0}]
+      ]
+    }
+  }
+}

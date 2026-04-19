@@ -1,0 +1,65 @@
+{
+  "name": "Lead Creation Workflow",
+  "description": "Telegram -> Hermes -> CRM Lead Save",
+  "nodes": [
+    {
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [250, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-create",
+        "responseMode": "responseNode"
+      }
+    },
+    {
+      "name": "Parse Message",
+      "type": "n8n-nodes-base.set",
+      "position": [450, 300],
+      "parameters": {
+        "values": {
+          "name": "={{ $json.body.name }}",
+          "mobile": "={{ $json.body.mobile }}",
+          "email": "={{ $json.body.email }}",
+          "source": "={{ $json.body.source || 'telegram' }}"
+        }
+      }
+    },
+    {
+      "name": "CRM API",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [650, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8505/crm/lead",
+        "bodyParameters": {
+          "name": "={{ $json.name }}",
+          "mobile": "={{ $json.mobile }}",
+          "email": "={{ $json.email }}",
+          "source": "={{ $json.source }}"
+        }
+      }
+    },
+    {
+      "name": "Telegram Send",
+      "type": "n8n-nodes-base.telegram",
+      "position": [850, 300],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "={{ $json.body.chat_id }}",
+        "text": "=✅ Lead Created!\n\n📋 Name: {{ $json.name }}\n📱 Mobile: {{ $json.mobile }}"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Parse Message", "type": "main", "index": 0}]]
+    },
+    "Parse Message": {
+      "main": [[{"node": "CRM API", "type": "main", "index": 0}]]
+    },
+    "CRM API": {
+      "main": [[{"node": "Telegram Send", "type": "main", "index": 0}]]
+    }
+  }
+}

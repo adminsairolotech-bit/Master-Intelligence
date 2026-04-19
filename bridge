@@ -1,0 +1,11 @@
+#!/bin/bash
+# Universal Bridge CLI
+# Usage: ./bridge "your message" or just ./bridge for interactive mode
+
+cd "$(dirname "$0")"
+
+if [ -z "$1" ]; then
+    python universal_bridge.py --cli
+else
+    python universal_bridge.py "$@"
+fi

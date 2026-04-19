@@ -1,0 +1,27 @@
+{
+  "name": "cloud-code-extension",
+  "version": "1.0.0",
+  "description": "SAI Rolotech AI Cloud Code Extension - Multi-agent AI bridges for OpenClaw, Cloud AI, and automation",
+  "private": true,
+  "workspaces": [
+    "prompt-builder-vscode",
+    "agno-multiagent",
+    "sai-rolotech-ai-hub",
+    "Agentfy",
+    "design-tool"
+  ],
+  "scripts": {
+    "openclaw": "python openclaw-bridge/openclaw_bridge.py --cli",
+    "cloud": "python cloud-ai/cloud_bridge.py --cli",
+    "test": "echo \"No tests configured\""
+  },
+  "keywords": [
+    "ai",
+    "claude",
+    "openclaw",
+    "automation",
+    "multi-agent"
+  ],
+  "author": "SAI Rolotech",
+  "license": "MIT"
+}

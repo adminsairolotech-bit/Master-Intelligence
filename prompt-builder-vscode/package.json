@@ -1,0 +1,54 @@
+{
+  "name": "prompt-builder-chat",
+  "displayName": "Prompt Builder Chat",
+  "description": "Simple prompt builder with ON/OFF chatbot toggle",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:electron": "playwright test tests/electron.spec.js",
+    "test:vscode": "node run-vscode-test.js",
+    "test:all": "playwright test && playwright test tests/electron.spec.js",
+    "test:desktop": "python tests/desktop_automation.py"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@vscode/test-electron": "^2.5.2",
+    "electron": "^41.2.1"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "promptBuilderChat.open",
+        "title": "Open Prompt Builder"
+      }
+    ],
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "promptBuilderPanel",
+          "title": "Prompt Builder"
+        }
+      ]
+    },
+    "views": {
+      "promptBuilderPanel": [
+        {
+          "type": "webview",
+          "id": "promptBuilderWebview",
+          "name": "Prompt Builder"
+        }
+      ]
+    }
+  }
+}

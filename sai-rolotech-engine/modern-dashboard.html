@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAI Rolotech - Modern Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0a0f;
+      min-height: 100vh;
+      color: #fff;
+      overflow-x: hidden;
+    }
+    .orbs {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: float 20s infinite ease-in-out;
+    }
+    .orb-1 { width: 400px; height: 400px; background: rgba(0, 217, 255, 0.15); top: -100px; left: -100px; }
+    .orb-2 { width: 300px; height: 300px; background: rgba(0, 255, 136, 0.1); bottom: -50px; right: -50px; animation-delay: -5s; }
+    .orb-3 { width: 250px; height: 250px; background: rgba(138, 43, 226, 0.1); top: 50%; left: 50%; animation-delay: -10s; }
+    @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 25% { transform: translate(30px, -30px) scale(1.1); } 50% { transform: translate(-20px, 20px) scale(0.9); } 75% { transform: translate(20px, 30px) scale(1.05); } }
+
+    .grid-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(rgba(0, 217, 255, 0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 217, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 40px 30px; position: relative; z-index: 1; }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 50px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .header h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, #00d9ff, #00ff88);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header-actions { display: flex; gap: 15px; }
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary { background: linear-gradient(135deg, #00d9ff, #00ccaa); color: #000; }
+    .btn-secondary { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3); }
+
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 40px; }
+    .stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .stat-card:hover { border-color: #00d9ff; transform: translateY(-5px); }
+    .stat-value { font-size: 2.5rem; font-weight: 700; color: #00d9ff; }
+    .stat-label { color: #888; margin-top: 5px; }
+
+    .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px;
+    }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .card h2 { font-size: 1.3rem; color: #fff; }
+    .card-body { color: #aaa; line-height: 1.8; }
+
+    .chat-container { display: flex; flex-direction: column; height: 400px; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 15px; margin-bottom: 15px; }
+    .chat-message { padding: 12px 18px; border-radius: 15px; margin-bottom: 10px; max-width: 80%; }
+    .chat-message.user { background: rgba(0, 217, 255, 0.2); margin-left: auto; }
+    .chat-message.bot { background: rgba(0, 255, 136, 0.1); }
+    .chat-input { display: flex; gap: 10px; }
+    .chat-input input { flex: 1; padding: 15px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #fff; }
+    .chat-input input:focus { outline: none; border-color: #00d9ff; }
+
+    .agent-list { display: flex; flex-direction: column; gap: 15px; }
+    .agent-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .agent-item:hover { background: rgba(0, 217, 255, 0.1); }
+    .agent-avatar { width: 45px; height: 45px; border-radius: 12px; background: linear-gradient(135deg, #00d9ff, #00ff88); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+    .agent-info { flex: 1; }
+    .agent-name { font-weight: 600; }
+    .agent-status { font-size: 0.85rem; color: #00ff88; }
+  </style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+  <div class="orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1>SAI Rolotech Engine</h1>
+      <div class="header-actions">
+        <button class="btn btn-secondary">Settings</button>
+        <button class="btn btn-primary">New Project</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-value">24</div>
+        <div class="stat-label">Active Projects</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">156</div>
+        <div class="stat-label">Tests Passed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">98%</div>
+        <div class="stat-label">Uptime</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">12</div>
+        <div class="stat-label">AI Models</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-header">
+          <h2>AI Chat Assistant</h2>
+          <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.9rem;">Clear</button>
+        </div>
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-message bot">Hello! I'm your AI assistant. How can I help you today?</div>
+          </div>
+          <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Type your message...">
+            <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>AI Agents</h2>
+        </div>
+        <div class="agent-list">
+          <div class="agent-item">
+            <div class="agent-avatar">🤖</div>
+            <div class="agent-info">
+              <div class="agent-name">Code Assistant</div>
+              <div class="agent-status">● Active</div>
+            </div>
+          </div>
+          <div class="agent-item">
+            <div class="agent-avatar">🔍</div>
+            <div class="agent-info">
+              <div class="agent-name">Bug Hunter</div>
+              <div class="agent-status">● Active</div>
+            </div>
+          </div>
+          <div class="agent-item">
+            <div class="agent-avatar">📝</div>
+            <div class="agent-info">
+              <div class="agent-name">Doc Writer</div>
+              <div class="agent-status">● Active</div>
+            </div>
+          </div>
+          <div class="agent-item">
+            <div class="agent-avatar">🧪</div>
+            <div class="agent-info">
+              <div class="agent-name">Test Runner</div>
+              <div class="agent-status">● Active</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+
+    function addMessage(text, type) {
+      const div = document.createElement('div');
+      div.className = `chat-message ${type}`;
+      div.textContent = text;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+      addMessage(text, 'user');
+      chatInput.value = '';
+
+      setTimeout(() => {
+        addMessage('This is a demo response. Configure Gemini API for real responses.', 'bot');
+      }, 500);
+    }
+
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+</body>
+</html>

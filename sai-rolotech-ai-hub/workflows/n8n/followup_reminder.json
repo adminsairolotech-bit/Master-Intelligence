@@ -1,0 +1,73 @@
+{
+  "name": "Follow-up Reminder Workflow",
+  "description": "Stage change -> Send follow-up message",
+  "nodes": [
+    {
+      "name": "CRM Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [250, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "followup-trigger"
+      }
+    },
+    {
+      "name": "Check Stage",
+      "type": "n8n-nodes-base.switch",
+      "position": [450, 300],
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.body.stage }}",
+        "rules": {
+          "rules": [
+            {"value2": "contacted", "output": 0},
+            {"value2": "qualified", "output": 1},
+            {"value2": "proposal", "output": 2}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Message Contacted",
+      "type": "n8n-nodes-base.telegram",
+      "position": [650, 100],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "={{ $json.body.chat_id }}",
+        "text": "=👋 Hi {{ $json.body.name }}!\n\nThanks for your interest in SAI Rolotech!\n\nWhen would be a good time for a quick call?"
+      }
+    },
+    {
+      "name": "Message Qualified",
+      "type": "n8n-nodes-base.telegram",
+      "position": [650, 300],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "={{ $json.body.chat_id }}",
+        "text": "=📋 Great talking with you!\n\nSending our product catalog and pricing details."
+      }
+    },
+    {
+      "name": "Message Proposal",
+      "type": "n8n-nodes-base.telegram",
+      "position": [650, 500],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "={{ $json.body.chat_id }}",
+        "text": "=📄 Proposal Ready!\n\nPlease review the quotation attached.\n\nLet us know if you have any questions!"
+      }
+    }
+  ],
+  "connections": {
+    "CRM Webhook": {
+      "main": [[{"node": "Check Stage", "type": "main", "index": 0}]]
+    },
+    "Check Stage": {
+      "main": [
+        [{"node": "Message Contacted", "type": "main", "index": 0}],
+        [{"node": "Message Qualified", "type": "main", "index": 0}],
+        [{"node": "Message Proposal", "type": "main", "index": 0}]
+      ]
+    }
+  }
+}

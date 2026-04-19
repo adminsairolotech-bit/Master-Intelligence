@@ -1,0 +1,58 @@
+{
+  "name": "Daily Follow-up Reminder",
+  "description": "Every morning - fetch due leads and send reminder",
+  "nodes": [
+    {
+      "name": "Schedule",
+      "type": "n8n-nodes-base.cron",
+      "position": [250, 300],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {"field": "hour", "hours": 9}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Due Leads",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [450, 300],
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:8505/crm/leads?stage=contacted"
+      }
+    },
+    {
+      "name": "Format Summary",
+      "type": "n8n-nodes-base.set",
+      "position": [650, 300],
+      "parameters": {
+        "values": {
+          "summary": "📊 Daily Follow-up Report\n\nDue Today:\n{{ $json.leads.length }} leads\n\n{{ $json.leads.map(l => '• ' + l.name + ' - ' + l.mobile).join('\\n') }}"
+        }
+      }
+    },
+    {
+      "name": "Telegram Morning",
+      "type": "n8n-nodes-base.telegram",
+      "position": [850, 300],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "={{ $json.summary }}"
+      }
+    }
+  ],
+  "connections": {
+    "Schedule": {
+      "main": [[{"node": "Get Due Leads", "type": "main", "index": 0}]]
+    },
+    "Get Due Leads": {
+      "main": [[{"node": "Format Summary", "type": "main", "index": 0}]]
+    },
+    "Format Summary": {
+      "main": [[{"node": "Telegram Morning", "type": "main", "index": 0}]]
+    }
+  }
+}

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Command Center - SAI Rolotech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #1a1a24;
+      --bg-card-hover: #22222e;
+      --text-primary: #ffffff;
+      --text-secondary: #8b8b9e;
+      --accent-cyan: #00d4ff;
+      --accent-purple: #a855f7;
+      --accent-green: #10b981;
+      --accent-orange: #f59e0b;
+      --accent-red: #ef4444;
+      --border-color: rgba(255,255,255,0.08);
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .bg-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(150px);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-glow.cyan { background: var(--accent-cyan); top: -200px; left: -200px; }
+    .bg-glow.purple { background: var(--accent-purple); bottom: -200px; right: -200px; }
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,10,15,0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .logo {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+    }
+    .header-title h1 {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header-title p { font-size: 12px; color: var(--text-secondary); }
+    .header-stats { display: flex; gap: 24px; }
+    .stat-item {
+      text-align: center;
+      padding: 8px 16px;
+      background: var(--bg-card);
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+    .stat-value { font-size: 18px; font-weight: 700; color: var(--accent-cyan); }
+    .stat-label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 32px; position: relative; z-index: 1; }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      background: var(--bg-secondary);
+      padding: 6px;
+      border-radius: 16px;
+      width: fit-content;
+    }
+    .tab {
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: var(--text-secondary);
+      border: none;
+      background: transparent;
+    }
+    .tab:hover { color: var(--text-primary); }
+    .tab.active {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #fff;
+    }
+    .section { display: none; }
+    .section.active { display: block; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 20px 40px rgba(0,212,255,0.1);
+    }
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    .card-icon.cyan { background: rgba(0,212,255,0.15); color: var(--accent-cyan); }
+    .card-icon.purple { background: rgba(168,85,247,0.15); color: var(--accent-purple); }
+    .card-icon.green { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+    .card-icon.orange { background: rgba(245,158,11,0.15); color: var(--accent-orange); }
+    .card-icon.red { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+    .card h3 { font-size: 18px; margin-bottom: 8px; }
+    .card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+    .card-meta { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge.cyan { background: rgba(0,212,255,0.15); color: var(--accent-cyan); }
+    .badge.purple { background: rgba(168,85,247,0.15); color: var(--accent-purple); }
+    .badge.green { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+    .card-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: all 0.3s;
+    }
+    .card-btn:hover { transform: scale(1.05); }
+    .framework-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s;
+    }
+    .framework-card:hover {
+      border-color: var(--accent-purple);
+      transform: translateY(-2px);
+    }
+    .framework-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .framework-name { font-size: 16px; font-weight: 700; }
+    .framework-version {
+      padding: 4px 8px;
+      background: rgba(168,85,247,0.15);
+      color: var(--accent-purple);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .framework-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+    .framework-status { display: flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12px; color: var(--accent-green); }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .changelog-item {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 20px 24px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 16px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .changelog-date { min-width: 100px; text-align: center; padding: 12px; background: var(--bg-secondary); border-radius: 12px; }
+    .changelog-date .day { font-size: 24px; font-weight: 800; color: var(--accent-cyan); }
+    .changelog-date .month { font-size: 12px; color: var(--text-secondary); }
+    .changelog-content { flex: 1; }
+    .changelog-content h4 { font-size: 16px; margin-bottom: 8px; }
+    .changelog-content p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+    .changelog-badges { display: flex; gap: 8px; margin-top: 12px; }
+    .api-item {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 18px 24px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .api-info { display: flex; align-items: center; gap: 14px; }
+    .api-icon { font-size: 24px; }
+    .api-name { font-weight: 600; font-size: 15px; }
+    .api-endpoint { font-size: 12px; color: var(--text-secondary); }
+    .api-status-badge { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .api-status-badge.working { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+    .quick-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .quick-stat {
+      background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+    .quick-stat-value { font-size: 32px; font-weight: 800; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .quick-stat-label { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .section-header h2 { font-size: 24px; font-weight: 700; }
+    .section-header p { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+    @media (max-width: 768px) {
+      .header { padding: 12px 16px; flex-wrap: wrap; gap: 12px; }
+      .header-stats { gap: 12px; }
+      .container { padding: 16px; }
+      .tabs { flex-wrap: wrap; }
+      .quick-stats { grid-template-columns: repeat(2, 1fr); }
+      .changelog-item { flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow cyan"></div>
+  <div class="bg-glow purple"></div>
+  <header class="header">
+    <div class="header-left">
+      <div class="logo"><i class="ri-robot-2-fill"></i></div>
+      <div class="header-title">
+        <h1>AI Command Center</h1>
+        <p>SAI Rolotech - Unified AI Dashboard</p>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-item"><div class="stat-value">13</div><div class="stat-label">AI Tools</div></div>
+      <div class="stat-item"><div class="stat-value">9</div><div class="stat-label">Frameworks</div></div>
+      <div class="stat-item"><div class="stat-value">100%</div><div class="stat-label">Status</div></div>
+    </div>
+  </header>
+  <div class="container">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('dashboard')">Dashboard</button>
+      <button class="tab" onclick="switchTab('tools')">AI Tools</button>
+      <button class="tab" onclick="switchTab('frameworks')">Frameworks</button>
+      <button class="tab" onclick="switchTab('changelog')">Changelog</button>
+      <button class="tab" onclick="switchTab('api')">API Status</button>
+    </div>
+    <section id="dashboard" class="section active">
+      <div class="quick-stats">
+        <div class="quick-stat"><div class="quick-stat-value">738</div><div class="quick-stat-label">Claude Skills</div></div>
+        <div class="quick-stat"><div class="quick-stat-value">75</div><div class="quick-stat-label">Agents</div></div>
+        <div class="quick-stat"><div class="quick-stat-value">102</div><div class="quick-stat-label">Slash Commands</div></div>
+        <div class="quick-stat"><div class="quick-stat-value">7</div><div class="quick-stat-label">AI Frameworks</div></div>
+      </div>
+      <div class="section-header"><div><h2>Popular AI Tools</h2><p>Quick access to your most used tools</p></div></div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon cyan"><i class="ri-bard-fill"></i></div>
+          <h3>God Level Extension</h3>
+          <p>Access all 9 AI frameworks with one click. Claude, Gemini, GPT-4, and more integrated.</p>
+          <div class="card-meta"><span class="badge cyan">VS Code</span><span class="badge purple">All Frameworks</span></div>
+          <button class="card-btn" onclick="window.location.href='../god-level-extension/index.html'"><i class="ri-external-link-line"></i> Open Extension</button>
+        </div>
+        <div class="card">
+          <div class="card-icon purple"><i class="ri-message-3-fill"></i></div>
+          <h3>Prompt Builder Pro</h3>
+          <p>Build structured prompts with role detection, templates, and AI converter. Hindi/English support.</p>
+          <div class="card-meta"><span class="badge cyan">10 Skills</span><span class="badge purple">8 Templates</span></div>
+          <button class="card-btn" onclick="window.location.href='../prompt-builder-vscode/index.html'"><i class="ri-external-link-line"></i> Open Builder</button>
+        </div>
+        <div class="card">
+          <div class="card-icon green"><i class="ri-team-fill"></i></div>
+          <h3>Agno Multi-Agent</h3>
+          <p>Deploy multi-agent AI systems with LangGraph, CrewAI, and AutoGen orchestration.</p>
+          <div class="card-meta"><span class="badge green">Multi-Agent</span><span class="badge purple">v2.5.17</span></div>
+          <button class="card-btn" onclick="window.location.href='../agno-multiagent/index.html'"><i class="ri-external-link-line"></i> Open Agent</button>
+        </div>
+        <div class="card">
+          <div class="card-icon orange"><i class="ri-palette-fill"></i></div>
+          <h3>Design Tool</h3>
+          <p>AI-powered design automation with Figma integration and template generation.</p>
+          <div class="card-meta"><span class="badge orange">Design</span><span class="badge cyan">Automation</span></div>
+          <button class="card-btn" onclick="window.location.href='../design-tool/index.html'"><i class="ri-external-link-line"></i> Open Tool</button>
+        </div>
+        <div class="card">
+          <div class="card-icon red"><i class="ri-share-circle-fill"></i></div>
+          <h3>Agentfy</h3>
+          <p>Social media automation agents for Twitter, Instagram, and LinkedIn content creation.</p>
+          <div class="card-meta"><span class="badge red">Social</span><span class="badge green">Automation</span></div>
+          <button class="card-btn" onclick="window.location.href='../Agentfy/index.html'"><i class="ri-external-link-line"></i> Open Agentfy</button>
+        </div>
+        <div class="card">
+          <div class="card-icon cyan"><i class="ri-brain-fill"></i></div>
+          <h3>Hermes AI Hub</h3>
+          <p>Central AI hub with intelligent agent coordination and workflow automation.</p>
+          <div class="card-meta"><span class="badge cyan">Central Hub</span><span class="badge purple">Smart</span></div>
+          <button class="card-btn" onclick="window.location.href='../sai-rolotech-ai-hub/index.html'"><i class="ri-external-link-line"></i> Open Hub</button>
+        </div>
+      </div>
+    </section>
+    <section id="tools" class="section">
+      <div class="section-header"><div><h2>All AI Tools</h2><p>Complete collection of AI development tools</p></div></div>
+      <div class="grid-4">
+        <div class="card"><div class="card-icon cyan"><i class="ri-bard-fill"></i></div><h3>God Level Extension</h3><p>9 AI frameworks in one extension</p><div class="card-meta"><span class="badge cyan">VS Code</span></div></div>
+        <div class="card"><div class="card-icon purple"><i class="ri-message-3-fill"></i></div><h3>Prompt Builder</h3><p>Structured prompt generation</p><div class="card-meta"><span class="badge purple">10 Skills</span></div></div>
+        <div class="card"><div class="card-icon green"><i class="ri-team-fill"></i></div><h3>Agno Multi-Agent</h3><p>Multi-agent orchestration</p><div class="card-meta"><span class="badge green">v2.5.17</span></div></div>
+        <div class="card"><div class="card-icon orange"><i class="ri-palette-fill"></i></div><h3>Design Tool</h3><p>Design automation</p><div class="card-meta"><span class="badge orange">Design</span></div></div>
+        <div class="card"><div class="card-icon red"><i class="ri-share-circle-fill"></i></div><h3>Agentfy</h3><p>Social media agents</p><div class="card-meta"><span class="badge red">Social</span></div></div>
+        <div class="card"><div class="card-icon cyan"><i class="ri-brain-fill"></i></div><h3>Hermes AI Hub</h3><p>Central AI coordination</p><div class="card-meta"><span class="badge cyan">Central</span></div></div>
+        <div class="card"><div class="card-icon purple"><i class="ri-file-chart-fill"></i></div><h3>AutoCAD Bridge</h3><p>Natural language to AutoCAD</p><div class="card-meta"><span class="badge purple">Engineering</span></div></div>
+        <div class="card"><div class="card-icon green"><i class="ri-customer-service-2-fill"></i></div><h3>SAI Rolotech Engine</h3><p>Automation dashboard</p><div class="card-meta"><span class="badge green">Dashboard</span></div></div>
+      </div>
+    </section>
+    <section id="frameworks" class="section">
+      <div class="section-header"><div><h2>AI Frameworks</h2><p>All supported AI development frameworks</p></div></div>
+      <div class="grid-4">
+        <div class="framework-card"><div class="framework-header"><span class="framework-name">LangGraph</span><span class="framework-version">v1.1.8</span></div><p class="framework-desc">Build stateful multi-actor applications with LLM graphs</p><div class="framework-status"><span class="status-dot"></span> Installed and Working</div></div>
+        <div class="framework-card"><div class="framework-header"><span class="framework-name">CrewAI</span><span class="framework-version">v1.14.1</span></div><p class="framework-desc">Framework for building autonomous AI agents</p><div class="framework-status"><span class="status-dot"></span> Installed and Working</div></div>
+        <div class="framework-card"><div class="framework-header"><span class="framework-name">Agno</span><span class="framework-version">v2.5.17</span></div><p class="framework-desc">Build Agentic RAG and Multi-Agent systems</p><div class="framework-status"><span class="status-dot"></span> Installed and Working</div></div>
+        <div class="framework-card"><div class="framework-header"><span class="framework-name">AutoGen</span><span class="framework-version">v0.5.7</span></div><p class="framework-desc">Microsoft framework for LLM applications</p><div class="framework-status"><span class="status-dot"></span> Installed and Working</div></div>
+        <div class="framework-card"><div class="framework-header"><span class="framework-name">LlamaIndex</span><span class="framework-version">v0.14.20</span></div><p class="framework-desc">Data framework for LLM applications</p><div class="framework-status"><span class="status-dot"></span> Installed and Working</div></div>
+        <div class="framework-card"><div class="framework-header"><span class="framework-name">ChromaDB</span><span class="framework-version">Latest</span></div><p class="framework-desc">Vector database for AI applications</p><div class="framework-status"><span class="status-dot"></span> Installed and Working</div></div>
+        <div class="framework-card"><div class="framework-header"><span class="framework-name">DeepEval</span><span class="framework-version">Latest</span></div><p class="framework-desc">Evaluation framework for LLM outputs</p><div class="framework-status"><span class="status-dot"></span> Installed and Working</div></div>
+        <div class="framework-card"><div class="framework-header"><span class="framework-name">Arize Phoenix</span><span class="framework-version">Latest</span></div><p class="framework-desc">ML observability platform</p><div class="framework-status"><span class="status-dot"></span> Available</div></div>
+        <div class="framework-card"><div class="framework-header"><span class="framework-name">Weaviate</span><span class="framework-version">Latest</span></div><p class="framework-desc">Open source vector search engine</p><div class="framework-status"><span class="status-dot"></span> Available</div></div>
+      </div>
+    </section>
+    <section id="changelog" class="section">
+      <div class="section-header"><div><h2>Changelog</h2><p>Track all updates and changes</p></div></div>
+      <div class="changelog-item"><div class="changelog-date"><div class="day">18</div><div class="month">APR 2026</div></div><div class="changelog-content"><h4>AI Command Center Launched</h4><p>Unified dashboard combining all AI coding tools with changelog tracking and API status monitoring.</p><div class="changelog-badges"><span class="badge cyan">New</span><span class="badge green">Feature</span></div></div></div>
+      <div class="changelog-item"><div class="changelog-date"><div class="day">17</div><div class="month">APR 2026</div></div><div class="changelog-content"><h4>AutoCAD SCR Generator v2.0</h4><p>Enhanced with roll assembly diagrams, bearing specs, and flower pattern generation.</p><div class="changelog-badges"><span class="badge green">Feature</span></div></div></div>
+      <div class="changelog-item"><div class="changelog-date"><div class="day">16</div><div class="month">APR 2026</div></div><div class="changelog-content"><h4>God Level Extension Updated</h4><p>All 9 AI frameworks integrated with version tracking and run demo functionality.</p><div class="changelog-badges"><span class="badge purple">Update</span></div></div></div>
+      <div class="changelog-item"><div class="changelog-date"><div class="day">15</div><div class="month">APR 2026</div></div><div class="changelog-content"><h4>Prompt Builder Pro Released</h4><p>10 skill chips, 8 templates, AI converter with tone/format options.</p><div class="changelog-badges"><span class="badge cyan">New</span></div></div></div>
+      <div class="changelog-item"><div class="changelog-date"><div class="day">14</div><div class="month">APR 2026</div></div><div class="changelog-content"><h4>OpenClaw Gateway Updated</h4><p>Version 2026.4.15 with 32/74 skills ready, Telegram integration.</p><div class="changelog-badges"><span class="badge purple">Update</span></div></div></div>
+      <div class="changelog-item"><div class="changelog-date"><div class="day">13</div><div class="month">APR 2026</div></div><div class="changelog-content"><h4>Computer Use Module Complete</h4><p>Full automation: mouse, keyboard, windows, files, screenshots. All 8 tests passed.</p><div class="changelog-badges"><span class="badge green">Feature</span></div></div></div>
+      <div class="changelog-item"><div class="changelog-date"><div class="day">12</div><div class="month">APR 2026</div></div><div class="changelog-content"><h4>Cloud AI Bridge v2</h4><p>Multi-provider routing: Groq to NVIDIA to Gemini to OpenRouter with failover.</p><div class="changelog-badges"><span class="badge purple">Update</span></div></div></div>
+      <div class="changelog-item"><div class="changelog-date"><div class="day">10</div><div class="month">APR 2026</div></div><div class="changelog-content"><h4>SAI Rolotech CRM Launched</h4><p>Complete CRM for roll forming business with AI chat and quotation generator.</p><div class="changelog-badges"><span class="badge cyan">New</span></div></div></div>
+      <div class="changelog-item"><div class="changelog-date"><div class="day">01</div><div class="month">APR 2026</div></div><div class="changelog-content"><h4>Project Initialization</h4><p>Cloud Code Extension monorepo created with Claude Code skills and agents.</p><div class="changelog-badges"><span class="badge cyan">New</span></div></div></div>
+    </section>
+    <section id="api" class="section">
+      <div class="section-header"><div><h2>API Status</h2><p>Real-time status of all connected APIs</p></div></div>
+      <div class="api-item"><div class="api-info"><span class="api-icon">G</span><div><div class="api-name">Gemini API</div><div class="api-endpoint">generativelanguage.googleapis.com</div></div></div><span class="api-status-badge working"><span class="status-dot"></span> Working - 13 Keys</span></div>
+      <div class="api-item"><div class="api-info"><span class="api-icon">C</span><div><div class="api-name">Claude (OpusMax)</div><div class="api-endpoint">api.opusmax.pro</div></div></div><span class="api-status-badge working"><span class="status-dot"></span> Working</span></div>
+      <div class="api-item"><div class="api-info"><span class="api-icon">OR</span><div><div class="api-name">OpenRouter</div><div class="api-endpoint">openrouter.ai</div></div></div><span class="api-status-badge working"><span class="status-dot"></span> Working</span></div>
+      <div class="api-item"><div class="api-info"><span class="api-icon">GQ</span><div><div class="api-name">Groq</div><div class="api-endpoint">api.groq.com</div></div></div><span class="api-status-badge working"><span class="status-dot"></span> Working</span></div>
+      <div class="api-item"><div class="api-info"><span class="api-icon">NV</span><div><div class="api-name">NVIDIA</div><div class="api-endpoint">integrate.api.nvidia.com</div></div></div><span class="api-status-badge working"><span class="status-dot"></span> Working</span></div>
+    </section>
+  </div>
+  <script>
+    function switchTab(tabName) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

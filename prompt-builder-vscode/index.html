@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', sans-serif;
+    background: #1e1e1e; color: #ccc; padding: 15px; height: 100vh;
+    overflow: hidden;
+  }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+  .header h1 { color: #4ec9b0; font-size: 18px; }
+  .header-controls { display: flex; gap: 10px; align-items: center; }
+  .toggle-container { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .toggle {
+    position: relative; width: 44px; height: 22px;
+    background: #3c3c3c; border-radius: 11px; cursor: pointer; transition: background 0.3s;
+  }
+  .toggle.active { background: #4caf50; }
+  .toggle::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 18px; height: 18px; background: #fff; border-radius: 50%; transition: transform 0.3s;
+  }
+  .toggle.active::after { transform: translateX(22px); }
+  .skill-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .chip {
+    padding: 4px 10px; border-radius: 12px; font-size: 11px;
+    background: #3c3c3c; color: #aaa; cursor: pointer;
+    border: 1px solid transparent; transition: all 0.2s;
+  }
+  .chip:hover { background: #4a4a4a; color: #fff; }
+  .chip.selected { background: #0e639c; color: #fff; border-color: #1177bb; }
+  .tabs { display: flex; gap: 5px; margin-bottom: 10px; }
+  .tab {
+    padding: 6px 14px; border-radius: 6px; font-size: 12px;
+    background: #2d2d2d; color: #888; cursor: pointer; border: none;
+  }
+  .tab.active { background: #0e639c; color: #fff; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .template-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-height: 200px; overflow-y: auto; }
+  .template-card {
+    background: #252526; border: 1px solid #3c3c3c; border-radius: 8px;
+    padding: 12px; cursor: pointer; transition: all 0.2s;
+  }
+  .template-card:hover { border-color: #4ec9b0; background: #2d2d30; }
+  .template-card h4 { color: #4ec9b0; font-size: 13px; margin-bottom: 4px; }
+  .template-card p { color: #888; font-size: 11px; }
+  .history-list { max-height: 200px; overflow-y: auto; }
+  .history-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px; background: #252526; border-radius: 6px; margin-bottom: 6px;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .history-item:hover { background: #2d2d30; }
+  .history-item .text { flex: 1; font-size: 12px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .history-item .time { font-size: 10px; color: #666; margin-left: 10px; }
+  .history-item .delete { color: #f48771; margin-left: 8px; font-size: 10px; cursor: pointer; }
+  .chat-box {
+    height: 45%; border: 1px solid #3c3c3c; border-radius: 8px;
+    background: #252526; padding: 10px; overflow-y: auto; margin-bottom: 10px;
+  }
+  .message { margin: 8px 0; padding: 8px 12px; border-radius: 8px; font-size: 13px; }
+  .user { background: #0e639c; color: #fff; margin-left: 15%; }
+  .bot { background: #2d2d2d; color: #dcdcaa; margin-right: 15%; }
+  .prompt-result {
+    background: #1a1a1a; border: 1px solid #4ec9b0; border-radius: 8px;
+    padding: 12px; margin-bottom: 10px; font-family: monospace; font-size: 12px;
+    white-space: pre-wrap; color: #4ec9b0; display: none; max-height: 150px; overflow-y: auto;
+  }
+  .prompt-result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .prompt-result-header span { font-size: 11px; color: #888; }
+  .input-area { display: flex; gap: 10px; }
+  .input-wrapper { flex: 1; position: relative; }
+  input {
+    width: 100%; padding: 12px; background: #3c3c3c; color: #fff;
+    border: 1px solid #3c3c3c; border-radius: 8px; font-size: 14px;
+  }
+  input:focus { outline: none; border-color: #0e639c; }
+  .input-lang {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    font-size: 10px; color: #888; background: #2d2d2d; padding: 2px 6px; border-radius: 4px;
+  }
+  button {
+    padding: 12px 20px; background: #4caf50; color: #fff;
+    border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold;
+  }
+  button:hover { background: #45a049; }
+  .copy-btn { background: #0e639c; }
+  .copy-btn:hover { background: #1177bb; }
+  .clear-btn { background: #f48771; }
+  .clear-btn:hover { background: #d8635c; }
+  .api-btn { background: #9b59b6; }
+  .api-btn:hover { background: #8e44ad; }
+  .api-btn.active { background: #27ae60; }
+  .api-status { display: none; padding: 8px; background: #2d2d2d; border-radius: 6px; margin-bottom: 10px; font-size: 11px; color: #888; }
+  .api-status.active { display: block; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #4a4a4a; border-radius: 3px; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>Prompt Builder Pro</h1>
+    <div class="header-controls">
+      <div class="toggle-container">
+        <span>Chat</span>
+        <div class="toggle" id="chatToggle" onclick="toggleChat()"></div>
+      </div>
+    </div>
+  </div>
+  <div class="skill-chips" id="skillChips">
+    <span class="chip" onclick="selectSkill(this, 'educator')">Educator</span>
+    <span class="chip" onclick="selectSkill(this, 'engineer')">Engineer</span>
+    <span class="chip" onclick="selectSkill(this, 'debugger')">Debugger</span>
+    <span class="chip" onclick="selectSkill(this, 'reviewer')">Reviewer</span>
+    <span class="chip" onclick="selectSkill(this, 'writer')">Writer</span>
+    <span class="chip" onclick="selectSkill(this, 'devops')">DevOps</span>
+    <span class="chip" onclick="selectSkill(this, 'security')">Security</span>
+    <span class="chip" onclick="selectSkill(this, 'data')">Data</span>
+    <span class="chip" onclick="selectSkill(this, 'business')">Business</span>
+    <span class="chip" onclick="selectSkill(this, 'support')">Support</span>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('chat')">Chat</button>
+    <button class="tab" onclick="switchTab('templates')">Templates</button>
+    <button class="tab" onclick="switchTab('history')">History</button>
+    <button class="tab" onclick="switchTab('converter')">Converter</button>
+  </div>
+  <div class="panel active" id="chatPanel">
+    <div class="chat-box" id="chatBox">
+      <div class="message bot">Welcome! Type your idea below or select a template.</div>
+    </div>
+    <div class="prompt-result" id="promptResult">
+      <div class="prompt-result-header">
+        <span>Generated Prompt:</span>
+        <button class="copy-btn" style="padding:4px 8px;font-size:10px;" onclick="copyPrompt()">Copy</button>
+      </div>
+      <div id="promptText"></div>
+    </div>
+    <div class="api-status" id="apiStatus">Generating with AI...</div>
+    <div class="input-area">
+      <div class="input-wrapper">
+        <input id="userInput" placeholder="Type your idea... (Hindi/English supported)" onkeypress="if(event.key==='Enter')buildPrompt()">
+        <span class="input-lang" id="inputLang">EN</span>
+      </div>
+      <button onclick="buildPrompt()">Build</button>
+      <button class="api-btn" id="apiBtn" onclick="toggleAPI()">AI</button>
+    </div>
+  </div>
+  <div class="panel" id="templatesPanel">
+    <div class="template-grid">
+      <div class="template-card" onclick="useTemplate('code-review')"><h4>Code Review</h4><p>Review code quality, security, and performance</p></div>
+      <div class="template-card" onclick="useTemplate('bug-fix')"><h4>Bug Fix</h4><p>Debug and fix issues with root cause analysis</p></div>
+      <div class="template-card" onclick="useTemplate('documentation')"><h4>Documentation</h4><p>Create comprehensive README and docs</p></div>
+      <div class="template-card" onclick="useTemplate('blog-post')"><h4>Blog Post</h4><p>Write engaging SEO-optimized articles</p></div>
+      <div class="template-card" onclick="useTemplate('api-design')"><h4>API Design</h4><p>Design clean REST/GraphQL APIs</p></div>
+      <div class="template-card" onclick="useTemplate('test-case')"><h4>Test Cases</h4><p>Generate comprehensive unit tests</p></div>
+      <div class="template-card" onclick="useTemplate('email')"><h4>Email</h4><p>Professional business emails</p></div>
+      <div class="template-card" onclick="useTemplate('presentation')"><h4>Presentation</h4><p>Pitch decks and slides structure</p></div>
+    </div>
+  </div>
+  <div class="panel" id="converterPanel">
+    <h3 style="color:#4ec9b0;margin-bottom:10px;">Auto Prompt Converter</h3>
+    <textarea id="rawPrompt" placeholder="Type your simple prompt here (Hindi/English)..." style="width:100%;height:80px;background:#3c3c3c;color:#fff;border:1px solid #3c3c3c;border-radius:8px;padding:10px;font-size:13px;resize:none;margin-bottom:10px;"></textarea>
+    <div style="margin-bottom:10px;">
+      <label style="font-size:11px;color:#888;display:block;margin-bottom:5px;">AI Model:</label>
+      <select id="aiModel" style="width:100%;padding:8px;background:#3c3c3c;color:#fff;border:1px solid #3c3c3c;border-radius:6px;font-size:12px;">
+        <option value="gemini">Gemini (Free)</option>
+        <option value="claude">Claude</option>
+        <option value="gpt">GPT-4</option>
+        <option value="local">Local/Llama</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:120px;">
+        <label style="font-size:11px;color:#888;display:block;margin-bottom:5px;">Tone:</label>
+        <select id="promptTone" style="width:100%;padding:8px;background:#3c3c3c;color:#fff;border:1px solid #3c3c3c;border-radius:6px;font-size:12px;">
+          <option value="professional">Professional</option>
+          <option value="friendly">Friendly</option>
+          <option value="technical">Technical</option>
+          <option value="casual">Casual</option>
+          <option value="formal">Formal</option>
+        </select>
+      </div>
+      <div style="flex:1;min-width:120px;">
+        <label style="font-size:11px;color:#888;display:block;margin-bottom:5px;">Format:</label>
+        <select id="promptFormat" style="width:100%;padding:8px;background:#3c3c3c;color:#fff;border:1px solid #3c3c3c;border-radius:6px;font-size:12px;">
+          <option value="markdown">Markdown</option>
+          <option value="json">JSON</option>
+          <option value="xml">XML</option>
+          <option value="plain">Plain Text</option>
+        </select>
+      </div>
+      <div style="flex:1;min-width:120px;">
+        <label style="font-size:11px;color:#888;display:block;margin-bottom:5px;">Length:</label>
+        <select id="promptLength" style="width:100%;padding:8px;background:#3c3c3c;color:#fff;border:1px solid #3c3c3c;border-radius:6px;font-size:12px;">
+          <option value="short">Short</option>
+          <option value="medium">Medium</option>
+          <option value="detailed">Detailed</option>
+        </select>
+      </div>
+    </div>
+    <button onclick="convertPrompt()" style="width:100%;padding:12px;background:#9b59b6;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;margin-bottom:10px;">Convert with AI</button>
+    <div id="convertedPrompt" style="background:#1a1a1a;border:1px solid #4ec9b0;border-radius:8px;padding:12px;font-family:monospace;font-size:12px;white-space:pre-wrap;color:#4ec9b0;display:none;max-height:200px;overflow-y:auto;margin-bottom:10px;"></div>
+    <button onclick="copyConverted()" id="copyConvertBtn" style="display:none;width:100%;padding:10px;background:#0e639c;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;">Copy Converted Prompt</button>
+  </div>
+  <div class="panel" id="historyPanel">
+    <div style="margin-bottom:10px;">
+      <button class="clear-btn" onclick="clearHistory()" style="padding:6px 12px;font-size:11px;">Clear All</button>
+    </div>
+    <div class="history-list" id="historyList">
+      <div class="message bot" style="margin:10px 0;">No history yet.</div>
+    </div>
+  </div>
+<script>
+let chatEnabled = true;
+let selectedSkill = null;
+let useAI = false;
+let history = JSON.parse(localStorage.getItem('promptHistory') || '[]');
+const roles = {
+  educator: { name: 'Expert Educator', role: 'You are an expert educator', expertise: 'break down concepts' },
+  engineer: { name: 'Software Engineer', role: 'You are a Principal Software Architect', expertise: 'write production-ready code' },
+  debugger: { name: 'Debugging Expert', role: 'You are a Senior Debugging Engineer', expertise: 'identify root causes' },
+  reviewer: { name: 'Code Reviewer', role: 'You are a Staff-level Code Reviewer', expertise: 'improve code quality' },
+  writer: { name: 'Content Writer', role: 'You are a Senior Content Strategist', expertise: 'create engaging content' },
+  devops: { name: 'DevOps Architect', role: 'You are a DevOps Architect', expertise: 'design infrastructure' },
+  security: { name: 'Security Expert', role: 'You are a Chief Security Officer', expertise: 'identify security risks' },
+  data: { name: 'Data Scientist', role: 'You are a Senior Data Scientist', expertise: 'transform data into insights' },
+  business: { name: 'Business Consultant', role: 'You are a Business Strategy Consultant', expertise: 'provide recommendations' },
+  support: { name: 'Support Specialist', role: 'You are a Customer Support Specialist', expertise: 'provide assistance' }
+};
+const templates = {
+  'code-review': 'Review this code for quality, security issues, performance problems. Code: ',
+  'bug-fix': 'Debug this issue and provide the exact fix. Issue: ',
+  'documentation': 'Create comprehensive documentation. Topic: ',
+  'blog-post': 'Write an engaging SEO-optimized blog post. Topic: ',
+  'api-design': 'Design a clean REST/GraphQL API. Requirements: ',
+  'test-case': 'Generate comprehensive unit tests. Function: ',
+  'email': 'Write a professional business email. Purpose: ',
+  'presentation': 'Create a presentation outline. Topic: '
+};
+function toggleChat() { chatEnabled = !chatEnabled; document.getElementById('chatToggle').classList.toggle('active', chatEnabled); document.getElementById('chatBox').style.display = chatEnabled ? 'block' : 'none'; }
+function toggleAPI() { useAI = !useAI; document.getElementById('apiBtn').classList.toggle('active', useAI); document.getElementById('apiStatus').classList.toggle('active', useAI); }
+function switchTab(tab) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active'); document.querySelectorAll('.panel').forEach(p => p.classList.remove('active')); document.getElementById(tab + 'Panel').classList.add('active'); if (tab === 'history') renderHistory(); }
+function selectSkill(chip, skill) { document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected')); if (selectedSkill === skill) { selectedSkill = null; } else { chip.classList.add('selected'); selectedSkill = skill; } }
+function useTemplate(key) { document.getElementById('userInput').value = templates[key]; switchTab('chat'); }
+function detectLanguage(text) { const hindiPattern = /[\u0900-\u097F]/; document.getElementById('inputLang').textContent = hindiPattern.test(text) ? 'HI' : 'EN'; return hindiPattern.test(text) ? 'Hindi' : 'English'; }
+function generatePrompt(text) {
+  const lower = text.toLowerCase(); detectLanguage(text);
+  let selectedRole = selectedSkill ? roles[selectedSkill] : roles.engineer;
+  const langHint = detectLanguage(text) === 'Hindi' ? '\nLanguage: Respond in Hindi.' : '';
+  return `# ROLE\n${selectedRole.role}.\n\n# TASK\n${text}\n\n# CONSTRAINTS\n• Start with the most important information\n• Use clear section headers${langHint}`;
+}
+function buildPrompt() {
+  const input = document.getElementById('userInput').value.trim();
+  if (!input) return;
+  if (chatEnabled) addMessage(input, 'user');
+  document.getElementById('userInput').value = '';
+  const generatedPrompt = generatePrompt(input);
+  document.getElementById('promptResult').style.display = 'block';
+  document.getElementById('promptText').textContent = generatedPrompt;
+  saveToHistory(input, generatedPrompt);
+  if (chatEnabled) addMessage('Prompt generated!', 'bot');
+}
+function addMessage(text, sender) { const chatBox = document.getElementById('chatBox'); const div = document.createElement('div'); div.className = 'message ' + sender; div.textContent = text; chatBox.appendChild(div); chatBox.scrollTop = chatBox.scrollHeight; }
+function copyPrompt() { navigator.clipboard.writeText(document.getElementById('promptText').innerText); }
+function saveToHistory(input, prompt) { history.unshift({ id: Date.now(), input: input.substring(0, 100), prompt, time: new Date().toLocaleTimeString() }); if (history.length > 50) history.pop(); localStorage.setItem('promptHistory', JSON.stringify(history)); }
+function renderHistory() { const list = document.getElementById('historyList'); list.innerHTML = history.length === 0 ? '<div class="message bot">No history yet.</div>' : history.map(item => `<div class="history-item" onclick="loadHistory(${item.id})"><span class="text">${item.input}</span><span class="time">${item.time}</span><span class="delete" onclick="event.stopPropagation();deleteHistory(${item.id})">X</span></div>`).join(''); }
+function loadHistory(id) { const item = history.find(h => h.id === id); if (item) { switchTab('chat'); document.getElementById('promptResult').style.display = 'block'; document.getElementById('promptText').textContent = item.prompt; } }
+function deleteHistory(id) { history = history.filter(h => h.id !== id); localStorage.setItem('promptHistory', JSON.stringify(history)); renderHistory(); }
+function clearHistory() { if (confirm('Clear all history?')) { history = []; localStorage.setItem('promptHistory', JSON.stringify(history)); renderHistory(); } }
+function convertPrompt() {
+  const raw = document.getElementById('rawPrompt').value.trim();
+  if (!raw) { alert('Please enter a prompt first!'); return; }
+  const model = document.getElementById('aiModel').value;
+  const tone = document.getElementById('promptTone').value;
+  const format = document.getElementById('promptFormat').value;
+  const length = document.getElementById('promptLength').value;
+  const output = document.getElementById('convertedPrompt');
+  const copyBtn = document.getElementById('copyConvertBtn');
+  output.style.display = 'block';
+  output.textContent = 'Converting...';
+  copyBtn.style.display = 'none';
+  setTimeout(() => {
+    const converted = buildStructuredPrompt(raw, model, tone, format, length);
+    output.textContent = converted;
+    copyBtn.style.display = 'block';
+  }, 800);
+}
+function buildStructuredPrompt(raw, model, tone, format, length) {
+  const toneMap = {
+    professional: 'Clear, concise, and business-oriented',
+    friendly: 'Warm, approachable, and conversational',
+    technical: 'Detailed, precise, and expert-level',
+    casual: 'Relaxed, easy-going, and informal',
+    formal: 'Official, structured, and authoritative'
+  };
+  const lengthMap = {
+    short: 'Keep it brief and to the point',
+    medium: 'Provide balanced detail',
+    detailed: 'Give comprehensive, thorough response'
+  };
+  const modelContext = {
+    gemini: 'Google Gemini',
+    claude: 'Anthropic Claude',
+    gpt: 'OpenAI GPT-4',
+    local: 'Local LLM'
+  };
+  let result = '';
+  if (format === 'markdown') {
+    result = `# Prompt for ${modelContext[model]}\n\n## Input\n${raw}\n\n## Requirements\n- Tone: ${toneMap[tone]}\n- ${lengthMap[length]}\n\n## Output Format\nStructured Markdown with headers\n`;
+  } else if (format === 'json') {
+    result = JSON.stringify({
+      model: modelContext[model],
+      input: raw,
+      tone: tone,
+      requirements: toneMap[tone],
+      length: lengthMap[length],
+      output_format: "JSON"
+    }, null, 2);
+  } else if (format === 'xml') {
+    result = `<prompt>\n  <model>${modelContext[model]}</model>\n  <input>${raw}</input>\n  <tone>${tone}</tone>\n  <requirements>${toneMap[tone]}</requirements>\n  <length>${lengthMap[length]}</length>\n</prompt>`;
+  } else {
+    result = `AI Prompt - ${modelContext[model]}\n${'='.repeat(40)}\n\nInput: ${raw}\n\nTone: ${toneMap[tone]}\nRequirements: ${lengthMap[length]}\n\nGenerated Prompt:\n${'─'.repeat(40)}\nConvert this into an effective prompt for ${modelContext[model]} with ${tone} tone. ${lengthMap[length]}. ${raw}`;
+  }
+  return result;
+}
+function copyConverted() {
+  const text = document.getElementById('convertedPrompt').textContent;
+  navigator.clipboard.writeText(text);
+  alert('Copied!');
+}
+toggleChat();
+</script>
+</body>
+</html>

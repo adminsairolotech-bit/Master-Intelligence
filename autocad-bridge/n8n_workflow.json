@@ -1,0 +1,112 @@
+{
+  "name": "AutoCAD Roll Forming Draw",
+  "nodes": [
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "=Drawing generated! Executing in AutoCAD...",
+        "additionalFields": {}
+      },
+      "id": "telegram-send",
+      "name": "Send Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1700, 300],
+      "credentials": { "telegramApi": "telegram-creds" },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "command": "=python \"{{ $json.scr_path }}\" && echo DONE",
+        "executeOnce": false
+      },
+      "id": "execute-autocad",
+      "name": "Execute AutoCAD",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1500, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "fileName": "={{ $json.filename }}",
+        "fileContent": "={{ $json.scr_content }}"
+      },
+      "id": "write-scr-file",
+      "name": "Write SCR File",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [1300, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{ $env.OPENROUTER_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "anthropic/claude-3.5-sonnet"
+            },
+            {
+              "name": "messages",
+              "value": [
+                {
+                  "role": "system",
+                  "content": "You are AutoCAD SCR generator for roll forming machines. Generate AutoCAD .scr script commands.\n\nAvailable profiles: C-Channel, Z-Purlin, Omega, U-Profile, L-Angle\n\nShaft sizes: C-75=40mm, C-150=50mm, C-250=75mm\nBearing: 6308(40mm), 6310(50mm), 6312(60mm), 6315(75mm)\n\nOutput ONLY JSON: {\"type\":\"c-channel\",\"web\":150,\"flange\":50,\"lip\":15,\"thickness\":2}\nor: {\"type\":\"shaft\",\"diameter\":50,\"length\":350,\"keyway\":true}\n\nReply with JSON only, no explanation."
+                },
+                {
+                  "role": "user",
+                  "content": "={{ $json.message.text }}"
+                }
+              ]
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ai-interpreter",
+      "name": "AI Interpret",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1100, 300]
+    },
+    {
+      "parameters": {
+        "updates": ["message"],
+        "additionalFields": {}
+      },
+      "id": "telegram-trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [900, 300],
+      "credentials": { "telegramApi": "telegram-creds" }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [[{ "node": "AI Interpret", "type": "main", "index": 0 }]]
+    },
+    "AI Interpret": {
+      "main": [[{ "node": "Write SCR File", "type": "main", "index": 0 }]]
+    },
+    "Write SCR File": {
+      "main": [[{ "node": "Execute AutoCAD", "type": "main", "index": 0 }]]
+    },
+    "Execute AutoCAD": {
+      "main": [[{ "node": "Send Reply", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "id": "autocad-rollforming"
+}
