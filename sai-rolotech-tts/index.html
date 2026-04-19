@@ -1,213 +1,362 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAIROLOTECH TTS - Voice Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>SAIROLOTECH TTS</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #00ff88;
+            --bg: #0a0a0f;
+            --card: #1a1a2e;
+            --border: #2a2a3e;
+            --text: #ffffff;
+            --text-dim: #888888;
+            --danger: #ff4444;
+            --warning: #ffcc00;
+        }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #0a0a0f;
-            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            padding: 20px;
+            line-height: 1.5;
         }
+
+        /* Mobile First Layout */
         .container {
-            max-width: 800px;
+            max-width: 480px;
             margin: 0 auto;
+            padding: 16px;
+            padding-bottom: 100px;
         }
-        h1 {
+
+        /* Header */
+        .header {
             text-align: center;
-            color: #00ff88;
-            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .logo {
             font-size: 2rem;
-        }
-        .card {
-            background: #1a1a2e;
-            border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 20px;
-            border: 1px solid #333;
-        }
-        label {
-            display: block;
             margin-bottom: 8px;
-            color: #888;
-            font-size: 14px;
         }
-        textarea {
-            width: 100%;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #333;
-            background: #0a0a0f;
-            color: #fff;
-            font-size: 16px;
-            resize: vertical;
-            min-height: 120px;
+
+        .title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
         }
-        textarea:focus {
-            outline: none;
-            border-color: #00ff88;
-        }
-        .voice-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .voice-btn {
-            padding: 12px 16px;
-            border: 2px solid #333;
-            border-radius: 10px;
-            background: #0a0a0f;
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: left;
-        }
-        .voice-btn:hover {
-            border-color: #00ff88;
-        }
-        .voice-btn.active {
-            border-color: #00ff88;
-            background: #00ff8833;
-        }
-        .voice-btn span {
-            display: block;
-            font-size: 12px;
-            color: #666;
+
+        .subtitle {
+            font-size: 0.75rem;
+            color: var(--text-dim);
             margin-top: 4px;
         }
-        .btn {
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+        }
+
+        /* Text Input */
+        .text-input {
             width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+            resize: none;
+            min-height: 100px;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .text-input::placeholder {
+            color: var(--text-dim);
+        }
+
+        /* Quick Buttons */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .quick-btn {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-dim);
+            font-size: 0.75rem;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
-        .btn-primary {
-            background: linear-gradient(135deg, #00ff88, #00cc6a);
-            color: #000;
+
+        .quick-btn:active {
+            background: var(--primary);
+            color: var(--bg);
+            transform: scale(0.98);
         }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px #00ff8844;
+
+        /* Voice Selection */
+        .voice-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 12px;
         }
-        .btn-primary:disabled {
+
+        .voice-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .voice-btn {
+            padding: 14px 12px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .voice-btn:active {
+            transform: scale(0.98);
+        }
+
+        .voice-btn.active {
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .voice-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .voice-lang {
+            font-size: 0.625rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* Generate Button - Fixed Bottom */
+        .generate-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            background: linear-gradient(transparent, var(--bg) 30%);
+            padding-top: 40px;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: var(--primary);
+            color: var(--bg);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .generate-btn:active {
+            transform: scale(0.98);
+        }
+
+        .generate-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
-        .audio-player {
-            width: 100%;
-            margin-top: 20px;
+
+        /* Audio Player */
+        .player-card {
             display: none;
+            margin-top: 16px;
         }
+
+        .player-card.show {
+            display: block;
+        }
+
         audio {
             width: 100%;
-            border-radius: 10px;
+            border-radius: 8px;
+            height: 44px;
         }
-        .status {
-            text-align: center;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            display: none;
-        }
-        .status.loading {
-            background: #ffcc0033;
-            color: #ffcc00;
+
+        .download-btn {
             display: block;
-        }
-        .status.success {
-            background: #00ff8833;
-            color: #00ff88;
-            display: block;
-        }
-        .status.error {
-            background: #ff444433;
-            color: #ff4444;
-            display: block;
-        }
-        .quick-texts {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 15px;
-        }
-        .quick-btn {
-            padding: 8px 12px;
-            border: 1px solid #333;
-            border-radius: 20px;
+            width: 100%;
+            padding: 14px;
+            margin-top: 12px;
+            border: 1px solid var(--primary);
+            border-radius: 12px;
             background: transparent;
-            color: #888;
-            font-size: 12px;
+            color: var(--primary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
             cursor: pointer;
         }
-        .quick-btn:hover {
-            border-color: #00ff88;
-            color: #00ff88;
+
+        .download-btn:active {
+            background: var(--primary);
+            color: var(--bg);
+        }
+
+        /* Status Messages */
+        .status {
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            margin: 16px 0;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .status.loading {
+            display: block;
+            background: rgba(255, 204, 0, 0.1);
+            color: var(--warning);
+        }
+
+        .status.success {
+            display: block;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--primary);
+        }
+
+        .status.error {
+            display: block;
+            background: rgba(255, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        /* Desktop Adjustments */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 600px;
+                padding: 32px;
+                padding-bottom: 32px;
+            }
+
+            .generate-section {
+                position: static;
+                background: none;
+                padding: 16px 0;
+            }
+
+            .voice-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎤 SAIROLOTECH TTS</h1>
+        <div class="header">
+            <div class="logo">🎤</div>
+            <div class="title">SAIROLOTECH TTS</div>
+            <div class="subtitle">Hindi • English • 100% FREE</div>
+        </div>
 
         <div class="card">
-            <label>Enter Text</label>
-            <textarea id="text" placeholder="Type your text here...">नमस्ते, मैं साई रोलोटेक हूं।</textarea>
+            <textarea
+                id="text"
+                class="text-input"
+                placeholder="Type text here..."
+            >नमस्ते, मैं साई रोलोटेक हूं।</textarea>
 
-            <div class="quick-texts">
-                <button class="quick-btn" onclick="setText('नमस्ते, मैं साई रोलोटेक हूं।')">Hindi Greeting</button>
-                <button class="quick-btn" onclick="setText('Hello, I am SAI Rolotech.')">English Greeting</button>
-                <button class="quick-btn" onclick="setText('We make roll forming machines.')">Business Text</button>
+            <div class="quick-grid">
+                <button class="quick-btn" onclick="setText('नमस्ते, मैं साई रोलोटेक हूं।')">👋 Namaskar</button>
+                <button class="quick-btn" onclick="setText('We make roll forming machines.')">🏭 Business</button>
+                <button class="quick-btn" onclick="setText('Hello, how can I help you?')">👋 Hello</button>
+                <button class="quick-btn" onclick="setText('Thank you for calling.')">📞 Thank You</button>
             </div>
         </div>
 
         <div class="card">
-            <label>Select Voice</label>
+            <div class="voice-label">SELECT VOICE</div>
             <div class="voice-grid">
                 <button class="voice-btn active" data-voice="hi_f" onclick="selectVoice(this)">
-                    Swara
-                    <span>Hindi Female</span>
+                    <div class="voice-name">Swara</div>
+                    <div class="voice-lang">Hindi Female</div>
                 </button>
                 <button class="voice-btn" data-voice="hi_m" onclick="selectVoice(this)">
-                    Madhur
-                    <span>Hindi Male</span>
+                    <div class="voice-name">Madhur</div>
+                    <div class="voice-lang">Hindi Male</div>
                 </button>
                 <button class="voice-btn" data-voice="en_f" onclick="selectVoice(this)">
-                    Jenny
-                    <span>English Female</span>
+                    <div class="voice-name">Jenny</div>
+                    <div class="voice-lang">English Female</div>
                 </button>
                 <button class="voice-btn" data-voice="en_m" onclick="selectVoice(this)">
-                    Guy
-                    <span>English Male</span>
+                    <div class="voice-name">Guy</div>
+                    <div class="voice-lang">English Male</div>
                 </button>
                 <button class="voice-btn" data-voice="uk_f" onclick="selectVoice(this)">
-                    Sonia
-                    <span>UK Female</span>
+                    <div class="voice-name">Sonia</div>
+                    <div class="voice-lang">UK Female</div>
                 </button>
             </div>
         </div>
-
-        <button class="btn btn-primary" id="generateBtn" onclick="generate()">
-            🎤 Generate Speech
-        </button>
 
         <div class="status" id="status"></div>
 
-        <div class="audio-player" id="player">
-            <audio id="audio" controls></audio>
-            <a id="downloadLink" download style="display:block; margin-top:10px; color:#00ff88; text-align:center;">
-                ⬇️ Download MP3
-            </a>
+        <div class="player-card" id="playerCard">
+            <div class="card">
+                <audio id="audio" controls></audio>
+                <a id="downloadLink" class="download-btn" download>
+                    ⬇️ Download MP3
+                </a>
+            </div>
         </div>
+    </div>
+
+    <div class="generate-section">
+        <button class="generate-btn" id="generateBtn" onclick="generate()">
+            <span id="btnText">🎤 Generate</span>
+        </button>
     </div>
 
     <script>
@@ -231,15 +380,13 @@
             }
 
             const btn = document.getElementById('generateBtn');
-            const status = document.getElementById('status');
-            const player = document.getElementById('player');
+            const btnText = document.getElementById('btnText');
 
             btn.disabled = true;
-            btn.textContent = '⏳ Generating...';
+            btnText.textContent = '⏳ Generating...';
             showStatus('Generating speech...', 'loading');
 
             try {
-                // Call TTS API
                 const response = await fetch('http://localhost:8505/tts/speak', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -249,26 +396,23 @@
                 if (!response.ok) throw new Error('API error');
 
                 const data = await response.json();
+                const filename = data.file.split(/[/\\]/).pop();
+                const audioUrl = `http://localhost:8505/tts/stream/${filename}`;
 
-                // Stream audio
-                const audioUrl = `http://localhost:8505/tts/stream/${data.file.split(/[/\\]/).pop()}`;
-                const audio = document.getElementById('audio');
-                const downloadLink = document.getElementById('downloadLink');
+                document.getElementById('audio').src = audioUrl;
+                document.getElementById('downloadLink').href = audioUrl;
+                document.getElementById('downloadLink').download = filename;
 
-                audio.src = audioUrl;
-                downloadLink.href = audioUrl;
-                downloadLink.download = data.file.split(/[/\\]/).pop();
-
-                player.style.display = 'block';
+                document.getElementById('playerCard').classList.add('show');
                 showStatus('Generated successfully!', 'success');
 
             } catch (error) {
                 console.error(error);
-                showStatus('Error: Make sure AI Hub is running (python sai-rolotech-ai-hub/main.py)', 'error');
+                showStatus('Start AI Hub: cd sai-rolotech-ai-hub && python main.py', 'error');
             }
 
             btn.disabled = false;
-            btn.textContent = '🎤 Generate Speech';
+            btnText.textContent = '🎤 Generate';
         }
 
         function showStatus(msg, type) {
@@ -276,6 +420,16 @@
             status.textContent = msg;
             status.className = 'status ' + type;
         }
+
+        // Auto-select based on text
+        document.getElementById('text').addEventListener('input', function() {
+            if (this.value.match(/[\u0900-\u097F]/)) {
+                // Hindi detected
+                if (selectedVoice.startsWith('en')) {
+                    selectVoice(document.querySelector('[data-voice="hi_f"]'));
+                }
+            }
+        });
     </script>
 </body>
 </html>
