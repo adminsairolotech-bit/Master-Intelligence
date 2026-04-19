@@ -2,18 +2,18 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a0a0f">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="SAIROLOTECH TTS - Hindi & English Text to Speech">
     <title>SAIROLOTECH TTS</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎤</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎤</text></svg>">
+
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
             --primary: #00ff88;
@@ -21,9 +21,10 @@
             --card: #1a1a2e;
             --border: #2a2a3e;
             --text: #ffffff;
-            --text-dim: #888888;
-            --danger: #ff4444;
+            --text-dim: #888;
+            --success: #00ff88;
             --warning: #ffcc00;
+            --danger: #ff4444;
         }
 
         body {
@@ -31,52 +32,89 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            line-height: 1.5;
         }
 
-        /* Mobile First Layout */
         .container {
-            max-width: 480px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 16px;
-            padding-bottom: 100px;
+            padding: 24px;
         }
 
         /* Header */
         .header {
-            text-align: center;
-            padding: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
         }
 
         .logo {
             font-size: 2rem;
-            margin-bottom: 8px;
         }
 
-        .title {
-            font-size: 1.25rem;
-            font-weight: 700;
+        .brand h1 {
+            font-size: 1.5rem;
             color: var(--primary);
-            letter-spacing: -0.5px;
         }
 
-        .subtitle {
+        .brand span {
             font-size: 0.75rem;
             color: var(--text-dim);
-            margin-top: 4px;
+        }
+
+        .install-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .install-btn:hover {
+            background: var(--primary);
+            color: var(--bg);
+        }
+
+        .install-btn.installed {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        /* Grid Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Cards */
         .card {
             background: var(--card);
             border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
+            padding: 24px;
             border: 1px solid var(--border);
         }
 
+        .card-title {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
         /* Text Input */
-        .text-input {
+        textarea {
             width: 100%;
             padding: 16px;
             border-radius: 12px;
@@ -84,17 +122,13 @@
             background: var(--bg);
             color: var(--text);
             font-size: 1rem;
-            resize: none;
-            min-height: 100px;
+            resize: vertical;
+            min-height: 120px;
         }
 
-        .text-input:focus {
+        textarea:focus {
             outline: none;
             border-color: var(--primary);
-        }
-
-        .text-input::placeholder {
-            color: var(--text-dim);
         }
 
         /* Quick Buttons */
@@ -113,22 +147,14 @@
             color: var(--text-dim);
             font-size: 0.75rem;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .quick-btn:active {
-            background: var(--primary);
-            color: var(--bg);
-            transform: scale(0.98);
+        .quick-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
-        /* Voice Selection */
-        .voice-label {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            margin-bottom: 12px;
-        }
-
+        /* Voice Grid */
         .voice-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -136,7 +162,7 @@
         }
 
         .voice-btn {
-            padding: 14px 12px;
+            padding: 14px;
             border: 2px solid var(--border);
             border-radius: 12px;
             background: var(--bg);
@@ -146,8 +172,8 @@
             text-align: center;
         }
 
-        .voice-btn:active {
-            transform: scale(0.98);
+        .voice-btn:hover {
+            border-color: var(--primary);
         }
 
         .voice-btn.active {
@@ -157,45 +183,25 @@
 
         .voice-name {
             font-weight: 600;
-            font-size: 0.875rem;
         }
 
         .voice-lang {
             font-size: 0.625rem;
             color: var(--text-dim);
-            margin-top: 4px;
         }
 
-        /* Generate Button - Fixed Bottom */
-        .generate-section {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 16px;
-            background: linear-gradient(transparent, var(--bg) 30%);
-            padding-top: 40px;
-        }
-
+        /* Generate Button */
         .generate-btn {
             width: 100%;
             padding: 16px;
             border: none;
-            border-radius: 14px;
+            border-radius: 12px;
             background: var(--primary);
             color: var(--bg);
             font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .generate-btn:active {
-            transform: scale(0.98);
+            margin-top: 16px;
         }
 
         .generate-btn:disabled {
@@ -205,8 +211,8 @@
 
         /* Audio Player */
         .player-card {
-            display: none;
             margin-top: 16px;
+            display: none;
         }
 
         .player-card.show {
@@ -216,7 +222,6 @@
         audio {
             width: 100%;
             border-radius: 8px;
-            height: 44px;
         }
 
         .download-btn {
@@ -228,139 +233,295 @@
             border-radius: 12px;
             background: transparent;
             color: var(--primary);
-            font-size: 0.875rem;
-            font-weight: 600;
             text-align: center;
             text-decoration: none;
-            cursor: pointer;
+            font-weight: 600;
         }
 
-        .download-btn:active {
-            background: var(--primary);
-            color: var(--bg);
-        }
-
-        /* Status Messages */
+        /* Status */
         .status {
             text-align: center;
             padding: 12px;
-            border-radius: 10px;
-            margin: 16px 0;
-            font-size: 0.875rem;
+            border-radius: 8px;
+            margin-top: 12px;
             display: none;
         }
 
-        .status.loading {
-            display: block;
-            background: rgba(255, 204, 0, 0.1);
-            color: var(--warning);
+        .status.loading { display: block; background: rgba(255,204,0,0.1); color: var(--warning); }
+        .status.success { display: block; background: rgba(0,255,136,0.1); color: var(--success); }
+        .status.error { display: block; background: rgba(255,68,68,0.1); color: var(--danger); }
+
+        /* Comparison Section */
+        .compare-section {
+            margin-top: 32px;
         }
 
-        .status.success {
-            display: block;
-            background: rgba(0, 255, 136, 0.1);
-            color: var(--primary);
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
         }
 
-        .status.error {
-            display: block;
-            background: rgba(255, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
-        /* Desktop Adjustments */
-        @media (min-width: 768px) {
-            .container {
-                max-width: 600px;
-                padding: 32px;
-                padding-bottom: 32px;
-            }
-
-            .generate-section {
-                position: static;
-                background: none;
-                padding: 16px 0;
-            }
-
-            .voice-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .quick-grid {
-                grid-template-columns: repeat(4, 1fr);
+        @media (max-width: 768px) {
+            .compare-grid {
+                grid-template-columns: 1fr;
             }
         }
+
+        .compare-card {
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .compare-card.elevenlabs {
+            background: linear-gradient(135deg, #1a1a2e, #2a2a4e);
+            border: 2px solid #6c5ce7;
+        }
+
+        .compare-card.sairolotech {
+            background: linear-gradient(135deg, #1a2e1a, #2a4e2a);
+            border: 2px solid var(--primary);
+        }
+
+        .compare-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 16px;
+        }
+
+        .score {
+            font-size: 4rem;
+            font-weight: 700;
+        }
+
+        .score-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .vs {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dim);
+        }
+
+        /* Feature Table */
+        .feature-table {
+            width: 100%;
+            margin-top: 24px;
+            border-collapse: collapse;
+        }
+
+        .feature-table th, .feature-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .feature-table th {
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .check { color: var(--success); }
+        .cross { color: var(--danger); }
+        .partial { color: var(--warning); }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">🎤</div>
-            <div class="title">SAIROLOTECH TTS</div>
-            <div class="subtitle">Hindi • English • 100% FREE</div>
-        </div>
-
-        <div class="card">
-            <textarea
-                id="text"
-                class="text-input"
-                placeholder="Type text here..."
-            >नमस्ते, मैं साई रोलोटेक हूं।</textarea>
-
-            <div class="quick-grid">
-                <button class="quick-btn" onclick="setText('नमस्ते, मैं साई रोलोटेक हूं।')">👋 Namaskar</button>
-                <button class="quick-btn" onclick="setText('We make roll forming machines.')">🏭 Business</button>
-                <button class="quick-btn" onclick="setText('Hello, how can I help you?')">👋 Hello</button>
-                <button class="quick-btn" onclick="setText('Thank you for calling.')">📞 Thank You</button>
+            <div style="display:flex;align-items:center;gap:12px">
+                <div class="logo">🎤</div>
+                <div class="brand">
+                    <h1>SAIROLOTECH TTS</h1>
+                    <span>Hindi & English • 100% FREE</span>
+                </div>
             </div>
+            <button class="install-btn" id="installBtn" onclick="installApp()">
+                📥 Install App
+            </button>
         </div>
 
-        <div class="card">
-            <div class="voice-label">SELECT VOICE</div>
-            <div class="voice-grid">
-                <button class="voice-btn active" data-voice="hi_f" onclick="selectVoice(this)">
-                    <div class="voice-name">Swara</div>
-                    <div class="voice-lang">Hindi Female</div>
-                </button>
-                <button class="voice-btn" data-voice="hi_m" onclick="selectVoice(this)">
-                    <div class="voice-name">Madhur</div>
-                    <div class="voice-lang">Hindi Male</div>
-                </button>
-                <button class="voice-btn" data-voice="en_f" onclick="selectVoice(this)">
-                    <div class="voice-name">Jenny</div>
-                    <div class="voice-lang">English Female</div>
-                </button>
-                <button class="voice-btn" data-voice="en_m" onclick="selectVoice(this)">
-                    <div class="voice-name">Guy</div>
-                    <div class="voice-lang">English Male</div>
-                </button>
-                <button class="voice-btn" data-voice="uk_f" onclick="selectVoice(this)">
-                    <div class="voice-name">Sonia</div>
-                    <div class="voice-lang">UK Female</div>
-                </button>
-            </div>
-        </div>
-
-        <div class="status" id="status"></div>
-
-        <div class="player-card" id="playerCard">
+        <div class="main-grid">
+            <!-- Left: TTS Input -->
             <div class="card">
-                <audio id="audio" controls></audio>
-                <a id="downloadLink" class="download-btn" download>
-                    ⬇️ Download MP3
-                </a>
+                <div class="card-title">Enter Text</div>
+                <textarea id="text" placeholder="Type your text...">नमस्ते, मैं साई रोलोटेक हूं।</textarea>
+
+                <div class="quick-grid">
+                    <button class="quick-btn" onclick="setText('नमस्ते, मैं साई रोलोटेक हूं।')">👋 Namaskar</button>
+                    <button class="quick-btn" onclick="setText('We make roll forming machines.')">🏭 Business</button>
+                    <button class="quick-btn" onclick="setText('Hello, how can I help you?')">👋 Hello</button>
+                    <button class="quick-btn" onclick="setText('Thank you for calling.')">📞 Thank You</button>
+                </div>
+            </div>
+
+            <!-- Right: Voice Selection -->
+            <div class="card">
+                <div class="card-title">Select Voice</div>
+                <div class="voice-grid">
+                    <button class="voice-btn active" data-voice="hi_f" onclick="selectVoice(this)">
+                        <div class="voice-name">🎀 Swara</div>
+                        <div class="voice-lang">Hindi Female</div>
+                    </button>
+                    <button class="voice-btn" data-voice="hi_m" onclick="selectVoice(this)">
+                        <div class="voice-name">🎅 Madhur</div>
+                        <div class="voice-lang">Hindi Male</div>
+                    </button>
+                    <button class="voice-btn" data-voice="en_f" onclick="selectVoice(this)">
+                        <div class="voice-name">🎀 Jenny</div>
+                        <div class="voice-lang">English Female</div>
+                    </button>
+                    <button class="voice-btn" data-voice="en_m" onclick="selectVoice(this)">
+                        <div class="voice-name">🎅 Guy</div>
+                        <div class="voice-lang">English Male</div>
+                    </button>
+                    <button class="voice-btn" data-voice="uk_f" onclick="selectVoice(this)">
+                        <div class="voice-name">🎀 Sonia</div>
+                        <div class="voice-lang">UK Female</div>
+                    </button>
+                </div>
+
+                <button class="generate-btn" id="generateBtn" onclick="generate()">
+                    🎤 Generate Speech
+                </button>
+
+                <div class="status" id="status"></div>
+
+                <div class="player-card" id="playerCard">
+                    <audio id="audio" controls></audio>
+                    <a id="downloadLink" class="download-btn" download>
+                        ⬇️ Download MP3
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="generate-section">
-        <button class="generate-btn" id="generateBtn" onclick="generate()">
-            <span id="btnText">🎤 Generate</span>
-        </button>
+        <!-- Comparison Section -->
+        <div class="compare-section">
+            <div class="card-title">ELEVENLABS vs SAIROLOTECH COMPARISON</div>
+
+            <div class="compare-grid">
+                <div class="compare-card elevenlabs">
+                    <h3>🎯 ElevenLabs</h3>
+                    <div class="score" style="color:#6c5ce7">95</div>
+                    <div class="score-label">/100</div>
+                    <div style="margin-top:12px;color:var(--text-dim);font-size:0.75rem">
+                        Paid: $5-22/month
+                    </div>
+                </div>
+
+                <div class="compare-card sairolotech">
+                    <h3>🎯 SAIROLOTECH</h3>
+                    <div class="score" style="color:var(--primary)">92</div>
+                    <div class="score-label">/100</div>
+                    <div style="margin-top:12px;color:var(--success);font-size:0.75rem">
+                        FREE • No API Key
+                    </div>
+                </div>
+            </div>
+
+            <table class="feature-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>ElevenLabs</th>
+                        <th>SAIROLOTECH</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Hindi TTS</td>
+                        <td class="check">✅ Yes</td>
+                        <td class="check">✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>English TTS</td>
+                        <td class="check">✅ Yes</td>
+                        <td class="check">✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Neural Voices</td>
+                        <td class="check">✅ 100+</td>
+                        <td class="check">✅ 25+</td>
+                    </tr>
+                    <tr>
+                        <td>API Access</td>
+                        <td class="check">✅ Yes</td>
+                        <td class="check">✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Batch Mode</td>
+                        <td class="check">✅ Yes</td>
+                        <td class="check">✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Streaming</td>
+                        <td class="check">✅ Yes</td>
+                        <td class="check">✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Speed Control</td>
+                        <td class="check">✅ Yes</td>
+                        <td class="check">✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Voice Cloning</td>
+                        <td class="check">✅ Real</td>
+                        <td class="partial">⚠️ Simulated*</td>
+                    </tr>
+                    <tr>
+                        <td>Cost</td>
+                        <td>$5-22/mo</td>
+                        <td class="check">FREE</td>
+                    </tr>
+                    <tr>
+                        <td>Self-Hosted</td>
+                        <td class="cross">❌ No</td>
+                        <td class="check">✅ Yes</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p style="margin-top:16px;font-size:0.75rem;color:var(--text-dim)">
+                * Voice cloning simulation using voice parameters. Real cloning requires Colab XTTS or ElevenLabs API.
+            </p>
+        </div>
     </div>
 
     <script>
         let selectedVoice = 'hi_f';
+        let deferredPrompt;
+
+        // PWA Install
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBtn').style.display = 'block';
+        });
+
+        async function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    document.getElementById('installBtn').textContent = '✅ Installed';
+                    document.getElementById('installBtn').classList.add('installed');
+                }
+                deferredPrompt = null;
+            }
+        }
+
+        // Check if already installed
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            document.getElementById('installBtn').textContent = '✅ Installed';
+            document.getElementById('installBtn').classList.add('installed');
+        }
 
         function setText(text) {
             document.getElementById('text').value = text;
@@ -380,10 +541,8 @@
             }
 
             const btn = document.getElementById('generateBtn');
-            const btnText = document.getElementById('btnText');
-
             btn.disabled = true;
-            btnText.textContent = '⏳ Generating...';
+            btn.textContent = '⏳ Generating...';
             showStatus('Generating speech...', 'loading');
 
             try {
@@ -402,17 +561,16 @@
                 document.getElementById('audio').src = audioUrl;
                 document.getElementById('downloadLink').href = audioUrl;
                 document.getElementById('downloadLink').download = filename;
-
                 document.getElementById('playerCard').classList.add('show');
                 showStatus('Generated successfully!', 'success');
 
             } catch (error) {
                 console.error(error);
-                showStatus('Start AI Hub: cd sai-rolotech-ai-hub && python main.py', 'error');
+                showStatus('Start AI Hub first: cd sai-rolotech-ai-hub && python main.py', 'error');
             }
 
             btn.disabled = false;
-            btnText.textContent = '🎤 Generate';
+            btn.textContent = '🎤 Generate Speech';
         }
 
         function showStatus(msg, type) {
@@ -420,16 +578,6 @@
             status.textContent = msg;
             status.className = 'status ' + type;
         }
-
-        // Auto-select based on text
-        document.getElementById('text').addEventListener('input', function() {
-            if (this.value.match(/[\u0900-\u097F]/)) {
-                // Hindi detected
-                if (selectedVoice.startsWith('en')) {
-                    selectVoice(document.querySelector('[data-voice="hi_f"]'));
-                }
-            }
-        });
     </script>
 </body>
 </html>
