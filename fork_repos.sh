@@ -1,7 +1,17 @@
 #!/bin/bash
-# Fork/Organize SAI Rolotech Repos by Category
+# Create/Organize SAI Rolotech Repos by Category on GitHub
 # Usage: ./fork_repos.sh [action] [repo-name]
-# Actions: list, fork, status
+#
+# IMPORTANT: "Fork" yahan GitHub fork nahi hai!
+# Yahan kaam = Local repo ko NAYA GitHub repo banao + push karo
+#
+# Actions:
+#   list        - Repos category ke saath dikhao
+#   status      - Kaunsa repo GitHub par hai
+#   create      - Naya GitHub repo banao + push karo
+#   push        - Already exist → update/sync karo
+#   create-all  - Sab naye repos create karo
+#   push-all    - Sab repos sync karo
 
 set -e
 
@@ -77,23 +87,24 @@ declare -A CATEGORY_MAP=(
 
 show_help() {
     cat << EOF
-${GREEN}SAI ROLO TECH - Repo Fork Manager${NC}
+${GREEN}SAI ROLO TECH - Repo Manager (GitHub par push)${NC}
 
 ${YELLOW}Usage:${NC}
     ./fork_repos.sh <command> [options]
 
 ${YELLOW}Commands:${NC}
-    list                    List all repos by category
-    status                  Check which repos are on GitHub
-    fork <repo-name>        Fork/push a specific repo
-    fork-all                Fork all repos to GitHub
-    sync <repo-name>        Sync local changes to GitHub
+    list                    Repos ko category ke saath dikho
+    status                  Check karo kaunsa repo GitHub par hai
+    create <repo-name>      Naya GitHub repo banao + push karo
+    create-all              Sab naye repos create karo
+    push <repo-name>        Already exist → sync karo
+    push-all                Sab repos sync karo
 
 ${YELLOW}Examples:${NC}
     ./fork_repos.sh list
     ./fork_repos.sh status
-    ./fork_repos.sh fork agno-multiagent
-    ./fork_repos.sh fork-all
+    ./fork_repos.sh create agno-multiagent
+    ./fork_repos.sh create-all
 
 ${YELLOW}Categories:${NC}
     🤖 AI Agents & Automation
@@ -102,6 +113,9 @@ ${YELLOW}Categories:${NC}
     ☁️ Cloud & Infrastructure
     📱 Social Media & Marketing
     🛠️ Development Tools
+
+${RED}Note: 'fork' yahan GitHub fork nahi hai!
+Local folder ko NAYA GitHub repo banao.$NC
 
 EOF
 }
@@ -202,9 +216,10 @@ fork_all() {
         fi
     done
 
-    echo_success "All repos forked!"
+    echo_success "All repos created!"
 }
 
+# Aliases for clarity
 sync_repo() {
     local dir="$1"
     fork_repo "$dir"
@@ -218,19 +233,38 @@ case "${1:-}" in
     status)
         check_status
         ;;
-    fork)
+    # "create" = Naya repo banao (agar exist kare to sync)
+    create)
         if [[ -z "$2" ]]; then
-            echo_error "Usage: $0 fork <repo-name>"
+            echo_error "Usage: $0 create <repo-name>"
             exit 1
         fi
         fork_repo "$2"
         ;;
+    create-all)
+        fork_all
+        ;;
+    # "push" = Already exist to update karo
+    push)
+        if [[ -z "$2" ]]; then
+            echo_error "Usage: $0 push <repo-name>"
+            exit 1
+        fi
+        fork_repo "$2"
+        ;;
+    push-all)
+        fork_all
+        ;;
+    # Old commands (for backward compatibility)
+    fork)
+        echo_warn "Please use 'create' instead of 'fork'"
+        fork_repo "$2"
+        ;;
     fork-all)
+        echo_warn "Please use 'create-all' instead of 'fork-all'"
         fork_all
         ;;
     sync)
-        if [[ -z "$2" ]]; then
-            echo_error "Usage: $0 sync <repo-name>"
             exit 1
         fi
         sync_repo "$2"
