@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT + Codex Hub - SAI ROLO TECH</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --accent-chatgpt: #10a37f;
+            --accent-codex: #f7df1e;
+            --accent-glow: rgba(16, 163, 127, 0.3);
+            --text-primary: #ffffff;
+            --text-secondary: #8b8b9a;
+            --text-muted: #5a5a6a;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --success: #10a37f;
+            --warning: #f7df1e;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(16, 163, 127, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(16, 163, 127, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow-1 {
+            top: -200px;
+            left: -200px;
+            background: var(--accent-chatgpt);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .bg-glow-2 {
+            bottom: -200px;
+            right: -200px;
+            background: var(--accent-codex);
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(50px, 50px); }
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-chatgpt), var(--accent-codex));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-chatgpt), var(--accent-codex));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Flow Diagram */
+        .flow-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            animation: slideUp 0.6s ease-out 0.2s backwards;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .flow-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .flow-node.chatgpt {
+            border-color: var(--accent-chatgpt);
+            box-shadow: 0 0 20px rgba(16, 163, 127, 0.2);
+        }
+
+        .flow-node.codex {
+            border-color: var(--accent-codex);
+            box-shadow: 0 0 20px rgba(247, 223, 30, 0.2);
+        }
+
+        .flow-node.verify {
+            border-color: var(--accent-chatgpt);
+            box-shadow: 0 0 20px rgba(16, 163, 127, 0.2);
+        }
+
+        .flow-node.active {
+            transform: scale(1.1);
+        }
+
+        .flow-node-icon {
+            font-size: 2rem;
+        }
+
+        .flow-node-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .flow-node-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Main Content Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            flex: 1;
+            animation: slideUp 0.6s ease-out 0.4s backwards;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Panels */
+        .panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 1rem 1.5rem;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .panel-header-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .panel-header-icon.chatgpt {
+            background: var(--accent-chatgpt);
+        }
+
+        .panel-header-icon.codex {
+            background: var(--accent-codex);
+            color: #000;
+        }
+
+        .panel-header-title {
+            font-weight: 600;
+        }
+
+        .panel-body {
+            padding: 1.5rem;
+            flex: 1;
+            overflow-y: auto;
+            max-height: 500px;
+        }
+
+        /* Input Form */
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-chatgpt);
+            box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-muted);
+        }
+
+        textarea.input-field {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Select Dropdown */
+        .select-field {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238b8b9a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+        }
+
+        .select-field:focus {
+            outline: none;
+            border-color: var(--accent-chatgpt);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-chatgpt), #0d8d66);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 163, 127, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 163, 127, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-primary);
+            border-color: var(--accent-codex);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Code Output */
+        .code-output {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: 'Fira Code', 'Monaco', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            color: #d4d4d4;
+            min-height: 200px;
+        }
+
+        .code-line {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .code-line-number {
+            color: #5a5a6a;
+            user-select: none;
+            min-width: 2rem;
+            text-align: right;
+        }
+
+        .code-line-content {
+            flex: 1;
+        }
+
+        /* Log Panel */
+        .log-entry {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .log-entry-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .log-entry-icon.chatgpt {
+            background: var(--accent-chatgpt);
+        }
+
+        .log-entry-icon.codex {
+            background: var(--accent-codex);
+            color: #000;
+        }
+
+        .log-entry-icon.system {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .log-entry-content {
+            flex: 1;
+        }
+
+        .log-entry-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .log-entry-message {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: rgba(139, 139, 154, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .status-badge.running {
+            background: rgba(247, 223, 30, 0.2);
+            color: var(--accent-codex);
+        }
+
+        .status-badge.success {
+            background: rgba(16, 163, 127, 0.2);
+            color: var(--accent-chatgpt);
+        }
+
+        .status-badge.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-badge.running .status-dot {
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 700px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value.chatgpt {
+            color: var(--accent-chatgpt);
+        }
+
+        .stat-value.codex {
+            color: var(--accent-codex);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scenario Cards */
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .scenario-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .scenario-card:hover {
+            border-color: var(--accent-chatgpt);
+            transform: translateY(-4px);
+        }
+
+        .scenario-card-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .scenario-card-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Verification Result */
+        .verification-result {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .verification-score {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: conic-gradient(
+                var(--accent-chatgpt) calc(var(--score) * 1%),
+                var(--bg-primary) calc(var(--score) * 1%)
+            );
+        }
+
+        .score-inner {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .verification-issues {
+            margin-top: 1rem;
+        }
+
+        .issue-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .issue-severity {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .issue-severity.high {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        .issue-severity.medium {
+            background: rgba(247, 223, 30, 0.2);
+            color: var(--accent-codex);
+        }
+
+        .issue-severity.low {
+            background: rgba(139, 139, 154, 0.2);
+            color: var(--text-secondary);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Copy Button */
+        .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-chatgpt);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <span class="logo-text">ChatGPT + Codex Hub</span>
+            </div>
+            <p class="tagline">Collaborative AI Coding Loop • SAI ROLO TECH</p>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value chatgpt">ChatGPT</div>
+                <div class="stat-label">Analysis & Plan</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value codex">Codex</div>
+                <div class="stat-label">Code Generation</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="iterations-count">0</div>
+                <div class="stat-label">Iterations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="score-display">--</div>
+                <div class="stat-label">Score</div>
+            </div>
+        </div>
+
+        <!-- Flow Diagram -->
+        <div class="flow-container">
+            <div class="flow-diagram">
+                <div class="flow-node chatgpt" id="node-chatgpt-1">
+                    <span class="flow-node-icon">🧠</span>
+                    <span class="flow-node-label">ChatGPT</span>
+                    <span class="flow-node-status">Analyzing...</span>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node codex" id="node-codex">
+                    <span class="flow-node-icon">💻</span>
+                    <span class="flow-node-label">Codex</span>
+                    <span class="flow-node-status">Generating...</span>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node verify" id="node-chatgpt-2">
+                    <span class="flow-node-icon">🔍</span>
+                    <span class="flow-node-label">ChatGPT</span>
+                    <span class="flow-node-status">Verifying...</span>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node" id="node-result">
+                    <span class="flow-node-icon" id="result-icon">✅</span>
+                    <span class="flow-node-label" id="result-label">Result</span>
+                    <span class="flow-node-status" id="result-status">Waiting...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Input Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-header-icon chatgpt">📝</div>
+                    <span class="panel-header-title">Enter Request</span>
+                </div>
+                <div class="panel-body">
+                    <div class="input-group">
+                        <label class="input-label">Task Type</label>
+                        <select class="select-field" id="task-type">
+                            <option value="generate_feature">✨ Generate Feature</option>
+                            <option value="fix_bug">🐛 Fix Bug</option>
+                            <option value="refactor">🔄 Refactor Code</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Your Request</label>
+                        <textarea class="input-field" id="user-request" placeholder="Describe what you want to build...">Create a Python calculator with add, subtract, multiply, divide functions</textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="run-btn" onclick="runLoop()">
+                            <span>▶</span> Run Loop
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearAll()">
+                            <span>🗑</span> Clear
+                        </button>
+                    </div>
+
+                    <!-- Demo Scenarios -->
+                    <h3 style="margin-top: 2rem; color: var(--text-secondary);">Quick Scenarios:</h3>
+                    <div class="scenario-grid">
+                        <div class="scenario-card" onclick="loadScenario('calculator')">
+                            <div class="scenario-card-title">🧮 Calculator</div>
+                            <div class="scenario-card-desc">Basic math operations</div>
+                        </div>
+                        <div class="scenario-card" onclick="loadScenario('rest_api')">
+                            <div class="scenario-card-title">🌐 REST API</div>
+                            <div class="scenario-card-desc">FastAPI CRUD</div>
+                        </div>
+                        <div class="scenario-card" onclick="loadScenario('bug_fix')">
+                            <div class="scenario-card-title">🐛 Bug Fix</div>
+                            <div class="scenario-card-desc">Security fix demo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-header-icon codex">📤</div>
+                    <span class="panel-header-title">Generated Code</span>
+                    <div style="margin-left: auto;">
+                        <span class="status-badge pending" id="status-badge">
+                            <span class="status-dot"></span>
+                            <span id="status-text">Ready</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="output-area">
+                        <div class="code-output" style="color: var(--text-muted);">
+# Generated code will appear here...
+
+# The loop works like this:
+# 1. ChatGPT analyzes your request
+# 2. Codex generates the code
+# 3. ChatGPT verifies the code
+# 4. If issues found, Codex revises (up to 3 times)
+                        </div>
+                    </div>
+
+                    <!-- Verification Result -->
+                    <div class="verification-result" id="verification-panel" style="display: none;">
+                        <h4 style="margin-bottom: 1rem;">Verification Result</h4>
+                        <div class="verification-score">
+                            <div class="score-circle" id="score-circle" style="--score: 0">
+                                <div class="score-inner">
+                                    <span id="score-value">0</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div id="verification-status" style="font-weight: 600; font-size: 1.25rem;">PASS</div>
+                                <div id="verification-summary" style="color: var(--text-secondary);">All checks passed</div>
+                            </div>
+                        </div>
+                        <div class="verification-issues" id="issues-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Log Panel -->
+        <div class="panel" style="margin-top: 2rem;">
+            <div class="panel-header">
+                <div class="panel-header-icon system">📋</div>
+                <span class="panel-header-title">Session Log</span>
+            </div>
+            <div class="panel-body">
+                <div id="log-area">
+                    <div class="log-entry">
+                        <div class="log-entry-icon system">ℹ️</div>
+                        <div class="log-entry-content">
+                            <div class="log-entry-time">Just now</div>
+                            <div class="log-entry-message">System ready. Enter a request and click "Run Loop" to start.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Demo scenarios
+        const scenarios = {
+            calculator: {
+                request: "Create a Python calculator with add, subtract, multiply, divide functions",
+                type: "generate_feature"
+            },
+            rest_api: {
+                request: "Create a FastAPI REST API with CRUD operations for items",
+                type: "generate_feature"
+            },
+            bug_fix: {
+                request: "Fix a bug where the login function allows any password",
+                type: "fix_bug"
+            }
+        };
+
+        // Load scenario
+        function loadScenario(name) {
+            const scenario = scenarios[name];
+            if (scenario) {
+                document.getElementById('user-request').value = scenario.request;
+                document.getElementById('task-type').value = scenario.type;
+                addLog('system', `Loaded scenario: ${name}`);
+            }
+        }
+
+        // Add log entry
+        function addLog(type, message) {
+            const logArea = document.getElementById('log-area');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <div class="log-entry-icon ${type}">${type === 'chatgpt' ? '🧠' : type === 'codex' ? '💻' : 'ℹ️'}</div>
+                <div class="log-entry-content">
+                    <div class="log-entry-time">${new Date().toLocaleTimeString()}</div>
+                    <div class="log-entry-message">${message}</div>
+                </div>
+            `;
+            logArea.appendChild(entry);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        // Update status
+        function updateStatus(status, text) {
+            const badge = document.getElementById('status-badge');
+            const statusText = document.getElementById('status-text');
+            badge.className = `status-badge ${status}`;
+            statusText.textContent = text;
+        }
+
+        // Update flow node
+        function updateNode(nodeId, active, icon, label, status) {
+            const node = document.getElementById(nodeId);
+            if (node) {
+                node.classList.toggle('active', active);
+                if (icon) node.querySelector('.flow-node-icon').textContent = icon;
+                if (label) node.querySelector('.flow-node-label').textContent = label;
+                if (status) node.querySelector('.flow-node-status').textContent = status;
+            }
+        }
+
+        // Run the loop
+        async function runLoop() {
+            const request = document.getElementById('user-request').value;
+            const taskType = document.getElementById('task-type').value;
+
+            if (!request.trim()) {
+                alert('Please enter a request');
+                return;
+            }
+
+            const runBtn = document.getElementById('run-btn');
+            runBtn.disabled = true;
+            runBtn.innerHTML = '<span class="spinner"></span> Running...';
+
+            // Reset
+            updateStatus('running', 'Processing...');
+            updateNode('node-chatgpt-1', true, '🧠', 'ChatGPT', 'Analyzing...');
+            updateNode('node-codex', false, '💻', 'Codex', 'Waiting...');
+            updateNode('node-chatgpt-2', false, '🔍', 'ChatGPT', 'Waiting...');
+            updateNode('node-result', false, '⏳', 'Result', 'Processing...');
+
+            addLog('chatgpt', `Analyzing request: "${request.substring(0, 50)}..."`);
+
+            // Simulate ChatGPT analysis
+            await sleep;
+            updateNode('node-chatgpt-1', false, '✅', 'ChatGPT', 'Plan Ready');
+            addLog('chatgpt', 'Analysis complete. Creating implementation plan...');
+
+            // Simulate Codex code generation
+            await sleep;
+            updateNode('node-codex', true, '💻', 'Codex', 'Generating...');
+            addLog('codex', 'Generating code based on plan...');
+
+            // Simulate code generation
+            await sleep;
+            updateNode('node-codex', false, '✅', 'Codex', 'Code Ready');
+
+            // Generate demo code
+            const code = generateDemoCode(request);
+            const outputArea = document.getElementById('output-area');
+            outputArea.innerHTML = `
+                <div style="position: relative;">
+                    <button class="copy-btn" onclick="copyCode()">📋 Copy</button>
+                    <div class="code-output">${formatCode(code)}</div>
+                </div>
+            `;
+            addLog('codex', `Generated code (${code.split('\\n').length} lines)`);
+
+            // Simulate ChatGPT verification
+            await sleep;
+            updateNode('node-chatgpt-2', true, '🔍', 'ChatGPT', 'Verifying...');
+            addLog('chatgpt', 'Verifying code quality and security...');
+
+            await sleep;
+            updateNode('node-chatgpt-2', false, '✅', 'ChatGPT', 'Verified');
+
+            // Show verification result
+            const score = 85;
+            const issues = [];
+
+            document.getElementById('score-display').textContent = score + '/100';
+            document.getElementById('iterations-count').textContent = '1';
+            document.getElementById('score-circle').style.setProperty('--score', score);
+            document.getElementById('score-value').textContent = score;
+
+            const verificationPanel = document.getElementById('verification-panel');
+            verificationPanel.style.display = 'block';
+
+            if (score >= 70) {
+                updateStatus('success', 'PASS');
+                updateNode('node-result', true, '✅', 'Complete', 'Success!');
+                addLog('system', 'Code verified successfully!');
+            } else {
+                updateStatus('error', 'FAIL');
+                updateNode('node-result', true, '❌', 'Failed', 'Issues found');
+                addLog('system', 'Verification failed. Issues detected.');
+            }
+
+            document.getElementById('verification-status').textContent = score >= 70 ? 'PASS' : 'REVISE';
+            document.getElementById('verification-summary').textContent = `Score: ${score}/100`;
+
+            // Reset button
+            runBtn.disabled = false;
+            runBtn.innerHTML = '<span>▶</span> Run Loop';
+        }
+
+        // Generate demo code
+        function generateDemoCode(request) {
+            const req = request.toLowerCase();
+
+            if (req.includes('calculator')) {
+                return `"""
+Calculator Module - Generated by Codex
+SAI ROLO TECH
+"""
+
+from typing import Union
+
+
+class Calculator:
+    """Simple calculator with basic operations."""
+
+    def __init__(self):
+        self.history = []
+
+    def add(self, a: Union[int, float], b: Union[int, float]) -> Union[int, float]:
+        """Add two numbers."""
+        result = a + b
+        self.history.append(f"add({a}, {b}) = {result}")
+        return result
+
+    def subtract(self, a: Union[int, float], b: Union[int, float]) -> Union[int, float]:
+        """Subtract b from a."""
+        result = a - b
+        self.history.append(f"subtract({a}, {b}) = {result}")
+        return result
+
+    def multiply(self, a: Union[int, float], b: Union[int, float]) -> Union[int, float]:
+        """Multiply two numbers."""
+        result = a * b
+        self.history.append(f"multiply({a}, {b}) = {result}")
+        return result
+
+    def divide(self, a: Union[int, float], b: Union[int, float]) -> Union[int, float]:
+        """Divide a by b."""
+        if b == 0:
+            raise ValueError("Cannot divide by zero")
+        result = a / b
+        self.history.append(f"divide({a}, {b}) = {result}")
+        return result
+
+
+if __name__ == "__main__":
+    calc = Calculator()
+    print(f"2 + 3 = {calc.add(2, 3)}")
+    print(f"10 / 4 = {calc.divide(10, 4)}")`;
+            }
+
+            if (req.includes('api') || req.includes('rest')) {
+                return `"""
+REST API - Generated by Codex
+SAI ROLO TECH
+"""
+
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import List, Optional
+
+
+app = FastAPI(title="SAI Rolotech API")
+
+
+class Item(BaseModel):
+    id: Optional[int] = None
+    name: str
+    price: float
+
+
+items = []
+item_id = 1
+
+
+@app.get("/")
+async def root():
+    return {"message": "API Running", "version": "1.0.0"}
+
+
+@app.get("/items", response_model=List[Item])
+async def list_items():
+    return items
+
+
+@app.post("/items", status_code=201)
+async def create_item(item: Item):
+    global item_id
+    new_item = Item(id=item_id, name=item.name, price=item.price)
+    item_id += 1
+    items.append(new_item)
+    return new_item`;
+            }
+
+            // Default code
+            return `"""
+Generated Code - Codex
+SAI ROLO TECH
+"""
+
+class GeneratedModule:
+    def __init__(self):
+        self.data = None
+
+    def process(self, input_data):
+        self.data = input_data
+        return {"status": "processed", "data": self.data}
+
+    def validate(self) -> bool:
+        return self.data is not None`;
+        }
+
+        // Format code for display
+        function formatCode(code) {
+            const lines = code.split('\n');
+            return lines.map((line, i) =>
+                `<div class="code-line"><span class="code-line-number">${i + 1}</span><span class="code-line-content">${escapeHtml(line)}</span></div>`
+            ).join('');
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // Copy code
+        function copyCode() {
+            const code = generateDemoCode(document.getElementById('user-request').value);
+            navigator.clipboard.writeText(code);
+            alert('Code copied!');
+        }
+
+        // Clear all
+        function clearAll() {
+            document.getElementById('user-request').value = '';
+            document.getElementById('output-area').innerHTML = `
+                <div class="code-output" style="color: var(--text-muted);">
+# Generated code will appear here...
+                </div>`;
+            document.getElementById('verification-panel').style.display = 'none';
+            document.getElementById('log-area').innerHTML = `
+                <div class="log-entry">
+                    <div class="log-entry-icon system">ℹ️</div>
+                    <div class="log-entry-content">
+                        <div class="log-entry-time">Just now</div>
+                        <div class="log-entry-message">System cleared.</div>
+                    </div>
+                </div>`;
+            updateStatus('pending', 'Ready');
+            document.getElementById('score-display').textContent = '--';
+            document.getElementById('iterations-count').textContent = '0';
+        }
+
+        // Sleep utility
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+</html>
