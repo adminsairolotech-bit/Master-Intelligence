@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAIROLOTECH TTS - Voice Generator</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0a0a0f;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #00ff88;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+        .card {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #888;
+            font-size: 14px;
+        }
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background: #0a0a0f;
+            color: #fff;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 120px;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+        .voice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .voice-btn {
+            padding: 12px 16px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: #0a0a0f;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        .voice-btn:hover {
+            border-color: #00ff88;
+        }
+        .voice-btn.active {
+            border-color: #00ff88;
+            background: #00ff8833;
+        }
+        .voice-btn span {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #000;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px #00ff8844;
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .audio-player {
+            width: 100%;
+            margin-top: 20px;
+            display: none;
+        }
+        audio {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .status {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+        }
+        .status.loading {
+            background: #ffcc0033;
+            color: #ffcc00;
+            display: block;
+        }
+        .status.success {
+            background: #00ff8833;
+            color: #00ff88;
+            display: block;
+        }
+        .status.error {
+            background: #ff444433;
+            color: #ff4444;
+            display: block;
+        }
+        .quick-texts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .quick-btn {
+            padding: 8px 12px;
+            border: 1px solid #333;
+            border-radius: 20px;
+            background: transparent;
+            color: #888;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .quick-btn:hover {
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 SAIROLOTECH TTS</h1>
+
+        <div class="card">
+            <label>Enter Text</label>
+            <textarea id="text" placeholder="Type your text here...">नमस्ते, मैं साई रोलोटेक हूं।</textarea>
+
+            <div class="quick-texts">
+                <button class="quick-btn" onclick="setText('नमस्ते, मैं साई रोलोटेक हूं।')">Hindi Greeting</button>
+                <button class="quick-btn" onclick="setText('Hello, I am SAI Rolotech.')">English Greeting</button>
+                <button class="quick-btn" onclick="setText('We make roll forming machines.')">Business Text</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <label>Select Voice</label>
+            <div class="voice-grid">
+                <button class="voice-btn active" data-voice="hi_f" onclick="selectVoice(this)">
+                    Swara
+                    <span>Hindi Female</span>
+                </button>
+                <button class="voice-btn" data-voice="hi_m" onclick="selectVoice(this)">
+                    Madhur
+                    <span>Hindi Male</span>
+                </button>
+                <button class="voice-btn" data-voice="en_f" onclick="selectVoice(this)">
+                    Jenny
+                    <span>English Female</span>
+                </button>
+                <button class="voice-btn" data-voice="en_m" onclick="selectVoice(this)">
+                    Guy
+                    <span>English Male</span>
+                </button>
+                <button class="voice-btn" data-voice="uk_f" onclick="selectVoice(this)">
+                    Sonia
+                    <span>UK Female</span>
+                </button>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" id="generateBtn" onclick="generate()">
+            🎤 Generate Speech
+        </button>
+
+        <div class="status" id="status"></div>
+
+        <div class="audio-player" id="player">
+            <audio id="audio" controls></audio>
+            <a id="downloadLink" download style="display:block; margin-top:10px; color:#00ff88; text-align:center;">
+                ⬇️ Download MP3
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let selectedVoice = 'hi_f';
+
+        function setText(text) {
+            document.getElementById('text').value = text;
+        }
+
+        function selectVoice(btn) {
+            document.querySelectorAll('.voice-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedVoice = btn.dataset.voice;
+        }
+
+        async function generate() {
+            const text = document.getElementById('text').value.trim();
+            if (!text) {
+                showStatus('Please enter text', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('generateBtn');
+            const status = document.getElementById('status');
+            const player = document.getElementById('player');
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Generating...';
+            showStatus('Generating speech...', 'loading');
+
+            try {
+                // Call TTS API
+                const response = await fetch('http://localhost:8505/tts/speak', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, voice: selectedVoice })
+                });
+
+                if (!response.ok) throw new Error('API error');
+
+                const data = await response.json();
+
+                // Stream audio
+                const audioUrl = `http://localhost:8505/tts/stream/${data.file.split(/[/\\]/).pop()}`;
+                const audio = document.getElementById('audio');
+                const downloadLink = document.getElementById('downloadLink');
+
+                audio.src = audioUrl;
+                downloadLink.href = audioUrl;
+                downloadLink.download = data.file.split(/[/\\]/).pop();
+
+                player.style.display = 'block';
+                showStatus('Generated successfully!', 'success');
+
+            } catch (error) {
+                console.error(error);
+                showStatus('Error: Make sure AI Hub is running (python sai-rolotech-ai-hub/main.py)', 'error');
+            }
+
+            btn.disabled = false;
+            btn.textContent = '🎤 Generate Speech';
+        }
+
+        function showStatus(msg, type) {
+            const status = document.getElementById('status');
+            status.textContent = msg;
+            status.className = 'status ' + type;
+        }
+    </script>
+</body>
+</html>

@@ -8,10 +8,12 @@ load_dotenv()
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import Optional
 import uvicorn
 import os
+import asyncio
 
 from apps.hermes_agent.core.hermes_core import hermes
 from apps.interpreter_service.policies.policy_engine import policy
@@ -58,6 +60,40 @@ class LeadRequest(BaseModel):
     mobile: Optional[str] = None
     email: Optional[str] = None
     source: Optional[str] = "telegram"
+
+class TTSRequest(BaseModel):
+    text: str
+    voice: str = "hi_f"  # hi_f, hi_m, en_f, en_m, uk_f
+    output_file: Optional[str] = None
+
+# ==================== TTS FUNCTIONS ====================
+
+VOICES = {
+    "hi_f": "hi-IN-SwaraNeural",
+    "hi_m": "hi-IN-MadhurNeural",
+    "en_f": "en-US-JennyNeural",
+    "en_m": "en-US-GuyNeural",
+    "uk_f": "en-GB-SoniaNeural",
+}
+
+async def generate_speech(text: str, voice: str = "hi_f", output_file: str = None):
+    """Generate speech with edge-tts"""
+    import edge_tts
+
+    voice_id = VOICES.get(voice, VOICES["hi_f"])
+
+    if not output_file:
+        safe = text[:30].replace(" ", "_").replace(",", "").replace("?", "")
+        output_file = f"{safe}.mp3"
+
+    output_dir = os.path.join("output", "tts")
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, output_file)
+
+    communicate = edge_tts.Communicate(text, voice_id)
+    await communicate.save(output_path)
+
+    return output_path
 
 # ==================== HERMES ENDPOINTS ====================
 
@@ -199,6 +235,82 @@ async def get_stats():
 @app.get("/health")
 async def health():
     return {"status": "healthy", "service": "ai-hub"}
+
+# ==================== TTS ENDPOINTS ====================
+
+@app.get("/tts/voices")
+async def list_tts_voices():
+    """List available TTS voices"""
+    return {
+        "voices": [
+            {"id": "hi_f", "name": "Swara (Hindi Female)", "language": "hi"},
+            {"id": "hi_m", "name": "Madhur (Hindi Male)", "language": "hi"},
+            {"id": "en_f", "name": "Jenny (English Female)", "language": "en"},
+            {"id": "en_m", "name": "Guy (English Male)", "language": "en"},
+            {"id": "uk_f", "name": "Sonia (UK Female)", "language": "en-GB"},
+        ]
+    }
+
+@app.post("/tts/speak")
+async def tts_speak(request: TTSRequest):
+    """Generate speech - returns file path"""
+    try:
+        output_path = await generate_speech(request.text, request.voice, request.output_file)
+        return {
+            "success": True,
+            "file": output_path,
+            "text": request.text,
+            "voice": request.voice
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/tts/stream/{filename}")
+async def tts_stream(filename: str):
+    """Stream audio file"""
+    output_dir = os.path.join("output", "tts")
+    file_path = os.path.join(output_dir, filename)
+
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    return FileResponse(file_path, media_type="audio/mpeg")
+
+@app.get("/tts/download/{filename}")
+async def tts_download(filename: str):
+    """Download audio file"""
+    output_dir = os.path.join("output", "tts")
+    file_path = os.path.join(output_dir, filename)
+
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    return FileResponse(
+        file_path,
+        media_type="audio/mpeg",
+        filename=filename
+    )
+
+@app.post("/tts/chat-speak")
+async def tts_chat_speak(request: TTSRequest):
+    """Chat + TTS - generates response and speaks it"""
+    from apps.hermes_agent.core.hermes_core import hermes
+
+    # Get AI response
+    response = hermes.think(user_id=0, message=request.text, model="gemini")
+
+    # Generate speech
+    try:
+        output_path = await generate_speech(response, request.voice, request.output_file)
+        return {
+            "success": True,
+            "text": request.text,
+            "response": response,
+            "audio_file": output_path,
+            "voice": request.voice
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ==================== MAIN ====================
