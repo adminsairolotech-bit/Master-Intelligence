@@ -29,3 +29,5 @@ ai-command-center/release/
 # Executables - LARGE FILES
 *.exe
 *.zip
+*.exe
+prompt-builder-vscode/node_modules/electron/dist/*.exe
