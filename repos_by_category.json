@@ -1,0 +1,235 @@
+{
+  "last_updated": "2026-04-19",
+  "categories": [
+    {
+      "id": "ai-agents-automation",
+      "title": "AI Agents & Automation",
+      "icon": "🤖",
+      "tools": ["Agno", "LangChain", "CrewAI", "OpenClaw", "Hermes"],
+      "repos": [
+        {
+          "name": "sai-rolotech-pro-ai",
+          "title": "PRO AI Engine",
+          "created": "2026-04-19",
+          "description": "PRO AI Engine with 5 specialized agents",
+          "data": { "agents": 5, "status": "active" },
+          "github": "https://github.com/adminsairolotech-bit/sai-rolotech-pro-ai",
+          "local_path": "sai-rolotech-pro-ai/"
+        },
+        {
+          "name": "sai-rolotech-openclaw",
+          "title": "OpenClaw AI Gateway",
+          "created": "2026-04-19",
+          "description": "OpenClaw AI Gateway - Telegram/WhatsApp linked",
+          "data": { "agents": 6, "skills": 32, "status": "working" },
+          "github": "https://github.com/adminsairolotech-bit/sai-rolotech-openclaw",
+          "local_path": "sai-rolotech-openclaw/"
+        },
+        {
+          "name": "agno-multiagent",
+          "title": "Agno Multi-Agent",
+          "created": "2026-04-18",
+          "description": "Multi-agent AI system with Agno framework",
+          "data": { "framework": "agno", "status": "working" },
+          "local_path": "agno-multiagent/"
+        },
+        {
+          "name": "sai-rolotech-ai-hub",
+          "title": "AI Hub - Hermes Agent",
+          "created": "2026-04-19",
+          "description": "Central AI hub with Hermes agent, LangChain, LangGraph",
+          "data": { "features": ["hermes", "interpreter", "telegram", "dashboard"], "status": "active" },
+          "github": "https://github.com/adminsairolotech-bit/sai-rolotech-ai-hub",
+          "local_path": "sai-rolotech-ai-hub/"
+        }
+      ]
+    },
+    {
+      "id": "ai-tools-extensions",
+      "title": "AI Tools & Extensions",
+      "icon": "🔌",
+      "tools": ["VS Code Extension", "Claude Code", "Playwright"],
+      "repos": [
+        {
+          "name": "sai-rolotech-prompts",
+          "title": "Prompt Master",
+          "created": "2026-04-19",
+          "description": "Prompt Master - VS Code Extension",
+          "data": { "type": "vscode-extension", "features": ["chat", "prompts", "copy"] },
+          "github": "https://github.com/adminsairolotech-bit/sai-rolotech-prompts",
+          "local_path": "sai-rolotech-prompts/"
+        },
+        {
+          "name": "prompt-builder-vscode",
+          "title": "Prompt Builder VS Code",
+          "created": "2026-04-18",
+          "description": "VS Code extension for building structured prompts",
+          "data": { "type": "vscode-extension", "features": ["chat-ui", "role-detection", "hindi-english"] },
+          "local_path": "prompt-builder-vscode/"
+        },
+        {
+          "name": "everything-claude-code",
+          "title": "Everything Claude Code",
+          "created": "2026-04-03",
+          "description": "Agent harness performance optimization system",
+          "data": { "skills": 738, "agents": 75, "commands": 102 },
+          "github": "https://github.com/adminsairolotech-bit/everything-claude-code"
+        },
+        {
+          "name": "awesome-claude-code",
+          "title": "Awesome Claude Code",
+          "created": "2026-04-03",
+          "description": "Curated list of skills for Claude Code",
+          "data": { "type": "awesome-list" }
+        },
+        {
+          "name": "claude-mem",
+          "title": "Claude Memory",
+          "created": "2026-04-18",
+          "description": "Claude Code plugin for auto memory capture",
+          "data": { "type": "claude-plugin" }
+        }
+      ]
+    },
+    {
+      "id": "roll-forming-engineering",
+      "title": "Roll Forming Engineering",
+      "icon": "🏭",
+      "tools": ["AutoCAD", "SolidWorks", "Dynamo", "SCR Generator"],
+      "repos": [
+        {
+          "name": "sai-rolotech-autocad",
+          "title": "AutoCAD Bridge",
+          "created": "2026-04-19",
+          "description": "AutoCAD Bridge - SCR Generator for roll forming",
+          "data": { "tools": ["SCR Generator", "Profile Designer"], "profiles": ["C-Channel", "Z-Purlin"] },
+          "github": "https://github.com/adminsairolotech-bit/sai-rolotech-autocad",
+          "local_path": "sai-rolotech-autocad/"
+        },
+        {
+          "name": "autocad-bridge",
+          "title": "AutoCAD SCR Generator",
+          "created": "2026-04-18",
+          "description": "Natural language to AutoCAD SCR script",
+          "data": { "features": ["chat-interface", "profile-shaft-bearing"] },
+          "local_path": "autocad-bridge/"
+        },
+        {
+          "name": "sai-rolotech-smart-engines",
+          "title": "Smart Engines",
+          "created": "2026-03-22",
+          "description": "SAI Rolotech Smart Engines v2.2.0 - Professional Roll Forming & CNC Engineering Suite",
+          "data": { "version": "2.2.0", "type": "engineering-suite" },
+          "github": "https://github.com/adminsairolotech-bit/sai-rolotech-smart-engines"
+        }
+      ]
+    },
+    {
+      "id": "cloud-infrastructure",
+      "title": "Cloud & Infrastructure",
+      "icon": "☁️",
+      "tools": ["Cloud AI", "n8n", "API Gateways", "Docker"],
+      "repos": [
+        {
+          "name": "sai-rolotech-n8n",
+          "title": "n8n Automation Workflows",
+          "created": "2026-04-19",
+          "description": "n8n Automation Workflows for AI Hub",
+          "data": { "workflows": ["lead_create", "daily_report", "followup_reminder"], "status": "active" },
+          "github": "https://github.com/adminsairolotech-bit/sai-rolotech-n8n",
+          "local_path": "sai-rolotech-n8n/"
+        },
+        {
+          "name": "cloud-ai",
+          "title": "Cloud AI Bridge",
+          "created": "2026-04-19",
+          "description": "Cloud AI Bridge with Groq/NVIDIA/Gemini/OpenRouter",
+          "data": { "providers": ["groq", "nvidia", "gemini", "openrouter"], "status": "working" },
+          "local_path": "cloud-ai/"
+        },
+        {
+          "name": "openclaw-bridge",
+          "title": "OpenClaw Bridge",
+          "created": "2026-04-19",
+          "description": "OpenClaw Gateway bridge - Claude Opus 4.6 via OpenRouter",
+          "data": { "provider": "openrouter", "model": "claude-opus-4.6", "status": "working" },
+          "local_path": "openclaw-bridge/"
+        }
+      ]
+    },
+    {
+      "id": "social-media-marketing",
+      "title": "Social Media & Marketing",
+      "icon": "📱",
+      "tools": ["Instagram API", "Telegram Bot", "Content Generation"],
+      "repos": [
+        {
+          "name": "Agentfy",
+          "title": "Agentfy - Social Media Agents",
+          "created": "2026-04-19",
+          "description": "Social media agent collection",
+          "data": { "platforms": ["instagram", "telegram"], "agents": "multiple" },
+          "local_path": "Agentfy/"
+        },
+        {
+          "name": "instagram-automation",
+          "title": "Instagram Automation",
+          "created": "2026-04-18",
+          "description": "Instagram automation tools",
+          "data": { "platform": "instagram" },
+          "local_path": "instagram-automation/"
+        },
+        {
+          "name": "instagram-ai",
+          "title": "Instagram AI",
+          "created": "2026-04-18",
+          "description": "AI-powered Instagram tools",
+          "data": { "platform": "instagram", "features": ["ai-content"] },
+          "local_path": "instagram-ai/"
+        }
+      ]
+    },
+    {
+      "id": "development-tools",
+      "title": "Development Tools",
+      "icon": "🛠️",
+      "tools": ["Node.js", "Python", "TypeScript", "React"],
+      "repos": [
+        {
+          "name": "ai-command-center",
+          "title": "AI Command Center",
+          "created": "2026-04-19",
+          "description": "React-based AI command center dashboard",
+          "data": { "framework": "react", "build": "vite", "status": "built" },
+          "local_path": "ai-command-center/"
+        },
+        {
+          "name": "Prompt-Builder-Chatbot",
+          "title": "Prompt Builder Chatbot",
+          "created": "2026-04-19",
+          "description": "Chatbot for building prompts",
+          "data": { "type": "chatbot" },
+          "local_path": "Prompt-Builder-Chatbot/"
+        },
+        {
+          "name": "computer-agent",
+          "title": "Computer Agent",
+          "created": "2026-04-04",
+          "description": "Desktop app to control computer with AI",
+          "data": { "platforms": ["desktop", "terminal"] }
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_repos": 22,
+    "total_categories": 6,
+    "latest_repos": [
+      "sai-rolotech-autocad (2026-04-19)",
+      "sai-rolotech-prompts (2026-04-19)",
+      "sai-rolotech-n8n (2026-04-19)",
+      "sai-rolotech-openclaw (2026-04-19)",
+      "sai-rolotech-pro-ai (2026-04-19)"
+    ]
+  }
+}
