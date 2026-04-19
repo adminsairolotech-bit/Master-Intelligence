@@ -322,15 +322,23 @@ class SystemOptimizerPro:
     # ==================== AI - OPUS 4.7 (ONLINE) ====================
     async def opus_chat(self, message):
         """Chat with OPUS 4.7 via API."""
-        if not self.opus_api_key:
-            return {"success": False, "error": "OPUS_API_KEY not configured"}
+        # Try multiple key sources (safe fallback chain)
+        api_key = (
+            os.getenv('OPUS_API_KEY') or
+            os.getenv('OPENROUTER_API_KEY') or  # Fallback to OpenRouter
+            os.getenv('sk_or_v1') or
+            self.opus_api_key
+        )
+
+        if not api_key:
+            return {"success": False, "error": "API key not found. Check .env file."}
 
         try:
             async with httpx.AsyncClient(timeout=120) as client:
                 response = await client.post(
                     self.opus_api_url,
                     headers={
-                        "Authorization": f"Bearer {self.opus_api_key}",
+                        "Authorization": f"Bearer {api_key}",
                         "Content-Type": "application/json"
                     },
                     json={
@@ -341,7 +349,7 @@ class SystemOptimizerPro:
                 if response.status_code == 200:
                     data = response.json()
                     return {"success": True, "response": data['choices'][0]['message']['content']}
-                return {"success": False, "error": f"HTTP {response.status_code}: {response.text}"}
+                return {"success": False, "error": f"HTTP {response.status_code}: {response.text[:100]}"}
         except Exception as e:
             return {"success": False, "error": str(e)}
 
