@@ -35,7 +35,6 @@
             overflow-x: hidden;
         }
 
-        /* Animated Background */
         .bg-grid {
             position: fixed;
             top: 0;
@@ -80,7 +79,6 @@
             50% { transform: translate(50px, 50px); }
         }
 
-        /* Main Container */
         .container {
             position: relative;
             z-index: 1;
@@ -92,7 +90,6 @@
             flex-direction: column;
         }
 
-        /* Header */
         .header {
             text-align: center;
             padding: 2rem 0;
@@ -133,13 +130,48 @@
             font-size: 1.1rem;
         }
 
+        /* Connection Status */
+        .connection-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .connection-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .connection-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        .connection-dot.connected {
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .connection-dot.error {
+            background: var(--error);
+        }
+
         /* Flow Diagram */
         .flow-container {
             background: var(--bg-secondary);
             border: 1px solid var(--border-subtle);
             border-radius: 16px;
             padding: 2rem;
-            margin: 2rem 0;
+            margin: 1rem 0;
             animation: slideUp 0.6s ease-out 0.2s backwards;
         }
 
@@ -166,21 +198,29 @@
 
         .flow-node.chatgpt {
             border-color: var(--accent-chatgpt);
-            box-shadow: 0 0 20px rgba(16, 163, 127, 0.2);
         }
 
         .flow-node.codex {
             border-color: var(--accent-codex);
-            box-shadow: 0 0 20px rgba(247, 223, 30, 0.2);
         }
 
         .flow-node.verify {
             border-color: var(--accent-chatgpt);
-            box-shadow: 0 0 20px rgba(16, 163, 127, 0.2);
         }
 
         .flow-node.active {
             transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(16, 163, 127, 0.4);
+        }
+
+        .flow-node.error {
+            border-color: var(--error);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+        }
+
+        .flow-node.success {
+            border-color: var(--success);
+            box-shadow: 0 0 30px rgba(16, 163, 127, 0.4);
         }
 
         .flow-node-icon {
@@ -208,7 +248,6 @@
             50% { opacity: 1; }
         }
 
-        /* Main Content Grid */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -223,7 +262,6 @@
             }
         }
 
-        /* Panels */
         .panel {
             background: var(--bg-secondary);
             border: 1px solid var(--border-subtle);
@@ -272,7 +310,6 @@
             max-height: 500px;
         }
 
-        /* Input Form */
         .input-group {
             margin-bottom: 1.5rem;
         }
@@ -302,16 +339,11 @@
             box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.1);
         }
 
-        .input-field::placeholder {
-            color: var(--text-muted);
-        }
-
         textarea.input-field {
             min-height: 120px;
             resize: vertical;
         }
 
-        /* Select Dropdown */
         .select-field {
             width: 100%;
             padding: 1rem;
@@ -329,12 +361,6 @@
             background-size: 1rem;
         }
 
-        .select-field:focus {
-            outline: none;
-            border-color: var(--accent-chatgpt);
-        }
-
-        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -384,7 +410,6 @@
             margin-top: 1rem;
         }
 
-        /* Code Output */
         .code-output {
             background: #1e1e1e;
             border-radius: 10px;
@@ -396,6 +421,7 @@
             white-space: pre-wrap;
             color: #d4d4d4;
             min-height: 200px;
+            position: relative;
         }
 
         .code-line {
@@ -410,11 +436,6 @@
             text-align: right;
         }
 
-        .code-line-content {
-            flex: 1;
-        }
-
-        /* Log Panel */
         .log-entry {
             display: flex;
             align-items: flex-start;
@@ -457,11 +478,6 @@
             color: #000;
         }
 
-        .log-entry-icon.system {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-subtle);
-        }
-
         .log-entry-content {
             flex: 1;
         }
@@ -477,7 +493,6 @@
             color: var(--text-secondary);
         }
 
-        /* Status Badge */
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -524,18 +539,11 @@
             50% { opacity: 0.3; }
         }
 
-        /* Stats */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 1rem;
             margin-bottom: 2rem;
-        }
-
-        @media (max-width: 700px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
         }
 
         .stat-card {
@@ -565,7 +573,6 @@
             color: var(--text-secondary);
         }
 
-        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -582,7 +589,6 @@
             }
         }
 
-        /* Scenario Cards */
         .scenario-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -614,7 +620,6 @@
             color: var(--text-secondary);
         }
 
-        /* Verification Result */
         .verification-result {
             background: var(--bg-tertiary);
             border-radius: 12px;
@@ -654,10 +659,6 @@
             justify-content: center;
         }
 
-        .verification-issues {
-            margin-top: 1rem;
-        }
-
         .issue-item {
             display: flex;
             align-items: flex-start;
@@ -690,7 +691,6 @@
             color: var(--text-secondary);
         }
 
-        /* Loading Spinner */
         .spinner {
             width: 20px;
             height: 20px;
@@ -704,7 +704,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Copy Button */
         .copy-btn {
             position: absolute;
             top: 1rem;
@@ -723,23 +722,103 @@
             background: var(--accent-chatgpt);
             color: white;
         }
+
+        /* Comparison View */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .comparison-panel {
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .comparison-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .real-badge {
+            background: var(--accent-chatgpt);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+
+        .demo-badge {
+            background: var(--accent-codex);
+            color: #000;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+
+        .api-key-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .api-key-input input {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
     <div class="bg-grid"></div>
     <div class="bg-glow bg-glow-1"></div>
     <div class="bg-glow bg-glow-2"></div>
 
     <div class="container">
-        <!-- Header -->
         <header class="header">
             <div class="logo">
                 <div class="logo-icon">⚡</div>
                 <span class="logo-text">ChatGPT + Codex Hub</span>
             </div>
-            <p class="tagline">Collaborative AI Coding Loop • SAI ROLO TECH</p>
+            <p class="tagline">Real AI Collaboration Loop • SAI ROLO TECH</p>
         </header>
+
+        <!-- Connection Status -->
+        <div class="connection-bar">
+            <div class="connection-item">
+                <div class="connection-dot" id="backend-status"></div>
+                <span>Backend</span>
+            </div>
+            <div class="connection-item">
+                <div class="connection-dot" id="api-status"></div>
+                <span>OpenAI API</span>
+            </div>
+            <div class="connection-item">
+                <button class="btn btn-secondary" onclick="checkConnections()" style="padding: 0.5rem 1rem;">
+                    🔄 Check
+                </button>
+            </div>
+        </div>
+
+        <!-- API Key Input -->
+        <div class="panel" style="margin-bottom: 1rem;">
+            <div class="panel-header">
+                <div class="panel-header-icon chatgpt">🔑</div>
+                <span class="panel-header-title">API Configuration</span>
+            </div>
+            <div class="panel-body">
+                <div class="api-key-input">
+                    <input type="password" class="input-field" id="api-key" placeholder="Enter OpenAI API Key (sk-...)">
+                    <button class="btn btn-primary" onclick="saveApiKey()">Save</button>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.875rem;">
+                    Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank" style="color: var(--accent-chatgpt);">platform.openai.com</a>
+                </p>
+            </div>
+        </div>
 
         <!-- Stats -->
         <div class="stats-grid">
@@ -813,7 +892,10 @@
                     </div>
                     <div class="btn-group">
                         <button class="btn btn-primary" id="run-btn" onclick="runLoop()">
-                            <span>▶</span> Run Loop
+                            <span>▶</span> Run (REAL API)
+                        </button>
+                        <button class="btn btn-secondary" id="demo-btn" onclick="runDemo()">
+                            <span>🎭</span> Run Demo
                         </button>
                         <button class="btn btn-secondary" onclick="clearAll()">
                             <span>🗑</span> Clear
@@ -884,19 +966,58 @@
             </div>
         </div>
 
+        <!-- Comparison Section -->
+        <div class="panel" style="margin-top: 2rem;">
+            <div class="panel-header">
+                <div class="panel-header-icon chatgpt">⚖️</div>
+                <span class="panel-header-title">Real API vs Demo Comparison</span>
+            </div>
+            <div class="panel-body">
+                <div class="comparison-grid">
+                    <div class="comparison-panel">
+                        <div class="comparison-title">
+                            <span class="real-badge">REAL API</span>
+                            Uses your actual OpenAI API key
+                        </div>
+                        <ul style="color: var(--text-secondary); font-size: 0.875rem; margin-left: 1rem;">
+                            <li>✅ Real GPT-4 responses</li>
+                            <li>✅ Actual code generation</li>
+                            <li>✅ Real verification</li>
+                            <li>⚠️ Costs API credits</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-panel">
+                        <div class="comparison-title">
+                            <span class="demo-badge">DEMO</span>
+                            Simulated responses
+                        </div>
+                        <ul style="color: var(--text-secondary); font-size: 0.875rem; margin-left: 1rem;">
+                            <li>✅ No API costs</li>
+                            <li>✅ Fast responses</li>
+                            <li>✅ Works offline</li>
+                            <li>⚠️ Pre-generated code only</li>
+                        </ul>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.875rem;">
+                    Click "Run (REAL API)" to use real ChatGPT/Codex, or "Run Demo" for quick preview.
+                </p>
+            </div>
+        </div>
+
         <!-- Log Panel -->
         <div class="panel" style="margin-top: 2rem;">
             <div class="panel-header">
-                <div class="panel-header-icon system">📋</div>
+                <div class="panel-header-icon chatgpt">📋</div>
                 <span class="panel-header-title">Session Log</span>
             </div>
             <div class="panel-body">
                 <div id="log-area">
                     <div class="log-entry">
-                        <div class="log-entry-icon system">ℹ️</div>
+                        <div class="log-entry-icon chatgpt">ℹ️</div>
                         <div class="log-entry-content">
                             <div class="log-entry-time">Just now</div>
-                            <div class="log-entry-message">System ready. Enter a request and click "Run Loop" to start.</div>
+                            <div class="log-entry-message">System ready. Enter a request or try a demo scenario.</div>
                         </div>
                     </div>
                 </div>
@@ -905,7 +1026,12 @@
     </div>
 
     <script>
-        // Demo scenarios
+        // Config
+        const API_BASE = 'http://localhost:8080';
+        let apiKey = localStorage.getItem('openai_api_key') || '';
+        let isDemoMode = false;
+
+        // Scenarios
         const scenarios = {
             calculator: {
                 request: "Create a Python calculator with add, subtract, multiply, divide functions",
@@ -921,7 +1047,42 @@
             }
         };
 
-        // Load scenario
+        // Check connections on load
+        checkConnections();
+
+        function checkConnections() {
+            const backendStatus = document.getElementById('backend-status');
+            const apiStatus = document.getElementById('api-status');
+
+            // Check backend
+            fetch(`${API_BASE}/health`)
+                .then(() => {
+                    backendStatus.classList.add('connected');
+                    addLog('system', 'Backend connected successfully');
+                })
+                .catch(() => {
+                    backendStatus.classList.add('error');
+                    addLog('system', 'Backend not running. Run: python main.py');
+                });
+
+            // Check API key
+            if (apiKey) {
+                apiStatus.classList.add('connected');
+            } else {
+                apiStatus.classList.remove('connected');
+            }
+        }
+
+        function saveApiKey() {
+            const input = document.getElementById('api-key');
+            apiKey = input.value.trim();
+            if (apiKey) {
+                localStorage.setItem('openai_api_key', apiKey);
+                document.getElementById('api-status').classList.add('connected');
+                addLog('chatgpt', 'API key saved');
+            }
+        }
+
         function loadScenario(name) {
             const scenario = scenarios[name];
             if (scenario) {
@@ -931,13 +1092,13 @@
             }
         }
 
-        // Add log entry
         function addLog(type, message) {
             const logArea = document.getElementById('log-area');
             const entry = document.createElement('div');
             entry.className = 'log-entry';
+            const icon = type === 'chatgpt' ? '🧠' : type === 'codex' ? '💻' : 'ℹ️';
             entry.innerHTML = `
-                <div class="log-entry-icon ${type}">${type === 'chatgpt' ? '🧠' : type === 'codex' ? '💻' : 'ℹ️'}</div>
+                <div class="log-entry-icon ${type}">${icon}</div>
                 <div class="log-entry-content">
                     <div class="log-entry-time">${new Date().toLocaleTimeString()}</div>
                     <div class="log-entry-message">${message}</div>
@@ -947,7 +1108,6 @@
             logArea.scrollTop = logArea.scrollHeight;
         }
 
-        // Update status
         function updateStatus(status, text) {
             const badge = document.getElementById('status-badge');
             const statusText = document.getElementById('status-text');
@@ -955,19 +1115,24 @@
             statusText.textContent = text;
         }
 
-        // Update flow node
-        function updateNode(nodeId, active, icon, label, status) {
+        function updateNode(nodeId, active, icon, label, status, className = '') {
             const node = document.getElementById(nodeId);
             if (node) {
-                node.classList.toggle('active', active);
+                node.classList.remove('active', 'error', 'success');
+                if (active) node.classList.add('active');
+                if (className) node.classList.add(className);
                 if (icon) node.querySelector('.flow-node-icon').textContent = icon;
                 if (label) node.querySelector('.flow-node-label').textContent = label;
                 if (status) node.querySelector('.flow-node-status').textContent = status;
             }
         }
 
-        // Run the loop
         async function runLoop() {
+            if (!apiKey) {
+                alert('Please enter your OpenAI API key first!');
+                return;
+            }
+
             const request = document.getElementById('user-request').value;
             const taskType = document.getElementById('task-type').value;
 
@@ -976,90 +1141,161 @@
                 return;
             }
 
+            isDemoMode = false;
             const runBtn = document.getElementById('run-btn');
+            const demoBtn = document.getElementById('demo-btn');
             runBtn.disabled = true;
+            demoBtn.disabled = true;
             runBtn.innerHTML = '<span class="spinner"></span> Running...';
 
-            // Reset
-            updateStatus('running', 'Processing...');
-            updateNode('node-chatgpt-1', true, '🧠', 'ChatGPT', 'Analyzing...');
+            // Reset nodes
+            updateNode('node-chatgpt-1', false, '🧠', 'ChatGPT', 'Waiting...');
             updateNode('node-codex', false, '💻', 'Codex', 'Waiting...');
             updateNode('node-chatgpt-2', false, '🔍', 'ChatGPT', 'Waiting...');
             updateNode('node-result', false, '⏳', 'Result', 'Processing...');
+            updateStatus('running', 'Processing...');
 
-            addLog('chatgpt', `Analyzing request: "${request.substring(0, 50)}..."`);
+            try {
+                // Step 1: ChatGPT analyzes
+                addLog('chatgpt', 'Starting ChatGPT analysis...');
+                updateNode('node-chatgpt-1', true, '🧠', 'ChatGPT', 'Analyzing...');
 
-            // Simulate ChatGPT analysis
+                const analyzeRes = await fetch(`${API_BASE}/api/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ request, task_type: taskType, api_key: apiKey })
+                }).then(r => r.json());
+
+                updateNode('node-chatgpt-1', false, '✅', 'ChatGPT', 'Plan Ready');
+                addLog('chatgpt', `Analysis complete: ${analyzeRes.components?.length || 0} components`);
+
+                // Step 2: Codex generates
+                await sleep(500);
+                updateNode('node-codex', true, '💻', 'Codex', 'Generating...');
+                addLog('codex', 'Generating code...');
+
+                const codeRes = await fetch(`${API_BASE}/api/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plan: analyzeRes.plan,
+                        context: request,
+                        api_key: apiKey
+                    })
+                }).then(r => r.json());
+
+                updateNode('node-codex', false, '✅', 'Codex', 'Code Ready');
+                addLog('codex', `Generated ${codeRes.files?.length || 0} files`);
+
+                // Show code
+                showCode(codeRes.code || '');
+
+                // Step 3: ChatGPT verifies
+                await sleep(500);
+                updateNode('node-chatgpt-2', true, '🔍', 'ChatGPT', 'Verifying...');
+                addLog('chatgpt', 'Verifying code...');
+
+                const verifyRes = await fetch(`${API_BASE}/api/verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: codeRes.code,
+                        original_request: request,
+                        api_key: apiKey
+                    })
+                }).then(r => r.json());
+
+                updateNode('node-chatgpt-2', false, '✅', 'ChatGPT', 'Verified');
+
+                // Show verification
+                showVerification(verifyRes);
+
+                // Final result
+                if (verifyRes.status === 'PASS') {
+                    updateStatus('success', 'PASS');
+                    updateNode('node-result', true, '✅', 'Complete', 'Success!', 'success');
+                    addLog('system', 'Code verified successfully!');
+                } else {
+                    updateStatus('error', 'REVISE');
+                    updateNode('node-result', true, '⚠️', 'Revise', 'Issues found', 'error');
+                    addLog('system', `${verifyRes.issues?.length || 0} issues found`);
+                }
+
+                document.getElementById('iterations-count').textContent = '1';
+
+            } catch (error) {
+                console.error('Error:', error);
+                updateStatus('error', 'ERROR');
+                updateNode('node-result', true, '❌', 'Error', error.message, 'error');
+                addLog('system', `Error: ${error.message}`);
+            }
+
+            runBtn.disabled = false;
+            demoBtn.disabled = false;
+            runBtn.innerHTML = '<span>▶</span> Run (REAL API)';
+        }
+
+        async function runDemo() {
+            isDemoMode = true;
+            const request = document.getElementById('user-request').value;
+            const runBtn = document.getElementById('run-btn');
+            const demoBtn = document.getElementById('demo-btn');
+            runBtn.disabled = true;
+            demoBtn.disabled = true;
+            demoBtn.innerHTML = '<span class="spinner"></span> Running...';
+
+            updateStatus('running', 'Demo Mode...');
+            updateNode('node-chatgpt-1', true, '🧠', 'ChatGPT', 'Analyzing...');
+            addLog('chatgpt', 'Demo: Simulating ChatGPT analysis...');
+
             await sleep;
             updateNode('node-chatgpt-1', false, '✅', 'ChatGPT', 'Plan Ready');
-            addLog('chatgpt', 'Analysis complete. Creating implementation plan...');
 
-            // Simulate Codex code generation
-            await sleep;
+            await sleep(500);
             updateNode('node-codex', true, '💻', 'Codex', 'Generating...');
-            addLog('codex', 'Generating code based on plan...');
+            addLog('codex', 'Demo: Generating code...');
 
-            // Simulate code generation
             await sleep;
             updateNode('node-codex', false, '✅', 'Codex', 'Code Ready');
 
-            // Generate demo code
             const code = generateDemoCode(request);
-            const outputArea = document.getElementById('output-area');
-            outputArea.innerHTML = `
-                <div style="position: relative;">
-                    <button class="copy-btn" onclick="copyCode()">📋 Copy</button>
-                    <div class="code-output">${formatCode(code)}</div>
-                </div>
-            `;
-            addLog('codex', `Generated code (${code.split('\\n').length} lines)`);
+            showCode(code);
+            addLog('codex', `Demo: Generated ${code.split('\n').length} lines`);
 
-            // Simulate ChatGPT verification
-            await sleep;
+            await sleep(500);
             updateNode('node-chatgpt-2', true, '🔍', 'ChatGPT', 'Verifying...');
-            addLog('chatgpt', 'Verifying code quality and security...');
+            addLog('chatgpt', 'Demo: Verifying...');
 
             await sleep;
             updateNode('node-chatgpt-2', false, '✅', 'ChatGPT', 'Verified');
 
-            // Show verification result
-            const score = 85;
-            const issues = [];
+            const verification = {
+                status: 'PASS',
+                score: 85,
+                issues: [],
+                summary: 'Demo mode - no real verification'
+            };
+            showVerification(verification);
 
-            document.getElementById('score-display').textContent = score + '/100';
+            updateStatus('success', 'DEMO');
+            updateNode('node-result', true, '✅', 'Demo', 'Complete', 'success');
+            addLog('system', 'Demo complete!');
+
             document.getElementById('iterations-count').textContent = '1';
-            document.getElementById('score-circle').style.setProperty('--score', score);
-            document.getElementById('score-value').textContent = score;
+            document.getElementById('score-display').textContent = '85';
 
-            const verificationPanel = document.getElementById('verification-panel');
-            verificationPanel.style.display = 'block';
-
-            if (score >= 70) {
-                updateStatus('success', 'PASS');
-                updateNode('node-result', true, '✅', 'Complete', 'Success!');
-                addLog('system', 'Code verified successfully!');
-            } else {
-                updateStatus('error', 'FAIL');
-                updateNode('node-result', true, '❌', 'Failed', 'Issues found');
-                addLog('system', 'Verification failed. Issues detected.');
-            }
-
-            document.getElementById('verification-status').textContent = score >= 70 ? 'PASS' : 'REVISE';
-            document.getElementById('verification-summary').textContent = `Score: ${score}/100`;
-
-            // Reset button
             runBtn.disabled = false;
-            runBtn.innerHTML = '<span>▶</span> Run Loop';
+            demoBtn.disabled = false;
+            demoBtn.innerHTML = '<span>🎭</span> Run Demo';
         }
 
-        // Generate demo code
         function generateDemoCode(request) {
             const req = request.toLowerCase();
 
             if (req.includes('calculator')) {
                 return `"""
 Calculator Module - Generated by Codex
-SAI ROLO TECH
+SAI ROLO TECH - DEMO MODE
 """
 
 from typing import Union
@@ -1107,7 +1343,7 @@ if __name__ == "__main__":
             if (req.includes('api') || req.includes('rest')) {
                 return `"""
 REST API - Generated by Codex
-SAI ROLO TECH
+SAI ROLO TECH - DEMO MODE
 """
 
 from fastapi import FastAPI, HTTPException
@@ -1147,9 +1383,8 @@ async def create_item(item: Item):
     return new_item`;
             }
 
-            // Default code
             return `"""
-Generated Code - Codex
+Generated Code - DEMO MODE
 SAI ROLO TECH
 """
 
@@ -1159,21 +1394,45 @@ class GeneratedModule:
 
     def process(self, input_data):
         self.data = input_data
-        return {"status": "processed", "data": self.data}
-
-    def validate(self) -> bool:
-        return self.data is not None`;
+        return {"status": "processed", "data": self.data}`;
         }
 
-        // Format code for display
-        function formatCode(code) {
+        function showCode(code) {
+            const outputArea = document.getElementById('output-area');
             const lines = code.split('\n');
-            return lines.map((line, i) =>
-                `<div class="code-line"><span class="code-line-number">${i + 1}</span><span class="code-line-content">${escapeHtml(line)}</span></div>`
-            ).join('');
+            outputArea.innerHTML = `
+                <div style="position: relative;">
+                    <button class="copy-btn" onclick="copyCode('${escapeHtml(code).replace(/'/g, "\\'")}')">📋 Copy</button>
+                    <div class="code-output">${lines.map((line, i) =>
+                        `<div class="code-line"><span class="code-line-number">${i + 1}</span><span class="code-line-content">${escapeHtml(line)}</span></div>`
+                    ).join('')}</div>
+                </div>`;
         }
 
-        // Escape HTML
+        function showVerification(result) {
+            const score = result.score || 0;
+            document.getElementById('score-display').textContent = score + '/100';
+            document.getElementById('score-circle').style.setProperty('--score', score);
+            document.getElementById('score-value').textContent = score;
+
+            const panel = document.getElementById('verification-panel');
+            panel.style.display = 'block';
+
+            document.getElementById('verification-status').textContent = result.status || 'PASS';
+            document.getElementById('verification-summary').textContent = result.summary || '';
+
+            const issuesList = document.getElementById('issues-list');
+            issuesList.innerHTML = (result.issues || []).map(issue => `
+                <div class="issue-item">
+                    <span class="issue-severity ${issue.severity?.toLowerCase() || 'low'}">${issue.severity || 'LOW'}</span>
+                    <div>
+                        <div style="font-weight: 600;">${issue.message || ''}</div>
+                        ${issue.suggestion ? `<div style="font-size: 0.875rem; color: var(--text-muted);">Fix: ${issue.suggestion}</div>` : ''}
+                    </div>
+                </div>
+            `).join('') || '<p style="color: var(--success);">✅ No issues found!</p>';
+        }
+
         function escapeHtml(text) {
             return text
                 .replace(/&/g, '&amp;')
@@ -1182,14 +1441,11 @@ class GeneratedModule:
                 .replace(/"/g, '&quot;');
         }
 
-        // Copy code
-        function copyCode() {
-            const code = generateDemoCode(document.getElementById('user-request').value);
+        function copyCode(code) {
             navigator.clipboard.writeText(code);
             alert('Code copied!');
         }
 
-        // Clear all
         function clearAll() {
             document.getElementById('user-request').value = '';
             document.getElementById('output-area').innerHTML = `
@@ -1199,7 +1455,7 @@ class GeneratedModule:
             document.getElementById('verification-panel').style.display = 'none';
             document.getElementById('log-area').innerHTML = `
                 <div class="log-entry">
-                    <div class="log-entry-icon system">ℹ️</div>
+                    <div class="log-entry-icon chatgpt">ℹ️</div>
                     <div class="log-entry-content">
                         <div class="log-entry-time">Just now</div>
                         <div class="log-entry-message">System cleared.</div>
@@ -1208,11 +1464,19 @@ class GeneratedModule:
             updateStatus('pending', 'Ready');
             document.getElementById('score-display').textContent = '--';
             document.getElementById('iterations-count').textContent = '0';
+            updateNode('node-chatgpt-1', false, '🧠', 'ChatGPT', 'Analyzing...');
+            updateNode('node-codex', false, '💻', 'Codex', 'Generating...');
+            updateNode('node-chatgpt-2', false, '🔍', 'ChatGPT', 'Verifying...');
+            updateNode('node-result', false, '✅', 'Result', 'Waiting...');
         }
 
-        // Sleep utility
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Load saved API key
+        if (apiKey) {
+            document.getElementById('api-key').value = apiKey;
         }
     </script>
 </body>
