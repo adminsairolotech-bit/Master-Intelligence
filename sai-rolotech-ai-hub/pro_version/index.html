@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Command AI - PRO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --accent-cyan: #00f5ff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border: #2a2a3a;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background Effects */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow-1 {
+            top: -200px;
+            left: -200px;
+            background: var(--accent-cyan);
+        }
+
+        .bg-glow-2 {
+            bottom: -200px;
+            right: -200px;
+            background: var(--accent-purple);
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: block;
+            margin-top: -5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            color: var(--bg-primary);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.2);
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 200px);
+            min-height: 500px;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .chat-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .chat-mode {
+            display: flex;
+            gap: 10px;
+        }
+
+        .mode-btn {
+            padding: 8px 15px;
+            border-radius: 8px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn.active {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            border-color: var(--accent-cyan);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-user {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .message-user .message-content {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            color: var(--bg-primary);
+            border-radius: 20px 20px 5px 20px;
+            padding: 15px 20px;
+            max-width: 80%;
+        }
+
+        .message-bot {
+            display: flex;
+            gap: 15px;
+        }
+
+        .bot-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .message-bot .message-content {
+            background: var(--bg-card);
+            border-radius: 5px 20px 20px 20px;
+            padding: 15px 20px;
+            max-width: 85%;
+            border: 1px solid var(--border);
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .message-content pre {
+            background: var(--bg-primary);
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-size: 0.85rem;
+        }
+
+        .message-content code {
+            background: var(--bg-primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .agent-badges {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .agent-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-planner { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
+        .badge-technical { background: rgba(0, 245, 255, 0.2); color: #00f5ff; }
+        .badge-business { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .badge-automation { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .badge-risk { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        /* Input Area */
+        .input-area {
+            display: flex;
+            gap: 15px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 18px 20px;
+            border-radius: 15px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-size: 1rem;
+            resize: none;
+            min-height: 60px;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.1);
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .send-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border: none;
+            color: var(--bg-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-card {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            padding: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Memory */
+        .memory-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .memory-item {
+            padding: 12px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .memory-item:hover {
+            border-color: var(--accent-cyan);
+            transform: translateX(5px);
+        }
+
+        .memory-command {
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .memory-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-item {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* Suggestions */
+        .suggestions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .suggestion-item {
+            padding: 12px 15px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .suggestion-item:hover {
+            border-color: var(--accent-purple);
+            color: var(--text-primary);
+            transform: translateX(5px);
+        }
+
+        /* Agents Status */
+        .agents-status {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .agent-status {
+            padding: 8px 12px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .agent-status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+        }
+
+        /* Loading */
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 10px 0;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .sidebar-card {
+                flex: 1;
+                min-width: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .logo h1 {
+                font-size: 1.4rem;
+            }
+
+            .chat-area {
+                height: calc(100vh - 280px);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🧠</div>
+                <div>
+                    <h1>Life Command AI</h1>
+                    <span>PRO Edition v1.0</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="clearChat()">
+                    🗑️ Clear
+                </button>
+                <button class="btn btn-primary" onclick="toggleMode()">
+                    ⚡ Full Analysis
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-grid">
+            <!-- Chat Area -->
+            <div class="chat-area">
+                <div class="chat-header">
+                    <div class="chat-title">💬 Command Center</div>
+                    <div class="chat-mode">
+                        <button class="mode-btn active" id="quickMode" onclick="setQuickMode()">
+                            ⚡ Quick
+                        </button>
+                        <button class="mode-btn" id="fullMode" onclick="setFullMode()">
+                            🔮 Full Analysis
+                        </button>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Welcome Message -->
+                    <div class="message">
+                        <div class="message-bot">
+                            <div class="bot-avatar">🤖</div>
+                            <div class="message-content">
+                                <div class="agent-badges">
+                                    <span class="agent-badge badge-technical">🧠 PRO Engine</span>
+                                </div>
+                                <p>Welcome to <strong>Life Command AI PRO</strong>!</p>
+                                <p style="margin-top: 10px;">I have 5 specialized AI agents working together:</p>
+                                <ul style="margin: 10px 0; padding-left: 20px;">
+                                    <li><strong>📋 Planner</strong> - Step-by-step planning</li>
+                                    <li><strong>💻 Technical</strong> - Solutions & code</li>
+                                    <li><strong>📊 Business</strong> - Strategy & analysis</li>
+                                    <li><strong>⚡ Automation</strong> - Workflow design</li>
+                                    <li><strong>⚠️ Risk</strong> - Assessment & mitigations</li>
+                                </ul>
+                                <p style="margin-top: 10px; color: var(--accent-cyan);">
+                                    Try: "Build a CRM for my business" or "Plan a product launch"
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <div class="input-wrapper">
+                        <textarea
+                            class="chat-input"
+                            id="chatInput"
+                            placeholder="Type your command... (e.g., 'build a chatbot for customer service')"
+                            onkeydown="handleKeyDown(event)"
+                        ></textarea>
+                    </div>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        ➤
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Stats -->
+                <div class="sidebar-card">
+                    <div class="sidebar-title">📊 Statistics</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalCommands">0</div>
+                            <div class="stat-label">Commands</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="contextUsed">0</div>
+                            <div class="stat-label">Context Used</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Active Agents</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">1.0</div>
+                            <div class="stat-label">Version</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory -->
+                <div class="sidebar-card">
+                    <div class="sidebar-title">🧠 Recent Context</div>
+                    <div class="memory-list" id="memoryList">
+                        <div class="memory-item">
+                            <div class="memory-command">No previous commands</div>
+                            <div class="memory-time">Start a conversation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suggestions -->
+                <div class="sidebar-card">
+                    <div class="sidebar-title">💡 Try These</div>
+                    <div class="suggestions">
+                        <div class="suggestion-item" onclick="useSuggestion(this)">
+                            Build a CRM for my business
+                        </div>
+                        <div class="suggestion-item" onclick="useSuggestion(this)">
+                            Analyze market for roll forming
+                        </div>
+                        <div class="suggestion-item" onclick="useSuggestion(this)">
+                            Plan a product launch
+                        </div>
+                        <div class="suggestion-item" onclick="useSuggestion(this)">
+                            Automate lead follow-up
+                        </div>
+                        <div class="suggestion-item" onclick="useSuggestion(this)">
+                            Design C-Channel in AutoCAD
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agents -->
+                <div class="sidebar-card">
+                    <div class="sidebar-title">🤖 AI Agents</div>
+                    <div class="agents-status">
+                        <div class="agent-status">
+                            <span class="dot"></span> Planner
+                        </div>
+                        <div class="agent-status">
+                            <span class="dot"></span> Technical
+                        </div>
+                        <div class="agent-status">
+                            <span class="dot"></span> Business
+                        </div>
+                        <div class="agent-status">
+                            <span class="dot"></span> Automation
+                        </div>
+                        <div class="agent-status">
+                            <span class="dot"></span> Risk
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let fullMode = false;
+        let totalCommands = 0;
+        let contextUsed = 0;
+        let conversationHistory = [];
+
+        // Elements
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // Mode Toggle
+        function setQuickMode() {
+            fullMode = false;
+            document.getElementById('quickMode').classList.add('active');
+            document.getElementById('fullMode').classList.remove('active');
+        }
+
+        function setFullMode() {
+            fullMode = true;
+            document.getElementById('quickMode').classList.remove('active');
+            document.getElementById('fullMode').classList.add('active');
+        }
+
+        function toggleMode() {
+            if (fullMode) setQuickMode();
+            else setFullMode();
+        }
+
+        // Suggestions
+        function useSuggestion(element) {
+            chatInput.value = element.textContent;
+            chatInput.focus();
+        }
+
+        // Handle Enter key
+        function handleKeyDown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Send Message
+        async function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Disable input while processing
+            chatInput.disabled = true;
+            sendBtn.disabled = true;
+
+            // Add user message
+            addMessage(message, 'user');
+            chatInput.value = '';
+            conversationHistory.push({ role: 'user', content: message });
+
+            // Show typing indicator
+            const typingId = showTyping();
+
+            try {
+                // Call API
+                const response = await fetch('/api/pro/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: message,
+                        full_analysis: fullMode,
+                        context: contextUsed > 0
+                    })
+                });
+
+                const data = await response.json();
+
+                // Remove typing indicator
+                removeTyping(typingId);
+
+                // Add bot response
+                addMessage(data.response, 'bot', data.agents);
+                conversationHistory.push({ role: 'bot', content: data.response });
+
+                // Update stats
+                totalCommands++;
+                if (data.context_used) contextUsed++;
+                updateStats();
+
+                // Update memory
+                updateMemory(message);
+
+            } catch (error) {
+                removeTyping(typingId);
+                addMessage('❌ Error: Could not connect to AI Hub. Make sure the server is running.', 'bot');
+            }
+
+            // Re-enable input
+            chatInput.disabled = false;
+            sendBtn.disabled = false;
+            chatInput.focus();
+        }
+
+        // Add Message to Chat
+        function addMessage(content, type, agents = []) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message message-${type}`;
+
+            if (type === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        <p>${escapeHtml(content)}</p>
+                    </div>
+                    <div class="message-time">${formatTime()}</div>
+                `;
+            } else {
+                const badgesHtml = agents.length > 0 ?
+                    `<div class="agent-badges">
+                        ${agents.map(a => `<span class="agent-badge badge-${a}">${getAgentIcon(a)} ${capitalize(a)}</span>`).join('')}
+                    </div>` : '';
+
+                messageDiv.innerHTML = `
+                    <div class="message-bot">
+                        <div class="bot-avatar">🤖</div>
+                        <div class="message-content">
+                            ${badgesHtml}
+                            <p>${formatContent(content)}</p>
+                        </div>
+                    </div>
+                    <div class="message-time">${formatTime()}</div>
+                `;
+            }
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Typing Indicator
+        function showTyping() {
+            const id = 'typing-' + Date.now();
+            const typingDiv = document.createElement('div');
+            typingDiv.id = id;
+            typingDiv.className = 'message message-bot';
+            typingDiv.innerHTML = `
+                <div class="bot-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return id;
+        }
+
+        function removeTyping(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        // Update Stats
+        function updateStats() {
+            document.getElementById('totalCommands').textContent = totalCommands;
+            document.getElementById('contextUsed').textContent = contextUsed;
+        }
+
+        // Update Memory
+        function updateMemory(command) {
+            const memoryList = document.getElementById('memoryList');
+            const memoryItem = document.createElement('div');
+            memoryItem.className = 'memory-item';
+            memoryItem.innerHTML = `
+                <div class="memory-command">${escapeHtml(command)}</div>
+                <div class="memory-time">${formatTime()}</div>
+            `;
+            memoryItem.onclick = () => {
+                chatInput.value = command;
+                chatInput.focus();
+            };
+
+            // Insert at top
+            if (memoryList.children.length > 0 && memoryList.children[0].querySelector('.memory-command').textContent === 'No previous commands') {
+                memoryList.innerHTML = '';
+            }
+            memoryList.insertBefore(memoryItem, memoryList.firstChild);
+
+            // Keep only 5
+            while (memoryList.children.length > 5) {
+                memoryList.removeChild(memoryList.lastChild);
+            }
+        }
+
+        // Clear Chat
+        function clearChat() {
+            chatMessages.innerHTML = `
+                <div class="message">
+                    <div class="message-bot">
+                        <div class="bot-avatar">🤖</div>
+                        <div class="message-content">
+                            <p>Chat cleared! Ready for new commands.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            conversationHistory = [];
+            totalCommands = 0;
+            contextUsed = 0;
+            updateStats();
+
+            document.getElementById('memoryList').innerHTML = `
+                <div class="memory-item">
+                    <div class="memory-command">No previous commands</div>
+                    <div class="memory-time">Start a conversation</div>
+                </div>
+            `;
+        }
+
+        // Utilities
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatContent(content) {
+            // Basic formatting
+            return escapeHtml(content)
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function formatTime() {
+            return new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function getAgentIcon(agent) {
+            const icons = {
+                planner: '📋',
+                technical: '💻',
+                business: '📊',
+                automation: '⚡',
+                risk: '⚠️'
+            };
+            return icons[agent] || '🤖';
+        }
+
+        // Initialize
+        chatInput.focus();
+    </script>
+</body>
+</html>

@@ -6,11 +6,9 @@ Claude + Gemini powered multi-agent system
 """
 
 import os
-import json
 import anthropic
-from typing import Optional, Dict, List, Any
+from typing import Optional, Dict
 from dataclasses import dataclass
-from datetime import datetime
 
 # API Keys from environment
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
@@ -50,11 +48,53 @@ class BaseAgent:
     def think(self, prompt: str, context: str = "") -> AgentResponse:
         """Send prompt to AI and get response"""
 
-        system_prompt = f"""You are {self.name}, a specialized AI agent.
+        system_prompt = f"""You are {self.name}, a world-class expert AI assistant.
 Role: {self.role}
 
-Always provide clear, actionable, and specific responses.
-Be technical but practical.
+UNIVERSAL DOMAINS (You are an expert in ALL):
+- Software Engineering, DevOps, Cloud
+- Business Strategy, Marketing, Sales
+- Data Science, AI/ML, Automation
+- Finance, Investment, Operations
+- Manufacturing, Engineering, Design
+- Healthcare, Legal, Education
+- ANY domain the user asks about
+
+SUPREME RESPONSE QUALITY STANDARDS:
+
+1. **SPECIFICITY** - Never vague. Give exact numbers, names, steps.
+   BAD: "Improve your code quality"
+   GOOD: "Add unit tests to achieve 80% coverage, refactor functions >50 lines"
+
+2. **STRUCTURE** - Use headers, bullets, numbered lists
+   BAD: "Here's some advice..."
+   GOOD: "## Strategy\n1. First... 2. Second..."
+
+3. **CONTEXT** - Explain WHY, not just WHAT
+   BAD: "Use microservices"
+   GOOD: "Use microservices for teams >10 to enable independent deployments"
+
+4. **ACTIONABLE** - Someone can execute immediately
+   BAD: "Consider better architecture"
+   GOOD: "Refactor into services: Auth, Orders, Inventory"
+
+5. **PRACTICAL** - Real-world, not theoretical
+   BAD: "LTS version is recommended"
+   GOOD: "Use Node.js 20 LTS - Long term support until 2027, LTS active"
+
+6. **HONEST** - Acknowledge trade-offs
+   BAD: "This is the best solution"
+   GOOD: "Option A is faster but costs 2x. Option B is cheaper but slower."
+
+OUTPUT FORMAT:
+- Start with key insight (1 sentence)
+- Use ## Headers for sections
+- Bullet points for lists
+- Code blocks with language tags
+- Tables for comparisons
+- Bold for emphasis on key terms
+
+TONE: Confident, direct, like a Stanford professor teaching a smart student.
 """
 
         full_prompt = f"{context}\n\n{prompt}" if context else prompt
@@ -163,14 +203,60 @@ class PlannerAgent(BaseAgent):
 
         prompt = f"""Task: {task}
 
-Create a step-by-step plan to accomplish this task.
+Create an EXHAUSTIVE, EXECUTABLE plan. Someone should be able to complete this task with ZERO follow-up questions.
 
-Format your response as:
-1. **Step 1**: [Description] - [Why this matters]
-2. **Step 2**: [Description] - [Why this matters]
-...
+## 📋 PLAN FORMAT (MUST FOLLOW EXACTLY)
 
-Be specific and actionable. Each step should be clear enough to execute directly.
+### 🎯 Goal (1 sentence)
+Clear definition of success
+
+### ⏱️ Timeline
+Total duration + key milestones
+
+### 📦 Phase 1: Foundation (Do First)
+1. **[Specific Action]**
+   → **Deliverable:** [Exact output]
+   → **Time:** [Duration]
+   → **Why:** [Business/technical rationale]
+
+2. **[Specific Action]**
+   → **Deliverable:** [Exact output]
+   → **Time:** [Duration]
+   → **Why:** [Business/technical rationale]
+
+### 🔨 Phase 2: Core Work
+3. **[Specific Action]**
+   → **Deliverable:** [Exact output]
+   → **Time:** [Duration]
+   → **Why:** [Business/technical rationale]
+
+4. **[Specific Action]**
+   → **Deliverable:** [Exact output]
+   → **Time:** [Duration]
+   → **Why:** [Business/technical rationale]
+
+### 🚀 Phase 3: Launch/Validate
+5. **[Specific Action]**
+   → **Deliverable:** [Exact output]
+   → **Time:** [Duration]
+   → **Why:** [Business/technical rationale]
+
+### 📊 Success Metrics
+- [Metric 1]: Target value
+- [Metric 2]: Target value
+
+### ⚠️ Critical Path Items (don't skip these!)
+1. [Item that can break everything]
+2. [Item that can break everything]
+
+### 🎯 Quick Wins (do these first for momentum)
+1. [Something that takes <1 hour but shows progress]
+
+RULES:
+- Each step must be actionable with clear ownership
+- Include dependencies: "After X is done, do Y"
+- Specify tools/services to use
+- Estimate effort: <1hr, half-day, day, week
 """
 
         return self.think(prompt, context)
@@ -193,15 +279,56 @@ class TechnicalAgent(BaseAgent):
 
         prompt = f"""Problem: {problem}
 
-Provide a comprehensive technical solution.
+Provide a PRODUCTION-READY technical solution.
 
-Include:
-- Architecture approach
-- Code examples (if applicable)
-- Best practices
-- Potential pitfalls to avoid
+## 🏗️ Architecture Overview
+[High-level design - describe components and relationships]
 
-Be practical and production-ready.
+## 📐 System Design
+```
+[Architecture diagram in text format]
+Example:
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   Client    │───→│   API GW    │───→│   Service   │
+└─────────────┘    └─────────────┘    └─────────────┘
+```
+
+## 💻 Implementation
+
+### Core Code
+```[language]
+[Complete, runnable code - not snippets]
+```
+
+### Setup Instructions
+1. [Step by step setup]
+2. [Step by step setup]
+
+## ⚡ Best Practices Applied
+- [Practice 1]
+- [Practice 2]
+- [Practice 3]
+
+## 🚨 Pitfalls to Avoid
+| Common Mistake | How to Prevent |
+|----------------|----------------|
+| [Mistake] | [Solution] |
+
+## 📈 Scaling Considerations
+- [Scaling point 1]
+- [Scaling point 2]
+
+## 🧪 Testing Strategy
+```[language]
+[Test code example]
+```
+
+RULES:
+- Code must be complete and runnable
+- Include error handling
+- Include imports/exports
+- Use modern patterns (async/await, etc.)
+- Specify language, framework, version
 """
 
         return self.think(prompt, context)
@@ -224,15 +351,58 @@ class BusinessAgent(BaseAgent):
 
         prompt = f"""Topic: {topic}
 
-Provide a business analysis including:
+Conduct a COMPREHENSIVE business analysis with actionable insights.
 
-- Market opportunity
-- Revenue model
-- Key success factors
-- Risks and mitigations
-- Growth potential
+## 📊 Executive Summary
+[2-3 sentences: What is this? Why does it matter? What should we do?]
 
-Be concise but insightful.
+## 🎯 Market Opportunity
+- **TAM (Total Addressable Market):** [Size + Source]
+- **SAM (Serviceable Addressable Market):** [Size + Source]
+- **SOM (Serviceable Obtainable Market):** [Size + Source]
+- **Growth Rate:** [X% CAGR]
+- **Key Trend:** [Primary market driver]
+
+## 💰 Business Model & Revenue
+- **Primary Revenue Stream:** [Model description]
+- **Pricing Strategy:** [Approach + Rationale]
+- **Unit Economics:**
+  - CAC: [Customer Acquisition Cost]
+  - LTV: [Lifetime Value]
+  - LTV:CAC Ratio: [X:1] → [Good if >3:1]
+- **Margins:** [Gross/Net margins]
+
+## 🏆 Competitive Landscape
+| Competitor | Strength | Weakness | Your Advantage |
+|------------|----------|----------|---------------|
+| [Name] | [X] | [Y] | [Z] |
+
+## ✅ Key Success Factors
+1. **[Factor 1]** - Why it matters + How to achieve
+2. **[Factor 2]** - Why it matters + How to achieve
+3. **[Factor 3]** - Why it matters + How to achieve
+
+## ⚠️ Risks & Mitigations
+| Risk | Severity | Mitigation |
+|------|----------|------------|
+| [Risk 1] | [H/M/L] | [Mitigation] |
+| [Risk 2] | [H/M/L] | [Mitigation] |
+
+## 📈 Growth Strategy
+1. **Phase 1 (0-6 months):** [Approach]
+2. **Phase 2 (6-12 months):** [Approach]
+3. **Phase 3 (Year 2+):** [Approach]
+
+## 🚀 Recommended Next Steps
+1. **[Immediate action]** - [1 week]
+2. **[Short-term action]** - [1 month]
+3. **[Long-term action]** - [3-6 months]
+
+RULES:
+- Use real-world numbers (not "could be millions")
+- Cite data sources when possible
+- Be honest about uncertainties
+- Focus on actionable insights
 """
 
         return self.think(prompt, context)
@@ -255,16 +425,98 @@ class AutomationAgent(BaseAgent):
 
         prompt = f"""Goal: {goal}
 
-Design an automation workflow to achieve this goal.
+Design a COMPLETE automation workflow with all details.
 
-Include:
-- Trigger conditions
-- Step-by-step process
-- Tools/services to use
-- Error handling
-- Success metrics
+## 🔄 Workflow Overview
+**Trigger:** [What starts this workflow?]
+**Frequency:** [Real-time / Scheduled / On-demand]
+**End Result:** [What does this produce?]
 
-Think about: n8n, Zapier, webhooks, APIs, scheduled tasks
+## 📋 Workflow Diagram
+```
+┌─────────────┐
+│   TRIGGER  │ ← What starts this?
+└──────┬──────┘
+       ↓
+┌─────────────┐
+│   STEP 1    │ ← What happens first?
+│   Action    │
+└──────┬──────┘
+       ↓
+┌─────────────┐
+│   STEP 2    │ ← What happens next?
+│   Action    │
+└──────┬──────┘
+       ↓
+    [More steps as needed]
+       ↓
+┌─────────────┐
+│  COMPLETE   │ ← What's the final output?
+└─────────────┘
+```
+
+## 🔧 Implementation Details
+
+### Trigger Configuration
+```
+Type: [Webhook/API/Schedule/Event]
+Endpoint: [URL if webhook]
+Payload: [Expected data format]
+```
+
+### Step-by-Step Instructions
+
+**Step 1: [Name]**
+- Action: [What to do]
+- Config: [Specific settings]
+- If error: [Error handling]
+
+**Step 2: [Name]**
+- Action: [What to do]
+- Config: [Specific settings]
+- If error: [Error handling]
+
+### Tools & Services
+| Step | Tool | Why This Tool |
+|------|------|---------------|
+| 1 | [n8n/API/Webhook/etc] | [Reason] |
+| 2 | [Tool] | [Reason] |
+
+## ⚠️ Error Handling
+| Error Type | Response |
+|------------|----------|
+| API timeout | [Retry 3x, then alert] |
+| Invalid data | [Log + skip + notify] |
+| Auth failure | [Alert + pause workflow] |
+
+## 📊 Success Metrics
+- **Runs per day:** [Expected volume]
+- **Success rate target:** [X%]
+- **Time saved:** [X hours/day]
+- **Cost per run:** [Amount]
+
+## 🚀 Quick Setup Commands
+
+### n8n
+```
+[CLI commands or n8n node configuration]
+```
+
+### Alternative: Python Script
+```python
+[Complete Python automation script]
+```
+
+### Alternative: Zapier
+```
+[Zap configuration steps]
+```
+
+RULES:
+- Make it beginner-friendly
+- Include actual code/config snippets
+- Specify all credentials needed
+- Include backup/error procedures
 """
 
         return self.think(prompt, context)
@@ -287,15 +539,66 @@ class RiskAgent(BaseAgent):
 
         prompt = f"""Plan/Approach: {plan}
 
-Conduct a risk assessment:
+Conduct a THOROUGH risk assessment. Think like a paranoid but rational expert.
 
-For each risk identify:
-- Risk Type: [Technical/Financial/Operational/External]
-- Severity: [Critical/High/Medium/Low]
-- Likelihood: [Probable/Possible/Unlikely]
-- Mitigation Strategy
+## 🎯 Executive Risk Summary
+[1-2 sentences: What are the TOP 2 risks that could kill this?]
 
-Format as a prioritized list.
+## 🔴 CRITICAL Risks (Stop Everything)
+| Risk | Impact | Probability | Immediate Action |
+|------|--------|-------------|------------------|
+| [Risk that could fail entirely] | [What happens] | [H/M/L] | [What to do NOW] |
+
+## 🟠 HIGH Risks (Fix Before Launch)
+| Risk | Impact | Probability | Mitigation | Owner |
+|------|--------|-------------|------------|-------|
+| [Major risk] | [Consequence] | [H/M/L] | [Specific action] | [Who] |
+
+## 🟡 MEDIUM Risks (Monitor & Plan)
+| Risk | Impact | Probability | Mitigation | Timeline |
+|------|--------|-------------|------------|----------|
+| [Moderate risk] | [Consequence] | [H/M/L] | [Action] | [When] |
+
+## 🟢 LOW Risks (Accept or Watch)
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| [Minor risk] | [Consequence] | [None/Light] |
+
+## 📊 Risk Matrix
+```
+                 Probability
+              Low    Med    High
+Impact  ┌─────────────────────────
+High    │  MEDIUM │  HIGH  │ CRITICAL│
+        ├─────────────────────────
+Medium  │   LOW   │ MEDIUM │  HIGH   │
+        ├─────────────────────────
+Low     │   LOW   │  LOW   │ MEDIUM  │
+        └─────────────────────────
+```
+
+## 🛡️ Mitigation Priority
+1. **Immediate (This week):** [Critical risk mitigations]
+2. **Short-term (This month):** [High risk mitigations]
+3. **Long-term (This quarter):** [Medium risk mitigations]
+
+## 🚨 Contingency Plans
+| If This Happens | Do This |
+|-----------------|---------|
+| [Worst case 1] | [Response plan] |
+| [Worst case 2] | [Response plan] |
+
+## 📋 Risk Monitoring Dashboard
+Track these metrics weekly:
+- [Metric 1]
+- [Metric 2]
+- [Metric 3]
+
+RULES:
+- Be paranoid but rational - don't inflate risks
+- Give SPECIFIC mitigations, not generic advice
+- Estimate cost of mitigation vs cost of risk
+- Consider second-order effects
 """
 
         return self.think(prompt, context)
