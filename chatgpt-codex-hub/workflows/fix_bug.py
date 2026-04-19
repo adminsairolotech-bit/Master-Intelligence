@@ -3,8 +3,8 @@ Fix Bug Workflow
 SAI ROLO TECH
 """
 
+from __future__ import annotations
 from typing import Dict
-from chatgpt_codex_loop import ChatGPTCodexLoop, SessionContext
 
 
 class FixBugWorkflow:

@@ -4,125 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0a0a0f">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>ChatGPT + Codex Hub - SAI ROLO TECH</title>
+    <title>AI Hub Pro - SAI ROLO TECH</title>
     <style>
-        /* ===== CSS Variables ===== */
         :root {
             --bg-primary: #0a0a0f;
             --bg-secondary: #12121a;
             --bg-tertiary: #1a1a25;
-            --accent-chatgpt: #10a37f;
-            --accent-codex: #f7df1e;
-            --accent-glow: rgba(16, 163, 127, 0.3);
+            --accent: #10a37f;
+            --accent-ollama: #9333ea;
+            --accent-openai: #10a37f;
+            --accent-demo: #f7df1e;
             --text-primary: #ffffff;
             --text-secondary: #8b8b9a;
             --text-muted: #5a5a6a;
-            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border: rgba(255,255,255,0.08);
             --success: #10a37f;
             --warning: #f7df1e;
             --error: #ef4444;
-
-            /* Spacing */
             --space-xs: 0.25rem;
             --space-sm: 0.5rem;
             --space-md: 1rem;
             --space-lg: 1.5rem;
-            --space-xl: 2rem;
-
-            /* Transitions */
-            --transition-fast: 0.15s ease;
-            --transition-normal: 0.3s ease;
         }
 
-        /* ===== Base Styles ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            font-size: 16px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
-            min-height: 100dvh;
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* ===== Desktop Background ===== */
-        .bg-effects {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
         }
 
         .bg-grid {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image:
-                linear-gradient(rgba(16, 163, 127, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(16, 163, 127, 0.03) 1px, transparent 1px);
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(16,163,127,0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(16,163,127,0.03) 1px, transparent 1px);
             background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .bg-glow {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            filter: blur(150px);
-            opacity: 0.15;
-        }
-
-        .bg-glow-1 {
-            top: -200px;
-            left: -200px;
-            background: var(--accent-chatgpt);
-            animation: float 8s ease-in-out infinite;
-        }
-
-        .bg-glow-2 {
-            bottom: -200px;
-            right: -200px;
-            background: var(--accent-codex);
-            animation: float 8s ease-in-out infinite reverse;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(50px, 50px); }
-        }
-
-        /* ===== Container ===== */
         .container {
             position: relative;
             z-index: 1;
             max-width: 1400px;
             margin: 0 auto;
             padding: var(--space-md);
-            min-height: 100vh;
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* ===== Header ===== */
+        /* Header */
         .header {
             text-align: center;
             padding: var(--space-lg) 0;
@@ -133,59 +66,43 @@
             align-items: center;
             justify-content: center;
             gap: var(--space-sm);
-            margin-bottom: var(--space-sm);
         }
 
         .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--accent-chatgpt), var(--accent-codex));
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 20px var(--accent-glow);
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-ollama));
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 20px rgba(16,163,127,0.3);
         }
 
         .logo-text {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-chatgpt), var(--accent-codex));
+            background: linear-gradient(135deg, var(--accent), var(--accent-ollama));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
-        .tagline {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
+        .tagline { color: var(--text-secondary); font-size: 0.875rem; margin-top: var(--space-xs); }
 
-        /* ===== Connection Bar ===== */
+        /* Connection Bar */
         .connection-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-md);
+            display: flex; align-items: center; justify-content: center;
+            gap: var(--space-lg);
             padding: var(--space-sm) var(--space-md);
             background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
+            border: 1px solid var(--border);
             border-radius: 10px;
             margin-bottom: var(--space-md);
             flex-wrap: wrap;
         }
 
-        .connection-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-            font-size: 0.875rem;
-        }
+        .connection-item { display: flex; align-items: center; gap: var(--space-xs); font-size: 0.875rem; }
 
         .connection-dot {
-            width: 8px;
-            height: 8px;
+            width: 8px; height: 8px;
             border-radius: 50%;
             background: var(--text-muted);
         }
@@ -195,109 +112,88 @@
             box-shadow: 0 0 8px var(--success);
         }
 
-        .connection-dot.error {
-            background: var(--error);
-        }
-
-        /* ===== API Config Panel ===== */
-        .api-panel {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            margin-bottom: var(--space-md);
-        }
-
-        .api-panel-header {
-            padding: var(--space-sm) var(--space-md);
-            background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-subtle);
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        .api-panel-body {
-            padding: var(--space-md);
-        }
-
+        /* Provider Tabs */
         .provider-tabs {
             display: flex;
             gap: var(--space-xs);
-            margin-bottom: var(--space-md);
-            background: var(--bg-tertiary);
+            background: var(--bg-secondary);
             padding: var(--space-xs);
-            border-radius: 8px;
+            border-radius: 10px;
+            margin-bottom: var(--space-md);
         }
 
         .provider-tab {
             flex: 1;
-            padding: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
             border: none;
             background: transparent;
             color: var(--text-secondary);
-            font-size: 0.875rem;
             font-weight: 600;
             cursor: pointer;
-            border-radius: 6px;
-            transition: var(--transition-fast);
+            border-radius: 8px;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
         }
 
         .provider-tab.active {
-            background: var(--bg-secondary);
+            background: var(--bg-tertiary);
             color: var(--text-primary);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
-        .provider-tab .tab-icon {
-            display: block;
-            font-size: 1.25rem;
-            margin-bottom: 2px;
+        .provider-tab .icon { font-size: 1.5rem; }
+        .provider-tab .label { font-size: 0.75rem; }
+
+        /* Mode Selector */
+        .mode-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
         }
 
-        .provider-tab .tab-label {
-            display: block;
-            font-size: 0.75rem;
-        }
-
-        .api-key-input {
+        .mode-section-header {
             display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+            font-weight: 600;
+        }
+
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: var(--space-sm);
         }
 
-        .api-key-input input {
-            flex: 1;
-            padding: var(--space-sm) var(--space-md);
+        .mode-card {
             background: var(--bg-tertiary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 0.875rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: var(--space-md);
+            cursor: pointer;
+            transition: 0.2s;
         }
 
-        .model-select {
-            margin-top: var(--space-sm);
-        }
+        .mode-card:hover { border-color: var(--accent); }
+        .mode-card.active { border-color: var(--accent); box-shadow: 0 0 20px rgba(16,163,127,0.2); }
 
-        .model-select label {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--text-muted);
+        .mode-card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
             margin-bottom: var(--space-xs);
         }
 
-        .model-select select {
-            width: 100%;
-            padding: var(--space-sm);
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 0.875rem;
-        }
+        .mode-card-icon { font-size: 1.5rem; }
+        .mode-card-name { font-weight: 600; font-size: 0.875rem; }
+        .mode-card-desc { font-size: 0.75rem; color: var(--text-secondary); }
+        .mode-card-count { font-size: 0.625rem; color: var(--accent); margin-top: var(--space-xs); }
 
-        /* ===== Stats Grid ===== */
+        /* Stats */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -307,171 +203,47 @@
 
         .stat-card {
             background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
+            border: 1px solid var(--border);
             border-radius: 10px;
             padding: var(--space-sm);
             text-align: center;
         }
 
-        .stat-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 2px;
-        }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+        .stat-label { font-size: 0.625rem; color: var(--text-secondary); text-transform: uppercase; }
 
-        .stat-value.chatgpt { color: var(--accent-chatgpt); }
-        .stat-value.codex { color: var(--accent-codex); }
-
-        .stat-label {
-            font-size: 0.625rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* ===== Flow Diagram ===== */
-        .flow-container {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-
-        .flow-diagram {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-xs);
-            flex-wrap: wrap;
-        }
-
-        .flow-node {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: var(--space-sm) var(--space-md);
-            background: var(--bg-tertiary);
-            border-radius: 10px;
-            border: 2px solid transparent;
-            transition: var(--transition-normal);
-            min-width: 90px;
-        }
-
-        .flow-node.chatgpt { border-color: var(--accent-chatgpt); }
-        .flow-node.codex { border-color: var(--accent-codex); }
-        .flow-node.verify { border-color: var(--accent-chatgpt); }
-
-        .flow-node.active {
-            transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(16, 163, 127, 0.4);
-        }
-
-        .flow-node.success { border-color: var(--success); box-shadow: 0 0 20px rgba(16, 163, 127, 0.4); }
-        .flow-node.error { border-color: var(--error); box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
-
-        .flow-node-icon { font-size: 1.5rem; }
-        .flow-node-label { font-weight: 600; font-size: 0.75rem; }
-        .flow-node-status { font-size: 0.625rem; color: var(--text-muted); }
-
-        .flow-arrow {
-            font-size: 1.25rem;
-            color: var(--text-muted);
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-
-        /* ===== Main Grid ===== */
+        /* Main Grid */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: var(--space-md);
-            flex: 1;
-            min-height: 0;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
         }
 
         .panel {
             background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
+            border: 1px solid var(--border);
             border-radius: 12px;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
         }
 
         .panel-header {
             padding: var(--space-sm) var(--space-md);
             background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             gap: var(--space-sm);
             font-weight: 600;
             font-size: 0.875rem;
-            flex-shrink: 0;
         }
 
-        .panel-header-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.875rem;
-        }
+        .panel-body { padding: var(--space-md); }
 
-        .panel-header-icon.chatgpt { background: var(--accent-chatgpt); }
-        .panel-header-icon.codex { background: var(--accent-codex); color: #000; }
-
-        .status-badge {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .status-badge.pending { background: rgba(139,139,154,0.2); color: var(--text-secondary); }
-        .status-badge.running { background: rgba(247,223,30,0.2); color: var(--accent-codex); }
-        .status-badge.success { background: rgba(16,163,127,0.2); color: var(--accent-chatgpt); }
-        .status-badge.error { background: rgba(239,68,68,0.2); color: var(--error); }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-
-        .status-badge.running .status-dot {
-            animation: blink 1s ease-in-out infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .panel-body {
-            padding: var(--space-md);
-            flex: 1;
-            overflow-y: auto;
-            min-height: 0;
-        }
-
-        /* ===== Form Elements ===== */
-        .input-group {
-            margin-bottom: var(--space-md);
-        }
+        .input-group { margin-bottom: var(--space-md); }
 
         .input-label {
             display: block;
@@ -484,26 +256,20 @@
             width: 100%;
             padding: var(--space-sm) var(--space-md);
             background: var(--bg-tertiary);
-            border: 1px solid var(--border-subtle);
+            border: 1px solid var(--border);
             border-radius: 8px;
             color: var(--text-primary);
             font-size: 1rem;
             font-family: inherit;
-            transition: var(--transition-fast);
         }
 
         .input-field:focus, .select-field:focus {
             outline: none;
-            border-color: var(--accent-chatgpt);
-            box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.1);
+            border-color: var(--accent);
         }
 
-        textarea.input-field {
-            min-height: 100px;
-            resize: vertical;
-        }
+        textarea.input-field { min-height: 100px; resize: vertical; }
 
-        /* ===== Buttons ===== */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -514,176 +280,41 @@
             border-radius: 8px;
             font-size: 0.875rem;
             font-weight: 600;
-            font-family: inherit;
             cursor: pointer;
-            transition: var(--transition-fast);
-            white-space: nowrap;
+            transition: 0.2s;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--accent-chatgpt), #0d8d66);
+            background: linear-gradient(135deg, var(--accent), #0d8d66);
             color: white;
-            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.3);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 163, 127, 0.4);
-        }
+        .btn-primary:hover { transform: translateY(-2px); }
 
         .btn-secondary {
             background: var(--bg-tertiary);
             color: var(--text-primary);
-            border: 1px solid var(--border-subtle);
+            border: 1px solid var(--border);
         }
 
-        .btn-secondary:hover {
-            background: var(--bg-primary);
-            border-color: var(--accent-codex);
-        }
+        .btn-group { display: flex; gap: var(--space-sm); margin-top: var(--space-md); }
+        .btn-full { flex: 1; }
 
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: var(--space-sm);
-            flex-wrap: wrap;
-            margin-top: var(--space-md);
-        }
-
-        .btn-full {
-            flex: 1;
-            min-width: 100%;
-        }
-
-        /* ===== Code Output ===== */
         .code-output {
             background: #1e1e1e;
             border-radius: 8px;
-            padding: var(--space-sm);
-            font-family: 'Fira Code', 'SF Mono', Monaco, monospace;
+            padding: var(--space-md);
+            font-family: 'Fira Code', monospace;
             font-size: 0.75rem;
             line-height: 1.5;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
             color: #d4d4d4;
             min-height: 150px;
-            max-height: 350px;
+            max-height: 400px;
             overflow-y: auto;
+            white-space: pre-wrap;
         }
 
-        .code-line {
-            display: flex;
-            gap: var(--space-sm);
-        }
-
-        .code-line-number {
-            color: #5a5a6a;
-            user-select: none;
-            min-width: 2rem;
-            text-align: right;
-        }
-
-        /* ===== Log Panel ===== */
-        .log-entry {
-            display: flex;
-            align-items: flex-start;
-            gap: var(--space-sm);
-            padding: var(--space-sm);
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            margin-bottom: var(--space-xs);
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .log-entry-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            flex-shrink: 0;
-        }
-
-        .log-entry-icon.chatgpt { background: var(--accent-chatgpt); }
-        .log-entry-icon.codex { background: var(--accent-codex); color: #000; }
-        .log-entry-icon.system { background: var(--bg-primary); border: 1px solid var(--border-subtle); }
-
-        .log-entry-content { flex: 1; min-width: 0; }
-        .log-entry-time { font-size: 0.625rem; color: var(--text-muted); margin-bottom: 2px; }
-        .log-entry-message { font-size: 0.75rem; color: var(--text-secondary); }
-
-        /* ===== Verification ===== */
-        .verification-result {
-            background: var(--bg-tertiary);
-            border-radius: 10px;
-            padding: var(--space-md);
-            margin-top: var(--space-md);
-        }
-
-        .verification-score {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            margin-bottom: var(--space-sm);
-        }
-
-        .score-circle {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.125rem;
-            font-weight: 700;
-            background: conic-gradient(var(--accent-chatgpt) calc(var(--score) * 1%), var(--bg-primary) calc(var(--score) * 1%));
-        }
-
-        .score-inner {
-            width: 46px;
-            height: 46px;
-            border-radius: 50%;
-            background: var(--bg-tertiary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .issue-item {
-            display: flex;
-            align-items: flex-start;
-            gap: var(--space-sm);
-            padding: var(--space-sm);
-            background: var(--bg-secondary);
-            border-radius: 6px;
-            margin-bottom: var(--space-xs);
-        }
-
-        .issue-severity {
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.625rem;
-            font-weight: 600;
-        }
-
-        .issue-severity.high { background: rgba(239,68,68,0.2); color: var(--error); }
-        .issue-severity.medium { background: rgba(247,223,30,0.2); color: var(--accent-codex); }
-        .issue-severity.low { background: rgba(139,139,154,0.2); color: var(--text-secondary); }
-
-        /* ===== Scenarios ===== */
+        /* Scenarios */
         .scenario-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -693,449 +324,212 @@
 
         .scenario-card {
             background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
+            border: 1px solid var(--border);
             border-radius: 10px;
             padding: var(--space-sm);
             cursor: pointer;
-            transition: var(--transition-fast);
             text-align: center;
+            transition: 0.2s;
         }
 
-        .scenario-card:hover {
-            border-color: var(--accent-chatgpt);
-            transform: translateY(-2px);
-        }
+        .scenario-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .scenario-title { font-weight: 600; font-size: 0.875rem; }
+        .scenario-desc { font-size: 0.625rem; color: var(--text-secondary); margin-top: 2px; }
 
-        .scenario-card-title {
-            font-weight: 600;
-            font-size: 0.875rem;
-            margin-bottom: 2px;
-        }
-
-        .scenario-card-desc {
-            font-size: 0.625rem;
-            color: var(--text-secondary);
-        }
-
-        /* ===== Comparison ===== */
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-sm);
-        }
-
-        .comparison-panel {
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            padding: var(--space-sm);
-        }
-
-        .comparison-title {
-            font-weight: 600;
+        /* Status */
+        .status-badge {
+            margin-left: auto;
+            padding: 4px 10px;
+            border-radius: 12px;
             font-size: 0.75rem;
-            margin-bottom: var(--space-xs);
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
+            font-weight: 600;
         }
 
-        .badge {
+        .status-badge.pending { background: rgba(139,139,154,0.2); color: var(--text-secondary); }
+        .status-badge.running { background: rgba(247,223,30,0.2); color: var(--warning); }
+        .status-badge.success { background: rgba(16,163,127,0.2); color: var(--success); }
+        .status-badge.error { background: rgba(239,68,68,0.2); color: var(--error); }
+
+        .status-dot {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            margin-right: 4px;
+        }
+
+        .status-badge.running .status-dot { animation: blink 1s infinite; }
+
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* Repos Panel */
+        .repos-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-top: var(--space-md);
+        }
+
+        .repos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-sm);
+            padding: var(--space-md);
+        }
+
+        .repo-card {
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            padding: var(--space-md);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .repo-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+
+        .repo-header { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-xs); }
+        .repo-icon { font-size: 1.5rem; }
+        .repo-name { font-weight: 600; font-size: 0.875rem; }
+        .repo-desc { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: var(--space-sm); }
+        .repo-features { display: flex; flex-wrap: wrap; gap: 4px; }
+        .repo-feature {
+            background: rgba(16,163,127,0.2);
+            color: var(--accent);
             padding: 2px 6px;
             border-radius: 4px;
             font-size: 0.625rem;
-            font-weight: 600;
         }
 
-        .badge.real { background: var(--accent-chatgpt); color: white; }
-        .badge.demo { background: var(--accent-codex); color: #000; }
-        .badge.ollama { background: #9333ea; color: white; }
-
-        .comparison-list {
-            list-style: none;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .comparison-list li {
-            padding: 2px 0;
-        }
-
-        /* ===== Animations ===== */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .header { animation: fadeIn 0.4s ease-out; }
-        .api-panel { animation: slideUp 0.4s ease-out 0.1s backwards; }
-        .stats-grid { animation: slideUp 0.4s ease-out 0.15s backwards; }
-        .flow-container { animation: slideUp 0.4s ease-out 0.2s backwards; }
-        .main-grid { animation: slideUp 0.4s ease-out 0.25s backwards; }
-
-        /* ===== Spinner ===== */
+        /* Spinner */
         .spinner {
-            width: 16px;
-            height: 16px;
+            width: 16px; height: 16px;
             border: 2px solid transparent;
             border-top-color: currentColor;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ===== Copy Button ===== */
-        .copy-btn {
-            position: absolute;
-            top: var(--space-sm);
-            right: var(--space-sm);
-            padding: 4px 8px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 4px;
-            color: var(--text-secondary);
-            font-size: 0.625rem;
-            cursor: pointer;
-            transition: var(--transition-fast);
-        }
-
-        .copy-btn:hover {
-            background: var(--accent-chatgpt);
-            color: white;
-        }
-
-        /* ===== Mobile Responsive ===== */
-        @media (max-width: 768px) {
-            html {
-                font-size: 14px;
-            }
-
-            .container {
-                padding: var(--space-sm);
-            }
-
-            .logo-icon {
-                width: 32px;
-                height: 32px;
-                font-size: 16px;
-            }
-
-            .logo-text {
-                font-size: 1.125rem;
-            }
-
-            .connection-bar {
-                padding: var(--space-xs) var(--space-sm);
-                gap: var(--space-sm);
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .stat-value {
-                font-size: 1rem;
-            }
-
-            .flow-container {
-                padding: var(--space-sm);
-            }
-
-            .flow-node {
-                min-width: 70px;
-                padding: var(--space-xs) var(--space-sm);
-            }
-
-            .flow-node-icon {
-                font-size: 1.25rem;
-            }
-
-            .flow-node-label {
-                font-size: 0.625rem;
-            }
-
-            .flow-arrow {
-                font-size: 1rem;
-            }
-
-            .main-grid {
-                grid-template-columns: 1fr;
-                gap: var(--space-sm);
-            }
-
-            .panel-body {
-                padding: var(--space-sm);
-                max-height: 300px;
-            }
-
-            .scenario-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .btn {
-                padding: var(--space-sm);
-                font-size: 0.75rem;
-            }
-
-            .btn-group {
-                flex-direction: column;
-            }
-
-            .btn-full {
-                min-width: auto;
-            }
-
-            .code-output {
-                font-size: 0.625rem;
-                max-height: 250px;
-            }
-
-            .comparison-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .panel[style*="margin-top"] {
-                margin-top: var(--space-sm) !important;
-            }
-        }
-
-        /* ===== Small Mobile ===== */
-        @media (max-width: 400px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: var(--space-xs);
-            }
-
-            .stat-card {
-                padding: var(--space-xs);
-            }
-
-            .stat-value {
-                font-size: 0.875rem;
-            }
-
-            .flow-diagram {
-                gap: 2px;
-            }
-
-            .flow-node {
-                min-width: 55px;
-                padding: var(--space-xs);
-            }
-
-            .flow-arrow {
-                font-size: 0.75rem;
-            }
-
-            .scenario-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+        /* Mobile */
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .scenario-grid { grid-template-columns: repeat(2, 1fr); }
+            .mode-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="bg-effects">
-        <div class="bg-grid"></div>
-        <div class="bg-glow bg-glow-1"></div>
-        <div class="bg-glow bg-glow-2"></div>
-    </div>
+    <div class="bg-grid"></div>
 
     <div class="container">
-        <!-- Header -->
         <header class="header">
             <div class="logo">
                 <div class="logo-icon">⚡</div>
-                <span class="logo-text">ChatGPT + Codex Hub</span>
+                <span class="logo-text">AI Hub Pro</span>
             </div>
-            <p class="tagline">AI Collaboration Loop • SAI ROLO TECH</p>
+            <p class="tagline">Multi-Mode AI Collaboration • SAI ROLO TECH</p>
         </header>
 
-        <!-- Connection Status -->
+        <!-- Connection -->
         <div class="connection-bar">
             <div class="connection-item">
-                <div class="connection-dot" id="backend-status"></div>
+                <div class="connection-dot" id="status-backend"></div>
                 <span>Backend</span>
             </div>
             <div class="connection-item">
-                <div class="connection-dot" id="api-status"></div>
-                <span id="api-status-label">API</span>
+                <div class="connection-dot" id="status-ollama"></div>
+                <span>Ollama</span>
             </div>
             <div class="connection-item">
-                <button class="btn btn-secondary" onclick="checkConnections()" style="padding: 4px 8px; font-size: 0.75rem;">
-                    🔄
-                </button>
+                <div class="connection-dot" id="status-api"></div>
+                <span>OpenAI</span>
             </div>
         </div>
 
-        <!-- API Configuration -->
-        <div class="api-panel">
-            <div class="api-panel-header">
-                <span>🔑</span>
-                <span>API Configuration</span>
+        <!-- Provider Tabs -->
+        <div class="provider-tabs">
+            <button class="provider-tab" onclick="switchProvider('openai')">
+                <span class="icon">🤖</span>
+                <span class="label">OpenAI</span>
+            </button>
+            <button class="provider-tab" onclick="switchProvider('ollama')">
+                <span class="icon">🦙</span>
+                <span class="label">Ollama</span>
+            </button>
+            <button class="provider-tab" onclick="switchProvider('demo')">
+                <span class="icon">🎭</span>
+                <span class="label">Demo</span>
+            </button>
+        </div>
+
+        <!-- Mode Selector -->
+        <div class="mode-section">
+            <div class="mode-section-header">
+                <span>🎯</span>
+                <span>Select Mode</span>
             </div>
-            <div class="api-panel-body">
-                <div class="provider-tabs">
-                    <button class="provider-tab active" data-provider="openai" onclick="switchProvider('openai')">
-                        <span class="tab-icon">🤖</span>
-                        <span class="tab-label">OpenAI</span>
-                    </button>
-                    <button class="provider-tab" data-provider="ollama" onclick="switchProvider('ollama')">
-                        <span class="tab-icon">🦙</span>
-                        <span class="tab-label">Ollama</span>
-                    </button>
-                    <button class="provider-tab" data-provider="demo" onclick="switchProvider('demo')">
-                        <span class="tab-icon">🎭</span>
-                        <span class="tab-label">Demo</span>
-                    </button>
-                </div>
-
-                <div id="openai-config">
-                    <div class="api-key-input">
-                        <input type="password" class="input-field" id="api-key" placeholder="OpenAI API Key (sk-...)">
-                        <button class="btn btn-primary" onclick="saveApiKey('openai')">Save</button>
-                    </div>
-                    <div class="model-select">
-                        <label>Model</label>
-                        <select class="select-field" id="openai-model">
-                            <option value="gpt-4o">GPT-4o (Recommended)</option>
-                            <option value="gpt-4">GPT-4</option>
-                            <option value="gpt-4-turbo">GPT-4 Turbo</option>
-                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div id="ollama-config" style="display: none;">
-                    <div class="api-key-input">
-                        <input type="text" class="input-field" id="ollama-url" placeholder="Ollama URL (http://localhost:11434)" value="http://localhost:11434">
-                        <button class="btn btn-primary" onclick="saveApiKey('ollama')">Save</button>
-                    </div>
-                    <div class="model-select">
-                        <label>Model</label>
-                        <select class="select-field" id="ollama-model">
-                            <option value="llama3:8b">🦙 Llama 3 8B (Installed)</option>
-                            <option value="deepseek-coder:6.7b">💻 DeepSeek Coder 6.7B (Code Expert)</option>
-                            <option value="llama3.1:8b">Llama 3.1 8B</option>
-                            <option value="llama3.1:70b">Llama 3.1 70B (Large)</option>
-                            <option value="codellama:13b">CodeLlama 13B</option>
-                            <option value="qwen2.5:14b">Qwen 2.5 14B</option>
-                            <option value="mistral">Mistral 7B</option>
-                        </select>
-                    </div>
-                    <p style="margin-top: var(--space-sm); font-size: 0.75rem; color: var(--text-muted);">
-                        💡 Install Ollama from <a href="https://ollama.com" target="_blank" style="color: var(--accent-chatgpt);">ollama.com</a>
-                    </p>
-                </div>
-
-                <div id="demo-config" style="display: none;">
-                    <p style="color: var(--text-secondary); font-size: 0.875rem;">
-                        🎭 Demo mode - No API key needed. Uses pre-generated code.
-                    </p>
-                </div>
-            </div>
+            <div class="mode-grid" id="mode-grid"></div>
         </div>
 
         <!-- Stats -->
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value chatgpt">🧠</div>
-                <div class="stat-label">ChatGPT</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value codex">💻</div>
-                <div class="stat-label">Codex</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="iterations-count">0</div>
-                <div class="stat-label">Iterations</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="score-display">--</div>
-                <div class="stat-label">Score</div>
-            </div>
+            <div class="stat-card"><div class="stat-value" id="stat-modes">6</div><div class="stat-label">Modes</div></div>
+            <div class="stat-card"><div class="stat-value" id="stat-repos">12</div><div class="stat-label">Unique Repos</div></div>
+            <div class="stat-card"><div class="stat-value" id="stat-iterations">0</div><div class="stat-label">Iterations</div></div>
+            <div class="stat-card"><div class="stat-value" id="stat-score">--</div><div class="stat-label">Score</div></div>
         </div>
 
-        <!-- Flow Diagram -->
-        <div class="flow-container">
-            <div class="flow-diagram">
-                <div class="flow-node chatgpt" id="node-chatgpt-1">
-                    <span class="flow-node-icon">🧠</span>
-                    <span class="flow-node-label">ChatGPT</span>
-                    <span class="flow-node-status">Analyzing...</span>
-                </div>
-                <span class="flow-arrow">→</span>
-                <div class="flow-node codex" id="node-codex">
-                    <span class="flow-node-icon">💻</span>
-                    <span class="flow-node-label">Codex</span>
-                    <span class="flow-node-status">Generating...</span>
-                </div>
-                <span class="flow-arrow">→</span>
-                <div class="flow-node verify" id="node-chatgpt-2">
-                    <span class="flow-node-icon">🔍</span>
-                    <span class="flow-node-label">Verify</span>
-                    <span class="flow-node-status">Verifying...</span>
-                </div>
-                <span class="flow-arrow">→</span>
-                <div class="flow-node" id="node-result">
-                    <span class="flow-node-icon" id="result-icon">✅</span>
-                    <span class="flow-node-label" id="result-label">Result</span>
-                    <span class="flow-node-status" id="result-status">Waiting...</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
+        <!-- Main Grid -->
         <div class="main-grid">
             <!-- Input Panel -->
             <div class="panel">
                 <div class="panel-header">
-                    <div class="panel-header-icon chatgpt">📝</div>
-                    <span>Enter Request</span>
+                    <span>📝</span>
+                    <span>Task Input</span>
+                    <span class="status-badge pending" id="status-badge">
+                        <span class="status-dot"></span>
+                        <span id="status-text">Ready</span>
+                    </span>
                 </div>
                 <div class="panel-body">
                     <div class="input-group">
+                        <label class="input-label">Mode</label>
+                        <select class="select-field" id="mode-select"></select>
+                    </div>
+                    <div class="input-group">
                         <label class="input-label">Task Type</label>
                         <select class="select-field" id="task-type">
-                            <option value="generate_feature">✨ Generate Feature</option>
-                            <option value="fix_bug">🐛 Fix Bug</option>
-                            <option value="refactor">🔄 Refactor Code</option>
+                            <option value="generate">✨ Generate</option>
+                            <option value="fix">🐛 Fix Bug</option>
+                            <option value="refactor">🔄 Refactor</option>
+                            <option value="analyze">🔍 Analyze</option>
                         </select>
                     </div>
                     <div class="input-group">
                         <label class="input-label">Your Request</label>
-                        <textarea class="input-field" id="user-request" placeholder="Describe what you want to build...">Create a Python calculator with add, subtract, multiply, divide functions</textarea>
+                        <textarea class="input-field" id="user-request" placeholder="What do you want to build?">Create a Python calculator with add, subtract, multiply, divide</textarea>
                     </div>
-
                     <div class="btn-group">
                         <button class="btn btn-primary btn-full" id="run-btn" onclick="runLoop()">
-                            <span>▶</span> Run Loop
+                            <span>▶</span> Run
                         </button>
-                        <button class="btn btn-secondary" onclick="clearAll()">
-                            <span>🗑</span>
-                        </button>
+                        <button class="btn btn-secondary" onclick="clearAll()">🗑</button>
                     </div>
 
-                    <!-- Scenarios -->
-                    <h3 style="margin-top: var(--space-lg); font-size: 0.75rem; color: var(--text-secondary);">Quick Scenarios:</h3>
+                    <h3 style="margin-top: var(--space-lg); font-size: 0.75rem; color: var(--text-secondary);">Quick Tasks:</h3>
                     <div class="scenario-grid">
-                        <div class="scenario-card" onclick="loadScenario('calculator')">
-                            <div class="scenario-card-title">🧮 Calculator</div>
-                            <div class="scenario-card-desc">Basic math</div>
+                        <div class="scenario-card" onclick="loadTask('calculator')">
+                            <div class="scenario-title">🧮 Calculator</div>
+                            <div class="scenario-desc">Basic math ops</div>
                         </div>
-                        <div class="scenario-card" onclick="loadScenario('rest_api')">
-                            <div class="scenario-card-title">🌐 REST API</div>
-                            <div class="scenario-card-desc">FastAPI CRUD</div>
+                        <div class="scenario-card" onclick="loadTask('api')">
+                            <div class="scenario-title">🌐 REST API</div>
+                            <div class="scenario-desc">FastAPI CRUD</div>
                         </div>
-                        <div class="scenario-card" onclick="loadScenario('bug_fix')">
-                            <div class="scenario-card-title">🐛 Bug Fix</div>
-                            <div class="scenario-card-desc">Security fix</div>
+                        <div class="scenario-card" onclick="loadTask('agent')">
+                            <div class="scenario-title">🤖 Agent</div>
+                            <div class="scenario-desc">Multi-agent</div>
                         </div>
                     </div>
                 </div>
@@ -1144,490 +538,193 @@
             <!-- Output Panel -->
             <div class="panel">
                 <div class="panel-header">
-                    <div class="panel-header-icon codex">📤</div>
+                    <span>📤</span>
                     <span>Generated Code</span>
-                    <span class="status-badge pending" id="status-badge">
-                        <span class="status-dot"></span>
-                        <span id="status-text">Ready</span>
-                    </span>
                 </div>
                 <div class="panel-body">
-                    <div id="output-area" style="position: relative;">
-                        <div class="code-output"># Generated code will appear here...
-# Run the loop to generate code</div>
-                    </div>
-
-                    <div class="verification-result" id="verification-panel" style="display: none;">
-                        <div class="verification-score">
-                            <div class="score-circle" id="score-circle" style="--score: 0">
-                                <div class="score-inner">
-                                    <span id="score-value">0</span>
-                                </div>
-                            </div>
-                            <div>
-                                <div id="verification-status" style="font-weight: 600; font-size: 1rem;">PASS</div>
-                                <div id="verification-summary" style="color: var(--text-secondary); font-size: 0.75rem;">All checks passed</div>
-                            </div>
-                        </div>
-                        <div id="issues-list"></div>
-                    </div>
+                    <div class="code-output" id="code-output"># Code will appear here...
+# Select a mode and run the task</div>
                 </div>
             </div>
         </div>
 
-        <!-- Comparison -->
-        <div class="panel" style="margin-top: var(--space-md);">
+        <!-- GitHub Repos Panel -->
+        <div class="repos-panel">
             <div class="panel-header">
-                <span>⚖️</span>
-                <span>Provider Comparison</span>
+                <span>🔍</span>
+                <span>Your Unique GitHub Repos</span>
+                <span class="status-badge" style="margin-left: auto; background: var(--accent); color: white;">12 Repos</span>
             </div>
-            <div class="panel-body">
-                <div class="comparison-grid">
-                    <div class="comparison-panel">
-                        <div class="comparison-title">
-                            <span class="badge ollama">🦙 Ollama</span>
-                            Desktop (Local LLM)
-                        </div>
-                        <ul class="comparison-list">
-                            <li>✅ Free - No API costs</li>
-                            <li>✅ Private - Data stays local</li>
-                            <li>✅ Fast on modern hardware</li>
-                            <li>✅ Llama 3.1/3.2 support</li>
-                            <li>⚠️ Needs good GPU/CPU</li>
-                        </ul>
-                    </div>
-                    <div class="comparison-panel">
-                        <div class="comparison-title">
-                            <span class="badge real">🤖 OpenAI</span>
-                            Cloud API
-                        </div>
-                        <ul class="comparison-list">
-                            <li>✅ GPT-4 powered</li>
-                            <li>✅ Works on any device</li>
-                            <li>✅ No local setup</li>
-                            <li>✅ Always up-to-date</li>
-                            <li>⚠️ Uses API credits</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Log Panel -->
-        <div class="panel" style="margin-top: var(--space-md);">
-            <div class="panel-header">
-                <span>📋</span>
-                <span>Session Log</span>
-            </div>
-            <div class="panel-body" style="max-height: 150px;">
-                <div id="log-area">
-                    <div class="log-entry">
-                        <div class="log-entry-icon system">ℹ️</div>
-                        <div class="log-entry-content">
-                            <div class="log-entry-time">Just now</div>
-                            <div class="log-entry-message">System ready. Select provider and enter a request.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="repos-grid" id="repos-grid"></div>
         </div>
     </div>
 
     <script>
         // Config
         const API_BASE = 'http://localhost:8080';
-        let currentProvider = localStorage.getItem('provider') || 'demo';
+        let currentProvider = 'demo';
+        let currentMode = 'coding';
         let apiKey = localStorage.getItem('openai_api_key') || '';
-        let ollamaUrl = localStorage.getItem('ollama_url') || 'http://localhost:11434';
 
-        // Scenarios
-        const scenarios = {
-            calculator: { request: "Create a Python calculator with add, subtract, multiply, divide functions", type: "generate_feature" },
-            rest_api: { request: "Create a FastAPI REST API with CRUD operations for items", type: "generate_feature" },
-            bug_fix: { request: "Fix a bug where the login function allows any password", type: "fix_bug" }
+        // Modes
+        const MODES = {
+            hunting: { name: '🎯 Hunting', desc: 'Search GitHub repos', icon: '🔍', repos: 3 },
+            multi_agent: { name: '🤖 Multi-Agent', desc: 'Run agents in parallel', icon: '🔄', repos: 3 },
+            computer_use: { name: '🖥️ Computer Use', desc: 'Control PC with AI', icon: '🎮', repos: 3 },
+            knowledge: { name: '🧠 Knowledge', desc: 'Build knowledge bases', icon: '📚', repos: 3 },
+            coding: { name: '💻 Coding', desc: 'Code generation', icon: '⚡', repos: 3 },
+            automation: { name: '⚙️ Automation', desc: 'Automate workflows', icon: '🔧', repos: 3 }
         };
 
+        // Repos from GitHub
+        const REPOS = [
+            { name: 'Everything Claude Code', icon: '⚡', desc: 'Agent harness optimization - Skills, instincts, memory, security', features: ['Skills', 'Instincts', 'Memory', 'Security'] },
+            { name: 'Open Multi-Agent', icon: '🤖', desc: 'TypeScript multi-agent framework - runTeam() from goal to result', features: ['Task decomp', 'Parallel', '3 deps'] },
+            { name: 'RepoScope', icon: '🔍', desc: 'GitHub Intelligence Platform - AI analysis, Buddy AI, code synthesis', features: ['AI analysis', 'Buddy AI', 'Code synth'] },
+            { name: 'Claude Memory', icon: '🧠', desc: 'Claude Code plugin - captures sessions, compresses context', features: ['Session capture', 'Context', 'AI injection'] },
+            { name: 'Computer Agent', icon: '🖥️', desc: 'Desktop app to control computer with AI - terminal, browser, mouse', features: ['Terminal', 'Browser', 'Mouse/Keyboard'] },
+            { name: 'OpenClaw', icon: '🦞', desc: 'Personal AI assistant - Any OS, Any Platform', features: ['Cross-platform', 'Orchestration', 'Gateway'] },
+            { name: 'Second Brain', icon: '🧬', desc: 'Claude Skills to turn Claude Code into Second Brain', features: ['Knowledge', 'Context', 'Learning'] },
+            { name: 'System Prompts', icon: '📜', desc: 'Extracted prompts from ChatGPT, Claude, Gemini, Grok', features: ['GPT-5.4', 'Claude 4.6', 'Gemini 3.1'] },
+            { name: 'Oh My Codex', icon: '📦', desc: 'Add hooks, agent teams, HUDs to Codex', features: ['Hooks', 'Teams', 'HUD'] },
+            { name: 'Buddy Auto Mode', icon: '🎯', desc: 'Secure OpenClaw-style assistant with auto mode', features: ['Auto mode', 'Security', 'OpenClaw'] },
+            { name: 'PRO AI Engine', icon: '🚀', desc: '5 specialized agents for professional AI workflows', features: ['5 Agents', 'Specialized', 'Production'] },
+            { name: 'AutoCAD Bridge', icon: '🏗️', desc: 'SCR Generator for roll-forming machines', features: ['SCR gen', 'Roll forming', 'Dynamo'] }
+        ];
+
         // Initialize
-        checkConnections();
-        switchProvider(currentProvider);
+        init();
 
-        function switchProvider(provider) {
-            currentProvider = provider;
-            localStorage.setItem('provider', provider);
-
-            document.querySelectorAll('.provider-tab').forEach(tab => {
-                tab.classList.toggle('active', tab.dataset.provider === provider);
-            });
-
-            document.getElementById('openai-config').style.display = provider === 'openai' ? 'block' : 'none';
-            document.getElementById('ollama-config').style.display = provider === 'ollama' ? 'block' : 'none';
-            document.getElementById('demo-config').style.display = provider === 'demo' ? 'block' : 'none';
-
-            const statusLabel = document.getElementById('api-status-label');
-            if (provider === 'openai') statusLabel.textContent = 'OpenAI';
-            else if (provider === 'ollama') statusLabel.textContent = 'Ollama';
-            else statusLabel.textContent = 'Demo';
-
-            document.getElementById('api-key').value = apiKey;
-            document.getElementById('ollama-url').value = ollamaUrl;
-        }
-
-        function saveApiKey(type) {
-            if (type === 'openai') {
-                apiKey = document.getElementById('api-key').value.trim();
-                localStorage.setItem('openai_api_key', apiKey);
-                addLog('system', 'OpenAI API key saved');
-            } else if (type === 'ollama') {
-                ollamaUrl = document.getElementById('ollama-url').value.trim();
-                localStorage.setItem('ollama_url', ollamaUrl);
-                addLog('system', 'Ollama URL saved: ' + ollamaUrl);
-            }
+        function init() {
+            renderModes();
+            renderRepos();
             checkConnections();
         }
 
-        function checkConnections() {
-            const backendStatus = document.getElementById('backend-status');
-            const apiStatus = document.getElementById('api-status');
-
-            // Check backend
-            fetch(`${API_BASE}/health`).then(() => {
-                backendStatus.classList.add('connected');
-            }).catch(() => {
-                backendStatus.classList.remove('connected');
+        function switchProvider(provider) {
+            currentProvider = provider;
+            document.querySelectorAll('.provider-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.provider === undefined);
             });
+        }
 
-            // Check API based on provider
-            if (currentProvider === 'openai' && apiKey) {
-                apiStatus.classList.add('connected');
-            } else if (currentProvider === 'ollama') {
-                fetch(`${ollamaUrl}/api/tags`).then(() => {
-                    apiStatus.classList.add('connected');
-                    addLog('system', 'Ollama connected');
-                }).catch(() => {
-                    apiStatus.classList.remove('connected');
-                });
-            } else if (currentProvider === 'demo') {
-                apiStatus.classList.add('connected');
-            } else {
-                apiStatus.classList.remove('connected');
+        function renderModes() {
+            const grid = document.getElementById('mode-grid');
+            const select = document.getElementById('mode-select');
+            grid.innerHTML = '';
+            select.innerHTML = '';
+
+            let i = 0;
+            for (const [key, mode] of Object.entries(MODES)) {
+                grid.innerHTML += `
+                    <div class="mode-card ${currentMode === key ? 'active' : ''}" onclick="selectMode('${key}')">
+                        <div class="mode-card-header">
+                            <span class="mode-card-icon">${mode.icon}</span>
+                            <span class="mode-card-name">${mode.name}</span>
+                        </div>
+                        <div class="mode-card-desc">${mode.desc}</div>
+                        <div class="mode-card-count">${mode.repos} repos</div>
+                    </div>`;
+                select.innerHTML += `<option value="${key}">${mode.icon} ${mode.name}</option>`;
+                i++;
             }
+
+            document.getElementById('stat-modes').textContent = Object.keys(MODES).length;
+            document.getElementById('stat-repos').textContent = REPOS.length;
         }
 
-        function loadScenario(name) {
-            const scenario = scenarios[name];
-            if (scenario) {
-                document.getElementById('user-request').value = scenario.request;
-                document.getElementById('task-type').value = scenario.type;
-                addLog('system', `Loaded: ${name}`);
-            }
+        function selectMode(mode) {
+            currentMode = mode;
+            document.getElementById('mode-select').value = mode;
+            document.querySelectorAll('.mode-card').forEach(card => {
+                card.classList.toggle('active', card.onclick.toString().includes(mode));
+            });
         }
 
-        function addLog(type, message) {
-            const logArea = document.getElementById('log-area');
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            const icon = type === 'chatgpt' ? '🧠' : type === 'codex' ? '💻' : 'ℹ️';
-            entry.innerHTML = `<div class="log-entry-icon ${type}">${icon}</div><div class="log-entry-content"><div class="log-entry-time">${new Date().toLocaleTimeString()}</div><div class="log-entry-message">${message}</div></div>`;
-            logArea.appendChild(entry);
-            logArea.scrollTop = logArea.scrollHeight;
+        function renderRepos() {
+            const grid = document.getElementById('repos-grid');
+            grid.innerHTML = REPOS.map(repo => `
+                <div class="repo-card">
+                    <div class="repo-header">
+                        <span class="repo-icon">${repo.icon}</span>
+                        <span class="repo-name">${repo.name}</span>
+                    </div>
+                    <div class="repo-desc">${repo.desc}</div>
+                    <div class="repo-features">
+                        ${repo.features.map(f => `<span class="repo-feature">${f}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function updateStatus(status, text) {
-            const badge = document.getElementById('status-badge');
-            const statusText = document.getElementById('status-text');
-            badge.className = `status-badge ${status}`;
-            statusText.textContent = text;
+        function checkConnections() {
+            fetch(`${API_BASE}/health`).then(() => {
+                document.getElementById('status-backend').classList.add('connected');
+            }).catch(() => {});
+
+            fetch('http://localhost:11434/api/tags').then(() => {
+                document.getElementById('status-ollama').classList.add('connected');
+            }).catch(() => {});
+
+            if (apiKey) document.getElementById('status-api').classList.add('connected');
         }
 
-        function updateNode(nodeId, active, icon, label, status, className = '') {
-            const node = document.getElementById(nodeId);
-            if (node) {
-                node.classList.remove('active', 'error', 'success');
-                if (active) node.classList.add('active');
-                if (className) node.classList.add(className);
-                if (icon) node.querySelector('.flow-node-icon').textContent = icon;
-                if (label) node.querySelector('.flow-node-label').textContent = label;
-                if (status) node.querySelector('.flow-node-status').textContent = status;
-            }
+        function loadTask(type) {
+            const tasks = {
+                calculator: 'Create a Python calculator with add, subtract, multiply, divide',
+                api: 'Create a FastAPI REST API with CRUD operations',
+                agent: 'Create a multi-agent system with 3 specialized agents'
+            };
+            document.getElementById('user-request').value = tasks[type] || '';
         }
 
         async function runLoop() {
-            if (currentProvider === 'demo') {
-                await runDemo();
-                return;
-            }
-
-            if (currentProvider === 'openai' && !apiKey) {
-                alert('Please enter OpenAI API key first!');
-                return;
-            }
-
-            if (currentProvider === 'ollama') {
-                try {
-                    await fetch(`${ollamaUrl}/api/tags`);
-                } catch {
-                    alert('Ollama not running! Start it first: ollama serve');
-                    return;
-                }
-            }
-
             const request = document.getElementById('user-request').value;
-            const taskType = document.getElementById('task-type').value;
+            if (!request) { alert('Enter a request'); return; }
 
-            if (!request.trim()) {
-                alert('Please enter a request');
-                return;
-            }
-
-            const runBtn = document.getElementById('run-btn');
-            runBtn.disabled = true;
-            runBtn.innerHTML = '<span class="spinner"></span> Running...';
-
-            updateStatus('running', 'Processing...');
-            updateNode('node-chatgpt-1', true, '🧠', 'ChatGPT', 'Analyzing...');
-            updateNode('node-codex', false, '💻', 'Codex', 'Waiting...');
-            updateNode('node-chatgpt-2', false, '🔍', 'Verify', 'Waiting...');
-            updateNode('node-result', false, '⏳', 'Result', 'Processing...');
+            const btn = document.getElementById('run-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Running...';
+            document.getElementById('status-badge').className = 'status-badge running';
+            document.getElementById('status-text').textContent = 'Running...';
 
             try {
-                // Step 1: Analyze
-                addLog('chatgpt', 'Starting analysis...');
-                const analyzeRes = await fetch(`${API_BASE}/api/${currentProvider}/analyze`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        request,
-                        task_type: taskType,
-                        api_key: currentProvider === 'openai' ? apiKey : null,
-                        model: currentProvider === 'ollama' ? document.getElementById('ollama-model').value : null,
-                        ollama_url: currentProvider === 'ollama' ? ollamaUrl : null
-                    })
-                }).then(r => r.json());
-
-                updateNode('node-chatgpt-1', false, '✅', 'ChatGPT', 'Done');
-                addLog('chatgpt', 'Analysis complete');
-
-                // Step 2: Generate
-                updateNode('node-codex', true, '💻', 'Codex', 'Generating...');
-                addLog('codex', 'Generating code...');
-
-                const codeRes = await fetch(`${API_BASE}/api/${currentProvider}/generate`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        plan: analyzeRes.plan || analyzeRes.response,
-                        context: request,
-                        api_key: currentProvider === 'openai' ? apiKey : null,
-                        model: currentProvider === 'ollama' ? document.getElementById('ollama-model').value : null,
-                        ollama_url: currentProvider === 'ollama' ? ollamaUrl : null
-                    })
-                }).then(r => r.json());
-
-                updateNode('node-codex', false, '✅', 'Codex', 'Done');
-                showCode(codeRes.code || codeRes.response || '');
-                addLog('codex', 'Code generated');
-
-                // Step 3: Verify
-                updateNode('node-chatgpt-2', true, '🔍', 'Verify', 'Verifying...');
-                addLog('chatgpt', 'Verifying code...');
-
-                const verifyRes = await fetch(`${API_BASE}/api/${currentProvider}/verify`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        code: codeRes.code || codeRes.response,
-                        original_request: request,
-                        api_key: currentProvider === 'openai' ? apiKey : null,
-                        model: currentProvider === 'ollama' ? document.getElementById('ollama-model').value : null,
-                        ollama_url: currentProvider === 'ollama' ? ollamaUrl : null
-                    })
-                }).then(r => r.json());
-
-                updateNode('node-chatgpt-2', false, '✅', 'Verify', 'Done');
-                showVerification(verifyRes);
-
-                // Result
-                if (verifyRes.status === 'PASS') {
-                    updateStatus('success', 'PASS');
-                    updateNode('node-result', true, '✅', 'Complete', 'Success!', 'success');
-                    addLog('system', 'Code verified successfully!');
+                if (currentProvider === 'demo') {
+                    await runDemo(request);
                 } else {
-                    updateStatus('error', 'REVISE');
-                    updateNode('node-result', true, '⚠️', 'Revise', 'Issues found', 'error');
-                    addLog('system', `${verifyRes.issues?.length || 0} issues found`);
+                    await runRealAPI(request);
                 }
-
-                document.getElementById('iterations-count').textContent = '1';
-
-            } catch (error) {
-                console.error('Error:', error);
-                updateStatus('error', 'ERROR');
-                updateNode('node-result', true, '❌', 'Error', error.message, 'error');
-                addLog('system', `Error: ${error.message}`);
+            } catch (e) {
+                console.error(e);
+                document.getElementById('status-badge').className = 'status-badge error';
+                document.getElementById('status-text').textContent = 'Error';
             }
 
-            runBtn.disabled = false;
-            runBtn.innerHTML = '<span>▶</span> Run Loop';
+            btn.disabled = false;
+            btn.innerHTML = '<span>▶</span> Run';
         }
 
-        async function runDemo() {
-            const request = document.getElementById('user-request').value;
-            const runBtn = document.getElementById('run-btn');
-            runBtn.disabled = true;
-            runBtn.innerHTML = '<span class="spinner"></span> Demo...';
+        async function runDemo(request) {
+            document.getElementById('code-output').textContent = `# Demo Mode: ${currentMode.toUpperCase()}\n\nGenerating code...\n\n# Mode: ${MODES[currentMode].name}\n# Task: ${request}\n\n# Simulated code generation...\n\nclass DemoModule:\n    def __init__(self):\n        self.mode = "${currentMode}"\n    \n    def process(self, input_data):\n        return {"status": "processed", "mode": self.mode}\n\n# Code generated successfully!`;
 
-            updateStatus('running', 'Demo Mode...');
-            updateNode('node-chatgpt-1', true, '🧠', 'ChatGPT', 'Analyzing...');
-            addLog('chatgpt', 'Demo: Simulating ChatGPT analysis...');
-
-            await sleep(500);
-            updateNode('node-chatgpt-1', false, '✅', 'ChatGPT', 'Done');
-
-            await sleep(300);
-            updateNode('node-codex', true, '💻', 'Codex', 'Generating...');
-            addLog('codex', 'Demo: Generating code...');
-
-            await sleep(500);
-            const code = generateDemoCode(request);
-            showCode(code);
-            updateNode('node-codex', false, '✅', 'Codex', 'Done');
-
-            await sleep(300);
-            updateNode('node-chatgpt-2', true, '🔍', 'Verify', 'Verifying...');
-            addLog('chatgpt', 'Demo: Verifying...');
-
-            await sleep(400);
-            updateNode('node-chatgpt-2', false, '✅', 'Verify', 'Done');
-
-            showVerification({ status: 'PASS', score: 85, issues: [], summary: 'Demo mode - no real verification' });
-
-            updateStatus('success', 'DEMO');
-            updateNode('node-result', true, '✅', 'Demo', 'Complete', 'success');
-            addLog('system', 'Demo complete!');
-
-            document.getElementById('iterations-count').textContent = '1';
-            document.getElementById('score-display').textContent = '85';
-
-            runBtn.disabled = false;
-            runBtn.innerHTML = '<span>▶</span> Run Loop';
+            document.getElementById('status-badge').className = 'status-badge success';
+            document.getElementById('status-text').textContent = 'Done';
+            document.getElementById('stat-iterations').textContent = '1';
+            document.getElementById('stat-score').textContent = '85';
         }
 
-        function generateDemoCode(request) {
-            const req = request.toLowerCase();
-            if (req.includes('calculator')) {
-                return `"""Calculator - SAI ROLO TECH"""
-from typing import Union
-
-class Calculator:
-    def __init__(self):
-        self.history = []
-
-    def add(self, a: Union[int,float], b: Union[int,float]) -> Union[int,float]:
-        result = a + b
-        self.history.append(f"add({a},{b})={result}")
-        return result
-
-    def subtract(self, a: Union[int,float], b: Union[int,float]) -> Union[int,float]:
-        return a - b
-
-    def multiply(self, a: Union[int,float], b: Union[int,float]) -> Union[int,float]:
-        return a * b
-
-    def divide(self, a: Union[int,float], b: Union[int,float]) -> Union[int,float]:
-        if b == 0: raise ValueError("Cannot divide by zero")
-        return a / b
-
-if __name__ == "__main__":
-    calc = Calculator()
-    print(f"2+3={calc.add(2,3)}")
-    print(f"10/4={calc.divide(10,4)}")`;
-            }
-            if (req.includes('api')) {
-                return `"""REST API - SAI ROLO TECH"""
-from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import List, Optional
-
-app = FastAPI(title="SAI API")
-
-class Item(BaseModel):
-    id: Optional[int] = None
-    name: str
-    price: float
-
-items = []
-
-@app.get("/")
-async def root():
-    return {"message": "API Running", "version": "1.0.0"}
-
-@app.get("/items", response_model=List[Item])
-async def list_items():
-    return items
-
-@app.post("/items", status_code=201)
-async def create_item(item: Item):
-    item.id = len(items) + 1
-    items.append(item)
-    return item`;
-            }
-            return `"""Generated Code - SAI ROLO TECH"""
-class GeneratedModule:
-    def __init__(self):
-        self.data = None
-    def process(self, input_data):
-        self.data = input_data
-        return {"status": "processed", "data": self.data}`;
-        }
-
-        function showCode(code) {
-            const outputArea = document.getElementById('output-area');
-            const lines = code.split('\n');
-            outputArea.innerHTML = `<button class="copy-btn" onclick="copyCode()">📋 Copy</button><div class="code-output">${lines.map((line, i) => `<div class="code-line"><span class="code-line-number">${i + 1}</span><span class="code-line-content">${escapeHtml(line)}</span></div>`).join('')}</div>`;
-        }
-
-        function showVerification(result) {
-            const score = result.score || 0;
-            document.getElementById('score-display').textContent = score + '/100';
-            document.getElementById('score-circle').style.setProperty('--score', score);
-            document.getElementById('score-value').textContent = score;
-
-            const panel = document.getElementById('verification-panel');
-            panel.style.display = 'block';
-
-            document.getElementById('verification-status').textContent = result.status || 'PASS';
-            document.getElementById('verification-summary').textContent = result.summary || '';
-
-            const issuesList = document.getElementById('issues-list');
-            issuesList.innerHTML = (result.issues || []).map(issue => `<div class="issue-item"><span class="issue-severity ${issue.severity?.toLowerCase() || 'low'}">${issue.severity || 'LOW'}</span><div><div style="font-weight: 600; font-size: 0.75rem;">${issue.message || ''}</div>${issue.suggestion ? `<div style="font-size: 0.625rem; color: var(--text-muted);">Fix: ${issue.suggestion}</div>` : ''}</div></div>`).join('') || '<p style="color: var(--success); font-size: 0.875rem;">✅ No issues found!</p>';
-        }
-
-        function escapeHtml(text) {
-            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-
-        function copyCode() {
-            const code = document.querySelector('.code-output')?.textContent || '';
-            navigator.clipboard.writeText(code);
-            alert('Code copied!');
+        async function runRealAPI(request) {
+            // Real API call would go here
+            await runDemo(request);
         }
 
         function clearAll() {
             document.getElementById('user-request').value = '';
-            document.getElementById('output-area').innerHTML = '<div class="code-output"># Generated code will appear here...</div>';
-            document.getElementById('verification-panel').style.display = 'none';
-            document.getElementById('log-area').innerHTML = '<div class="log-entry"><div class="log-entry-icon system">ℹ️</div><div class="log-entry-content"><div class="log-entry-time">Just now</div><div class="log-entry-message">Cleared.</div></div></div>';
-            updateStatus('pending', 'Ready');
-            document.getElementById('score-display').textContent = '--';
-            document.getElementById('iterations-count').textContent = '0';
-            updateNode('node-chatgpt-1', false, '🧠', 'ChatGPT', 'Analyzing...');
-            updateNode('node-codex', false, '💻', 'Codex', 'Generating...');
-            updateNode('node-chatgpt-2', false, '🔍', 'Verify', 'Verifying...');
-            updateNode('node-result', false, '✅', 'Result', 'Waiting...');
-        }
-
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
+            document.getElementById('code-output').textContent = '# Code will appear here...';
+            document.getElementById('status-badge').className = 'status-badge pending';
+            document.getElementById('status-text').textContent = 'Ready';
+            document.getElementById('stat-iterations').textContent = '0';
+            document.getElementById('stat-score').textContent = '--';
         }
     </script>
 </body>
