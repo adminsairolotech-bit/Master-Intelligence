@@ -170,6 +170,7 @@ function getWebviewContent() {
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #4a4a4a; border-radius: 3px; }
 
+  /* Command Search - REMOVED */
   /* Settings Panel */
   #settingsPanel {
     background: #252526;
@@ -204,6 +205,9 @@ function getWebviewContent() {
     <span class="chip" onclick="selectSkill(this, 'business')">💼 Business</span>
     <span class="chip" onclick="selectSkill(this, 'support')">🎧 Support</span>
   </div>
+
+  <!-- Command Search Bar - REMOVED PER USER REQUEST -->
+  <!-- Users now just type naturally - system auto-detects task type -->
 
   <!-- Tabs -->
   <div class="tabs">
@@ -454,6 +458,10 @@ function useTemplate(key) {
   addMessage('Template selected: ' + key.replace('-', ' '), 'bot');
 }
 
+// INTELLIGENT PROMPT GENERATOR v2
+// Samajhta hai koi bhi task - Hindi/English mix mein!
+// Fixed: Better Hindi detection, more patterns
+
 function detectLanguage(text) {
   const hindiPattern = /[\u0900-\u097F]/;
   const langIndicator = document.getElementById('inputLang');
@@ -461,93 +469,368 @@ function detectLanguage(text) {
     langIndicator.textContent = 'HI';
     return 'Hindi';
   }
+  // Also detect common Hindi words in Roman script
+  const hindiWords = ['mujhe', 'mera', 'meri', 'hai', 'ka', 'ke', 'ki', 'ko', 'se', 'aur', 'bhi', 'nahi', 'kya', 'kaise', 'kyun', 'iska', 'iski', 'iske', 'tum', 'aap', 'hum', 'sab', 'kuch', 'batao', 'samjhao', 'pata', 'lena', 'dena', 'karna', 'hona', 'raha', 'rahi', 'the', 'tha', 'thi'];
+  const words = text.toLowerCase().split(/\s+/);
+  const hindiCount = words.filter(w => hindiWords.includes(w)).length;
+  if (hindiCount >= 2) {
+    langIndicator.textContent = 'HI';
+    return 'Hindi';
+  }
   langIndicator.textContent = 'EN';
   return 'English';
 }
 
-function generatePrompt(text) {
+function analyzeTask(text) {
   const lower = text.toLowerCase();
-  detectLanguage(text);
+  const lang = detectLanguage(text);
 
-  // Get selected role or auto-detect
-  let selectedRole = selectedSkill ? roles[selectedSkill] : null;
+  // ===== DOMAIN DETECTION (PRIORITY-BASED SYSTEM) =====
+  // TIER 1: High-priority domains (specific intent)
+  // TIER 2: Medium-priority domains (action-based)
+  // TIER 3: Low-priority domains (catch-all)
 
-  if (!selectedRole) {
-    // Auto-detect based on keywords
-    const keywords = {
-      'code-review': ['review', 'check code', 'analyze code'],
-      'bug-fix': ['fix', 'bug', 'error', 'issue', 'crash'],
-      'documentation': ['document', 'readme', 'docs', 'explain'],
-      'blog-post': ['blog', 'article', 'write about', 'post'],
-      'api-design': ['api', 'endpoint', 'rest', 'graphql'],
-      'test-case': ['test', 'unit test', 'testing'],
-      'email': ['email', 'mail', 'message to'],
-      'presentation': ['presentation', 'slides', 'deck', 'pitch']
-    };
+  // TIER 1: Debugging (if error/bug keywords present)
+  const debugPatterns = ['bug', 'error', 'issue', 'problem', 'fail', 'not working', 'kaam nahi', 'chal nahi', 'thik karo', 'sudhar', 'exception', 'crash', 'ruk gaya', 'band ho'];
+  const hasDebug = debugPatterns.some(p => lower.includes(p));
+  if (hasDebug) {
+    return buildPromptResult(roles.debugger, 'debugging', [], lang, text);
+  }
 
-    for (const [skill, patterns] of Object.entries(keywords)) {
-      if (patterns.some(p => lower.includes(p))) {
-        selectedRole = roles[skill];
-        break;
-      }
+  // TIER 1: Security (if security keywords present)
+  const secPatterns = ['security', 'auth', 'password', 'encrypt', 'jwt', 'oauth', 'secure', 'permission', 'hack', 'vulnerability', 'ssl', 'https', 'firewall'];
+  const hasSec = secPatterns.some(p => lower.includes(p));
+  if (hasSec) {
+    return buildPromptResult(roles.security, 'security', detectTech(lower), lang, text);
+  }
+
+  // TIER 2: Review (explicit review intent)
+  const reviewPatterns = ['review', 'audit', 'analyze', 'check karo', 'improve', 'optimize', 'quality'];
+  const hasReview = reviewPatterns.some(p => lower.includes(p));
+  if (hasReview) {
+    return buildPromptResult(roles.reviewer, 'review', detectTech(lower), lang, text);
+  }
+
+  // TIER 2: Education (explicit learning intent)
+  const eduPatterns = ['explain', 'what is', 'kya hai', 'samjhao', 'batao', 'pata nahi', 'kaise kaam', 'simple', 'basics', 'understand', 'kuch bhi', 'seekho', 'shuru', 'kaise'];
+  const hasEdu = eduPatterns.some(p => lower.includes(p));
+  if (hasEdu) {
+    return buildPromptResult(roles.educator, 'education', detectTech(lower), lang, text);
+  }
+
+  // TIER 2: DevOps (setup/deploy context)
+  const devOpsPatterns = ['setup', 'deploy', 'docker', 'server', 'linux', 'aws', 'azure', 'kubernetes', 'hosting', 'install', 'configuration', 'container'];
+  const hasDevOps = devOpsPatterns.some(p => lower.includes(p));
+  if (hasDevOps) {
+    return buildPromptResult(roles.devops, 'devops', detectTech(lower), lang, text);
+  }
+
+  // TIER 3: Coding (default - general dev context)
+  const codingPatterns = ['code', 'program', 'function', 'class', 'api', 'component', 'banana', 'banao', 'website', 'web', 'app', 'page', 'button', 'script', 'build'];
+  const hasCoding = codingPatterns.some(p => lower.includes(p));
+  if (hasCoding) {
+    return buildPromptResult(roles.engineer, 'coding', detectTech(lower), lang, text);
+  }
+
+  // TIER 3: Writing
+  const writePatterns = ['write', 'article', 'blog', 'content', 'post', 'email', 'readme'];
+  const hasWrite = writePatterns.some(p => lower.includes(p));
+  if (hasWrite) {
+    return buildPromptResult(roles.writer, 'writing', [], lang, text);
+  }
+
+  // DEFAULT: Engineer role
+  return buildPromptResult(roles.engineer, 'coding', detectTech(lower), lang, text);
+}
+
+// Helper: Detect technology stack
+function detectTech(lower) {
+  const techs = [];
+  const techsMap = {
+    'React': ['react', 'jsx', 'tsx'],
+    'Vue': ['vue', 'nuxt'],
+    'Angular': ['angular'],
+    'Node.js': ['node', 'nodejs', 'express'],
+    'Python': ['python', 'python3'],
+    'JavaScript': ['javascript', 'js'],
+    'TypeScript': ['typescript', 'ts'],
+    'Java': ['java', 'spring'],
+    'Go': ['golang'],
+    'Rust': ['rust'],
+    'C#': ['csharp', 'dotnet'],
+    'PHP': ['php', 'laravel'],
+    'MongoDB': ['mongodb', 'mongo'],
+    'PostgreSQL': ['postgresql', 'postgres'],
+    'MySQL': ['mysql', 'mariadb'],
+    'Docker': ['docker', 'container'],
+    'Kubernetes': ['kubernetes', 'k8s', 'kubectl'],
+    'AWS': ['aws', 'ec2', 's3', 'lambda'],
+    'Azure': ['azure'],
+    'Git': ['git', 'github'],
+    'GraphQL': ['graphql'],
+    'REST API': ['rest', 'api', 'endpoint'],
+    'Web': ['website', 'html', 'css', 'frontend'],
+    'Mobile': ['mobile', 'android', 'ios', 'app'],
+  };
+
+  for (const [tech, patterns] of Object.entries(techsMap)) {
+    if (patterns.some(p => lower.includes(p))) {
+      techs.push(tech);
     }
+  }
+  return techs;
+}
 
-    if (!selectedRole) {
-      // Default based on content
-      if (lower.includes('explain') || lower.includes('what is')) {
-        selectedRole = roles.educator;
-      } else if (lower.includes('write') || lower.includes('create')) {
-        selectedRole = roles.writer;
-      } else if (lower.includes('code') || lower.includes('function')) {
-        selectedRole = roles.engineer;
-      } else {
-        selectedRole = roles.engineer; // Default
-      }
+// Helper: Build prompt result
+function buildPromptResult(role, taskType, techStacks, lang, text) {
+  const techStackSection = techStacks.length > 0 ?
+    `\n• **Tech Stack**: ${techStacks.join(', ')}` : '';
+
+  const langHint = lang === 'Hindi' ?
+    '\n• **Language**: Respond in Hindi (हिंदी) with English technical terms.' :
+    '\n• **Language**: Respond in English with standard technical terms.';
+
+  const format = lower.includes('step') || lower.includes('kaise') ?
+    'numbered step-by-step list' :
+    lower.includes('code') || lower.includes('function') ?
+    'code snippets with explanations' :
+    'clear paragraphs with proper structure';
+
+  const tone = lower.includes('simple') || lower.includes('basic') ?
+    'simple for beginners' :
+    lower.includes('technical') ?
+    'highly technical' :
+    'professional and helpful';
+
+  return '# ROLE\n' + role.role + '\n\n# EXPERTISE\nYour core strength: ' + role.expertise + '\n\n# TASK\n' + text + '\n\n# CONTEXT ANALYSIS\n• **Domain**: ' + taskType + '\n• **Detected Tech**: ' + (techStacks.length > 0 ? techStacks.join(', ') : 'General') + '\n• **Priority**: Essential first, advanced optional' + techStackSection + '\n\n# REQUIREMENTS\n• **Tone**: Be ' + tone + langHint + '\n• **Format**: Structure as ' + format + '\n• **Depth**: Cover essentials, then optional details\n\n# RESPONSE STRUCTURE\n1. Quick Summary (1-2 lines)\n2. Main Content\n3. Code Examples (if applicable)\n4. Common Pitfalls\n5. Next Steps\n\n# CONSTRAINTS\n• Start immediately with useful content\n• Use clear headers (## Header)\n• Include working code examples\n• Anticipate follow-up questions\n• End with actionable next steps';
+}
+
+// Legacy function for backward compatibility
+function detectLanguage(text) {
+  const hindiPattern = /[\u0900-\u097F]/;
+  const langIndicator = document.getElementById('inputLang');
+  if (hindiPattern.test(text)) {
+    langIndicator.textContent = 'HI';
+    return 'Hindi';
+  }
+  const hindiWords = ['mujhe', 'mera', 'meri', 'hai', 'ka', 'ke', 'ki', 'ko', 'se', 'aur', 'bhi', 'nahi', 'kya', 'kaise', 'kyun', 'iska', 'iski', 'iske', 'tum', 'aap', 'hum', 'sab', 'kuch', 'batao', 'samjhao', 'pata', 'lena', 'dena', 'karna', 'hona', 'raha', 'rahi', 'the', 'tha', 'thi'];
+  const words = text.toLowerCase().split(/\s+/);
+  const hindiCount = words.filter(w => hindiWords.includes(w)).length;
+  if (hindiCount >= 2) {
+    langIndicator.textContent = 'HI';
+    return 'Hindi';
+  }
+  langIndicator.textContent = 'EN';
+  return 'English';
+}
+
+// Legacy generatePrompt
+function generatePrompt(text) {
+  return analyzeTask(text);
+}
+
+// PLACEHOLDER for remaining code (chat, history, etc.)
+function switchTab(tab) { document.getElementById(tab + 'Panel').classList.add('active'); }
+function addMessage(text, sender) { const chatBox = document.getElementById('chatBox'); const div = document.createElement('div'); div.className = 'message ' + sender; div.textContent = text; chatBox.appendChild(div); }
+function copyPrompt() { navigator.clipboard.writeText(document.getElementById('promptText').innerText); }
+function buildPrompt() { const input = document.getElementById('userInput').value.trim(); if (!input) return; document.getElementById('promptText').textContent = analyzeTask(input); document.getElementById('promptResult').style.display = 'block'; addMessage(input, 'user'); document.getElementById('userInput').value = ''; }
+      patterns: [
+        'help', 'support', 'assist', 'customer', 'user', 'question',
+        'how to', 'guide', 'instructions', 'mujhe', 'chahiye', 'chaiye'
+      ],
+      role: roles.support,
+      weight: 0
+    }
+  };
+
+  // Calculate domain weights based on pattern matches
+  for (const [domain, data] of Object.entries(domains)) {
+    data.weight = data.patterns.filter(p => lower.includes(p)).length;
+  }
+
+  // Get best matching domain
+  let bestDomain = domains.coding;
+  let maxWeight = 0;
+  for (const [domain, data] of Object.entries(domains)) {
+    if (data.weight > maxWeight) {
+      maxWeight = data.weight;
+      bestDomain = data;
     }
   }
 
-  // Detect format
-  let format = 'structured and well-organized';
-  if (lower.includes('step') || lower.includes('how to')) format = 'step-by-step with clear numbering';
-  else if (lower.includes('example')) format = 'with practical examples';
-  else if (lower.includes('list')) format = 'bullet or numbered list format';
-  else if (lower.includes('code')) format = 'with code snippets and explanations';
-  else if (lower.includes('summary')) format = 'concise summary with key takeaways';
+  // Manual skill selection override
+  if (selectedSkill && roles[selectedSkill]) {
+    bestDomain = { role: roles[selectedSkill] };
+  }
 
-  // Detect tone
-  let tone = 'clear, helpful, and action-oriented';
-  if (lower.includes('formal')) tone = 'formal and professional';
-  else if (lower.includes('casual')) tone = 'casual and friendly';
-  else if (lower.includes('technical')) tone = 'highly technical and precise';
-  else if (lower.includes('simple')) tone = 'simple enough for beginners';
+  // ===== TECHNOLOGY STACK DETECTION (with Hindi patterns) =====
+  const techStacks = [];
+  const techPatterns = {
+    'React': ['react', 'jsx', 'tsx', 'usestate', 'useeffect', 'component', 'reactjs'],
+    'Vue': ['vue', 'nuxt', 'vuex', 'pinia', 'vuejs'],
+    'Angular': ['angular', 'ngmodule', '@component', 'angularjs'],
+    'Node.js': ['node', 'nodejs', 'express', 'npm', 'yarn', 'backend api'],
+    'Python': ['python', 'django', 'flask', 'fastapi', 'pip', 'python3'],
+    'Java': ['java', 'spring', 'maven', 'gradle', 'jdk'],
+    'Go': ['golang', ' go ', 'go-lang'],
+    'Rust': ['rust', 'cargo'],
+    'C#': ['csharp', 'dotnet', '.net', 'asp.net'],
+    'TypeScript': ['typescript', 'tsconfig', 'ts-node'],
+    'MongoDB': ['mongodb', 'mongoose', 'no-sql', 'mongo'],
+    'PostgreSQL': ['postgresql', 'postgres', 'pg-', 'psql'],
+    'MySQL': ['mysql', 'mariadb', 'mysql'],
+    'Docker': ['docker', 'container', 'dockerfile', 'docker-compose', 'containerization'],
+    'Kubernetes': ['kubernetes', 'k8s', 'kubectl', 'helm', 'cluster'],
+    'AWS': ['aws', 'amazon', 'ec2', 's3', 'lambda', 'dynamodb', 'cloudwatch'],
+    'Azure': ['azure', 'microsoft', 'az'],
+    'Git': ['git', 'github', 'gitlab', 'bitbucket', 'commit', 'branch', 'github'],
+    'GraphQL': ['graphql', 'apollo'],
+    'REST API': ['rest', 'restful', 'api', 'endpoint', 'http'],
+    // Hindi tech terms
+    'Web Development': ['website', 'web', 'page', 'html', 'css', 'frontend', 'backend'],
+    'Database': ['database', 'db', 'data', 'table', 'schema', 'sql'],
+    'Mobile': ['mobile', 'android', 'ios', 'react native', 'flutter', 'app'],
+  };
 
-  // Detect detail level
-  let detail = 'balanced mix of depth and clarity';
-  if (lower.includes('simple') || lower.includes('basic')) detail = 'beginner-friendly with foundational concepts';
-  else if (lower.includes('detailed') || lower.includes('comprehensive')) detail = 'comprehensive with deep analysis';
-  else if (lower.includes('quick') || lower.includes('brief')) detail = 'concise and to-the-point';
+  for (const [tech, patterns] of Object.entries(techPatterns)) {
+    if (patterns.some(p => lower.includes(p))) {
+      techStacks.push(tech);
+    }
+  }
+    'Node.js': ['node', 'express', 'npm', 'yarn', 'backend api'],
+    'Python': ['python', 'django', 'flask', 'fastapi', 'pip'],
+    'Java': ['java', 'spring', 'maven', 'gradle'],
+    'Go': ['golang', ' go ', 'go-lang'],
+    'Rust': ['rust', 'cargo'],
+    'C#': ['csharp', 'dotnet', '.net'],
+    'TypeScript': ['typescript', 'tsconfig', 'ts-node'],
+    'MongoDB': ['mongodb', 'mongoose', 'no-sql'],
+    'PostgreSQL': ['postgresql', 'postgres', 'pg-'],
+    'MySQL': ['mysql', 'mariadb'],
+    'Docker': ['docker', 'container', 'dockerfile', 'docker-compose'],
+    'Kubernetes': ['kubernetes', 'k8s', 'kubectl', 'helm'],
+    'AWS': ['aws', 'amazon', 'ec2', 's3', 'lambda', 'dynamodb'],
+    'Azure': ['azure', 'microsoft'],
+    'Git': ['git', 'github', 'gitlab', 'bitbucket', 'commit', 'branch'],
+    'GraphQL': ['graphql', 'apollo'],
+    'REST API': ['rest', 'restful', 'api endpoint', 'http request'],
+  };
 
-  // Language hint
-  const lang = detectLanguage(text);
-  const langHint = lang === 'Hindi' ? '\n• Language: Respond in Hindi with English technical terms where appropriate.' : '';
+  for (const [tech, patterns] of Object.entries(techPatterns)) {
+    if (patterns.some(p => lower.includes(p))) {
+      techStacks.push(tech);
+    }
+  }
 
-  // Build structured prompt
-  return "# ROLE\n" +
-    selectedRole.role + ".\n\n" +
-    "# EXPERTISE\n" +
-    "Your core strength: " + selectedRole.expertise + ".\n\n" +
-    "# TASK\n" +
-    text + "\n\n" +
-    "# REQUIREMENTS\n" +
-    "• Tone: Be " + tone + "\n" +
-    "• Detail Level: " + detail + "\n" +
-    "• Format: Structure your response " + format + langHint + "\n\n" +
-    "# CONSTRAINTS\n" +
-    "• Start with the most important information\n" +
-    "• Use clear section headers for organization\n" +
-    "• Include specific details, numbers, or code where relevant\n" +
-    "• Anticipate follow-up questions\n" +
-    "• End with actionable next steps or summary";
+  // ===== TASK TYPE DETECTION =====
+  let taskType = 'general';
+  const taskPatterns = {
+    'create': ['create', 'build', 'make', 'develop', 'implement', 'banana', 'banao', 'lena'],
+    'fix': ['fix', 'bug', 'error', 'issue', 'problem', 'thik', 'sudhar', 'solve'],
+    'explain': ['explain', 'what is', 'how does', 'why', 'kya hai', 'kyunki', 'kaise kaam'],
+    'review': ['review', 'check', 'analyze', 'audit', 'evaluate'],
+    'optimize': ['optimize', 'improve', 'enhance', 'performance', 'speed'],
+    'secure': ['secure', 'protect', 'encrypt', 'hash', 'safe'],
+    'test': ['test', 'testing', 'jest', 'pytest', 'unittest'],
+    'debug': ['debug', 'trace', 'stack', 'console log'],
+    'document': ['document', 'readme', 'docs', 'comment', 'specification'],
+    'deploy': ['deploy', 'release', 'publish', 'host', 'production'],
+  };
+
+  for (const [type, patterns] of Object.entries(taskPatterns)) {
+    if (patterns.some(p => lower.includes(p))) {
+      taskType = type;
+      break;
+    }
+  }
+
+  // ===== FORMAT DETECTION =====
+  let format = 'clear paragraphs with proper structure';
+  if (lower.includes('step') || lower.includes('step by step') || lower.includes('numbered') || lower.includes('순서')) {
+    format = 'numbered step-by-step list (1, 2, 3...)';
+  }
+  if (lower.includes('code') || lower.includes('snippet') || lower.includes('example')) {
+    format = 'code snippets with explanations (```language)';
+  }
+  if (lower.includes('list') || lower.includes('bullet') || lower.includes('points')) {
+    format = 'bullet points for easy scanning';
+  }
+  if (lower.includes('table') || lower.includes('comparison')) {
+    format = 'table format for comparison';
+  }
+  if (lower.includes('diagram') || lower.includes('flowchart')) {
+    format = 'ASCII diagrams or flowchart representation';
+  }
+
+  // ===== TONE DETECTION =====
+  let tone = 'professional and helpful';
+  if (lower.includes('simple') || lower.includes('basic') || lower.includes('beginner') || lower.includes('shuru')) {
+    tone = 'simple for beginners with explanations';
+  }
+  if (lower.includes('technical') || lower.includes('advanced') || lower.includes('expert')) {
+    tone = 'highly technical with deep details';
+  }
+  if (lower.includes('casual') || lower.includes('friendly') || lower.includes('informal')) {
+    tone = 'conversational and friendly';
+  }
+  if (lower.includes('formal') || lower.includes('business')) {
+    tone = 'formal and business-appropriate';
+  }
+
+  // ===== PRIORITY DETECTION =====
+  let priority = 'comprehensive coverage';
+  if (lower.includes('quick') || lower.includes('brief') || lower.includes('short') || lower.includes('fast')) {
+    priority = 'quick overview - most important only';
+  }
+  if (lower.includes('detailed') || lower.includes('comprehensive') || lower.includes('full')) {
+    priority = 'comprehensive and detailed with all edge cases';
+  }
+
+  // ===== LANGUAGE HINT =====
+  const langHint = lang === 'Hindi' ?
+    '\n• **Language**: Respond in Hindi (हिंदी) with English technical terms where standard.' :
+    '\n• **Language**: Respond in English with technical terms as standard.';
+
+  // ===== BUILD STRUCTURED PROMPT =====
+  const techStackSection = techStacks.length > 0 ?
+    `\n• **Tech Stack**: ${techStacks.join(', ')}` : '';
+
+  return `# ROLE
+${bestDomain.role.role}
+
+# EXPERTISE
+Your core strength: ${bestDomain.role.expertise}
+
+# TASK (Original Input)
+${text}
+
+# CONTEXT ANALYSIS
+• **Domain**: ${taskType.charAt(0).toUpperCase() + taskType.slice(1)}
+• **Detected Tech**: ${techStacks.length > 0 ? techStacks.join(', ') : 'General/Unspecified'}
+• **Priority Level**: ${priority}${techStackSection}
+
+# REQUIREMENTS
+• **Tone**: Be ${tone}
+• **Format**: Structure response as ${format}${langHint}
+• **Depth**: Cover essential points first, then optional advanced details
+
+# RESPONSE STRUCTURE
+1. Quick Summary (1-2 lines)
+2. Main Content (well-organized sections)
+3. Code Examples (if applicable)
+4. Common Pitfalls / Gotchas
+5. Related Commands / Next Steps
+
+# CONSTRAINTS
+• Start immediately with useful content - no preamble
+• Use clear headers (## Header) for organization
+• Include working code examples where applicable
+• Anticipate follow-up questions
+• End with actionable next steps or quick reference`;
+}
+
+function generatePrompt(text) {
+  return analyzeTask(text);
 }
 
 async function buildPrompt() {
