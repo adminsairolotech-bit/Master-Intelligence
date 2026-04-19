@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laptop Optimizer - Replit Style</title>
+    <style>
+        :root {
+            --bg: #1a1a1a;
+            --bg-sidebar: #252526;
+            --bg-activity: #333333;
+            --bg-hover: #2a2a2a;
+            --bg-selected: #094771;
+            --border: #3c3c3c;
+            --text: #cccccc;
+            --text-dim: #858585;
+            --accent: #0078d4;
+            --accent-hover: #1a8cde;
+            --success: #4ec9b0;
+            --warning: #dcdcaa;
+            --danger: #f14c4c;
+            --cpu: #ce9178;
+            --ram: #4fc1ff;
+            --disk: #cc99ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            font-size: 13px;
+        }
+
+        /* TOP BAR (Title Bar) */
+        .topbar {
+            height: 30px;
+            background: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            -webkit-app-region: drag;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            -webkit-app-region: no-drag;
+        }
+
+        .app-title {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .file-tabs {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            height: 100%;
+            margin-left: 20px;
+            -webkit-app-region: no-drag;
+        }
+
+        .tab {
+            padding: 0 15px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg);
+            border-right: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background: var(--bg);
+            border-bottom: 1px solid var(--accent);
+            margin-bottom: -1px;
+        }
+
+        .tab-icon { font-size: 14px; }
+
+        .topbar-actions {
+            display: flex;
+            -webkit-app-region: no-drag;
+        }
+
+        .topbar-btn {
+            width: 46px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .topbar-btn:hover { background: var(--bg-hover); }
+        .topbar-btn.close:hover { background: #e81123; color: white; }
+
+        /* MAIN LAYOUT */
+        .main {
+            display: grid;
+            grid-template-columns: 48px 240px 1fr 280px;
+            height: calc(100vh - 30px);
+        }
+
+        /* ACTIVITY BAR */
+        .activity {
+            background: var(--bg-activity);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px 0;
+        }
+
+        .activity-btn {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.1s;
+        }
+
+        .activity-btn:hover { background: var(--bg-hover); }
+        .activity-btn.active { color: var(--accent); }
+        .activity-btn.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: var(--accent);
+            border-radius: 0 2px 2px 0;
+        }
+
+        .activity-spacer { flex: 1; }
+
+        .activity-bottom {
+            margin-bottom: 8px;
+        }
+
+        /* SIDEBAR (Explorer) */
+        .sidebar {
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 10px 15px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .section-header {
+            padding: 8px 15px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .section-header:hover { color: var(--text); }
+        .section-header .arrow { font-size: 10px; transition: transform 0.2s; }
+        .section-header.open .arrow { transform: rotate(90deg); }
+
+        .file-list {
+            padding-left: 15px;
+        }
+
+        .file-item {
+            padding: 4px 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .file-item:hover { background: var(--bg-hover); }
+        .file-item.active { background: var(--bg-selected); }
+
+        .file-icon { font-size: 14px; }
+
+        /* EDITOR AREA */
+        .editor {
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .editor-tabs {
+            height: 35px;
+            background: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .editor-tab {
+            padding: 0 15px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: none;
+            border-right: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .editor-tab.active {
+            background: var(--bg);
+            color: var(--text);
+            border-bottom: 1px solid var(--bg);
+            margin-bottom: -1px;
+        }
+
+        .editor-tab:hover { color: var(--text); }
+
+        .editor-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 20px;
+        }
+
+        /* DASHBOARD CARDS */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .dash-card {
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .dash-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .dash-card-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .dash-card-title {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .dash-card-sub {
+            font-size: 10px;
+            color: var(--text-dim);
+        }
+
+        /* PROGRESS RING */
+        .ring-center {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .ring {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .ring svg { transform: rotate(-90deg); }
+        .ring-bg { fill: none; stroke: var(--bg); stroke-width: 8; }
+        .ring-fg { fill: none; stroke-width: 8; stroke-linecap: round; transition: all 0.5s; }
+
+        .ring-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ring-val { font-size: 24px; font-weight: 600; }
+        .ring-lbl { font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
+
+        /* MINI STATS */
+        .mini-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .mini-stat {
+            background: var(--bg);
+            padding: 8px 10px;
+            border-radius: 4px;
+        }
+
+        .mini-val { font-size: 14px; font-weight: 600; }
+        .mini-lbl { font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
+
+        /* CPU CORES */
+        .cores {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 4px;
+            margin-top: 10px;
+        }
+
+        .core {
+            background: var(--bg);
+            border-radius: 3px;
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .core-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        /* DISK LIST */
+        .disk-item {
+            margin-bottom: 10px;
+        }
+
+        .disk-top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .disk-bar {
+            height: 4px;
+            background: var(--bg);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .disk-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.5s;
+        }
+
+        /* NET STATS */
+        .net-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .net-box {
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .net-icon { font-size: 18px; }
+        .net-val { font-size: 16px; font-weight: 600; margin-top: 4px; }
+        .net-lbl { font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
+
+        /* TEMP GRID */
+        .temp-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .temp-item {
+            background: var(--bg);
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .temp-val { font-size: 14px; font-weight: 600; }
+        .temp-lbl { font-size: 9px; color: var(--text-dim); }
+
+        /* FULL WIDTH */
+        .dash-card.full { grid-column: 1 / -1; }
+
+        /* SUGGESTIONS */
+        .suggestions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .suggestion {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg);
+            border-radius: 6px;
+            font-size: 12px;
+            border-left: 3px solid;
+        }
+
+        .suggestion.danger { border-color: var(--danger); }
+        .suggestion.warning { border-color: var(--warning); }
+        .suggestion.success { border-color: var(--success); }
+
+        /* RIGHT PANEL */
+        .panel {
+            background: var(--bg-sidebar);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 10px 15px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-dim);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-tab {
+            flex: 1;
+            padding: 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .panel-tab:hover { color: var(--text); }
+        .panel-tab.active { color: var(--accent); border-bottom: 1px solid var(--accent); margin-bottom: -1px; }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* AI CHAT */
+        .ai-status {
+            padding: 10px 15px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.online { background: var(--success); }
+        .status-dot.offline { background: var(--danger); }
+        .status-dot.loading { background: var(--warning); animation: blink 1s infinite; }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .ai-msgs {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .ai-msg {
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .ai-msg.user { background: rgba(0, 120, 212, 0.2); margin-left: 15px; }
+        .ai-msg.ai { background: var(--bg); margin-right: 15px; }
+        .ai-msg.error { background: rgba(241, 76, 76, 0.2); color: var(--danger); }
+
+        .ai-input-area {
+            padding: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        .ai-input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .ai-input {
+            flex: 1;
+            padding: 8px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 12px;
+            resize: none;
+            font-family: inherit;
+        }
+
+        .ai-input:focus { outline: none; border-color: var(--accent); }
+
+        .ai-send {
+            padding: 8px 14px;
+            background: var(--accent);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .ai-send:hover { background: var(--accent-hover); }
+        .ai-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* PROCESS LIST */
+        .proc-list {
+            padding: 0;
+        }
+
+        .proc-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 15px;
+            font-size: 11px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        .proc-item:hover { background: var(--bg-hover); }
+
+        .proc-pid { color: var(--text-dim); width: 45px; }
+        .proc-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .proc-val { width: 55px; text-align: right; font-weight: 600; }
+        .proc-val.high { color: var(--danger); }
+        .proc-val.med { color: var(--warning); }
+
+        /* SYSTEM INFO */
+        .sys-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 15px;
+        }
+
+        .sys-item {
+            background: var(--bg);
+            padding: 8px 10px;
+            border-radius: 4px;
+        }
+
+        .sys-lbl { font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
+        .sys-val { font-size: 12px; font-weight: 600; margin-top: 2px; }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+        /* RESPONSIVE */
+        @media (max-width: 1400px) {
+            .main { grid-template-columns: 48px 0 1fr 260px; }
+            .sidebar { display: none; }
+        }
+
+        @media (max-width: 1000px) {
+            .main { grid-template-columns: 48px 1fr 0; }
+            .panel { display: none; }
+        }
+
+        /* STATUS BAR */
+        .statusbar {
+            height: 22px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 11px;
+            color: white;
+        }
+
+        .statusbar-left { flex: 1; display: flex; align-items: center; gap: 15px; }
+        .statusbar-right { display: flex; align-items: center; gap: 10px; }
+        .status-item { display: flex; align-items: center; gap: 4px; }
+    </style>
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <span style="font-size: 16px;">⚡</span>
+            <span class="app-title">Laptop Optimizer</span>
+        </div>
+        <div class="file-tabs">
+            <div class="tab active">
+                <span class="tab-icon">📊</span>
+                <span>Dashboard</span>
+            </div>
+        </div>
+        <div class="topbar-actions">
+            <button class="topbar-btn" onclick="loadAll()">↻</button>
+            <button class="topbar-btn close">✕</button>
+        </div>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main">
+        <!-- ACTIVITY BAR -->
+        <div class="activity">
+            <div class="activity-btn active" title="Explorer" onclick="toggleSidebar()">📁</div>
+            <div class="activity-btn" title="Search" onclick="showSection('search')">🔍</div>
+            <div class="activity-btn" title="Git" onclick="showSection('git')">⌥</div>
+            <div class="activity-btn" title="AI Chat" onclick="togglePanel()">🤖</div>
+            <div class="activity-spacer"></div>
+            <div class="activity-btn" title="Settings">⚙️</div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span>Explorer</span>
+                <span>...</span>
+            </div>
+            <div class="sidebar-content">
+                <!-- System -->
+                <div class="section-header open" onclick="toggleSection(this)">
+                    <span class="arrow">▶</span>
+                    <span>System Monitor</span>
+                </div>
+                <div class="file-list">
+                    <div class="file-item active" onclick="scrollTo('cpu')">
+                        <span class="file-icon">🖥️</span>
+                        <span>CPU Performance</span>
+                    </div>
+                    <div class="file-item" onclick="scrollTo('memory')">
+                        <span class="file-icon">💾</span>
+                        <span>Memory</span>
+                    </div>
+                    <div class="file-item" onclick="scrollTo('disk')">
+                        <span class="file-icon">💿</span>
+                        <span>Storage</span>
+                    </div>
+                    <div class="file-item" onclick="scrollTo('network')">
+                        <span class="file-icon">🌐</span>
+                        <span>Network</span>
+                    </div>
+                    <div class="file-item" onclick="scrollTo('gpu')">
+                        <span class="file-icon">🎮</span>
+                        <span>GPU</span>
+                    </div>
+                    <div class="file-item" onclick="scrollTo('temp')">
+                        <span class="file-icon">🌡️</span>
+                        <span>Temperature</span>
+                    </div>
+                </div>
+
+                <!-- AI -->
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="arrow">▶</span>
+                    <span>AI Assistants</span>
+                </div>
+                <div class="file-list" style="display: none;">
+                    <div class="file-item" onclick="switchAiTab('ollama')">
+                        <span class="file-icon">🦙</span>
+                        <span>Ollama (Offline)</span>
+                    </div>
+                    <div class="file-item" onclick="switchAiTab('opus')">
+                        <span class="file-icon">🔮</span>
+                        <span>OPUS 4.7 (Online)</span>
+                    </div>
+                </div>
+
+                <!-- Optimization -->
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="arrow">▶</span>
+                    <span>Optimization</span>
+                </div>
+                <div class="file-list" style="display: none;">
+                    <div class="file-item" onclick="scrollTo('suggestions')">
+                        <span class="file-icon">💡</span>
+                        <span>Suggestions</span>
+                    </div>
+                    <div class="file-item">
+                        <span class="file-icon">🚀</span>
+                        <span>Quick Actions</span>
+                    </div>
+                    <div class="file-item">
+                        <span class="file-icon">📈</span>
+                        <span>Benchmarks</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EDITOR -->
+        <div class="editor">
+            <div class="editor-tabs">
+                <button class="editor-tab active">
+                    <span>📊</span>
+                    <span>Dashboard</span>
+                </button>
+            </div>
+
+            <div class="editor-content">
+                <div class="dash-grid">
+                    <!-- CPU -->
+                    <div class="dash-card" id="card-cpu">
+                        <div class="dash-card-header">
+                            <div class="dash-card-icon" style="background: rgba(206, 145, 120, 0.2);">🖥️</div>
+                            <div>
+                                <div class="dash-card-title">CPU</div>
+                                <div class="dash-card-sub" id="cpu-info">Loading...</div>
+                            </div>
+                        </div>
+                        <div class="ring-center">
+                            <div class="ring">
+                                <svg width="100" height="100">
+                                    <circle class="ring-bg" cx="50" cy="50" r="42"/>
+                                    <circle class="ring-fg" id="cpu-ring" cx="50" cy="50" r="42" stroke="var(--cpu)" stroke-dasharray="264" stroke-dashoffset="264"/>
+                                </svg>
+                                <div class="ring-text">
+                                    <span class="ring-val" id="cpu-val">0%</span>
+                                    <span class="ring-lbl">Usage</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cores" id="cpu-cores"></div>
+                    </div>
+
+                    <!-- RAM -->
+                    <div class="dash-card" id="card-memory">
+                        <div class="dash-card-header">
+                            <div class="dash-card-icon" style="background: rgba(79, 193, 255, 0.2);">💾</div>
+                            <div>
+                                <div class="dash-card-title">Memory</div>
+                                <div class="dash-card-sub" id="ram-info">Loading...</div>
+                            </div>
+                        </div>
+                        <div class="ring-center">
+                            <div class="ring">
+                                <svg width="100" height="100">
+                                    <circle class="ring-bg" cx="50" cy="50" r="42"/>
+                                    <circle class="ring-fg" id="ram-ring" cx="50" cy="50" r="42" stroke="var(--ram)" stroke-dasharray="264" stroke-dashoffset="264"/>
+                                </svg>
+                                <div class="ring-text">
+                                    <span class="ring-val" id="ram-val">0%</span>
+                                    <span class="ring-lbl">Usage</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mini-stats">
+                            <div class="mini-stat">
+                                <div class="mini-val" id="ram-used">0 GB</div>
+                                <div class="mini-lbl">Used</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-val" id="ram-avail">0 GB</div>
+                                <div class="mini-lbl">Available</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GPU -->
+                    <div class="dash-card" id="card-gpu">
+                        <div class="dash-card-header">
+                            <div class="dash-card-icon" style="background: rgba(78, 201, 176, 0.2);">🎮</div>
+                            <div>
+                                <div class="dash-card-title">GPU</div>
+                                <div class="dash-card-sub" id="gpu-name">Loading...</div>
+                            </div>
+                        </div>
+                        <div class="mini-stats" id="gpu-stats">
+                            <div class="mini-stat">
+                                <div class="mini-val">-</div>
+                                <div class="mini-lbl">Status</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="mini-val">-</div>
+                                <div class="mini-lbl">Memory</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DISK -->
+                    <div class="dash-card" id="card-disk">
+                        <div class="dash-card-header">
+                            <div class="dash-card-icon" style="background: rgba(204, 153, 255, 0.2);">💿</div>
+                            <div>
+                                <div class="dash-card-title">Storage</div>
+                                <div class="dash-card-sub">Disk Usage</div>
+                            </div>
+                        </div>
+                        <div id="disk-list"></div>
+                    </div>
+
+                    <!-- NETWORK -->
+                    <div class="dash-card" id="card-network">
+                        <div class="dash-card-header">
+                            <div class="dash-card-icon" style="background: rgba(86, 156, 214, 0.2);">🌐</div>
+                            <div>
+                                <div class="dash-card-title">Network</div>
+                                <div class="dash-card-sub">Data Transfer</div>
+                            </div>
+                        </div>
+                        <div class="net-grid">
+                            <div class="net-box">
+                                <div class="net-icon">⬆️</div>
+                                <div class="net-val" id="net-sent">0 MB</div>
+                                <div class="net-lbl">Sent</div>
+                            </div>
+                            <div class="net-box">
+                                <div class="net-icon">⬇️</div>
+                                <div class="net-val" id="net-received">0 MB</div>
+                                <div class="net-lbl">Received</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TEMPERATURE -->
+                    <div class="dash-card" id="card-temp">
+                        <div class="dash-card-header">
+                            <div class="dash-card-icon" style="background: rgba(241, 76, 76, 0.2);">🌡️</div>
+                            <div>
+                                <div class="dash-card-title">Temperature</div>
+                                <div class="dash-card-sub">CPU & System</div>
+                            </div>
+                        </div>
+                        <div class="temp-grid" id="temp-grid">
+                            <div class="temp-item">
+                                <div class="temp-val">-°C</div>
+                                <div class="temp-lbl">CPU</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUGGESTIONS -->
+                    <div class="dash-card full" id="card-suggestions">
+                        <div class="dash-card-header">
+                            <div class="dash-card-icon" style="background: rgba(220, 220, 170, 0.2);">💡</div>
+                            <div>
+                                <div class="dash-card-title">Optimization Suggestions</div>
+                                <div class="dash-card-sub">System recommendations</div>
+                            </div>
+                        </div>
+                        <div class="suggestions" id="suggestions"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="panel" id="panel">
+            <div class="panel-header">AI Assistant</div>
+            <div class="panel-tabs">
+                <button class="panel-tab active" data-ai="ollama" onclick="switchAiTab('ollama')">🦙 Ollama</button>
+                <button class="panel-tab" data-ai="opus" onclick="switchAiTab('opus')">🔮 OPUS</button>
+            </div>
+            <div class="ai-status" id="ai-status">
+                <div class="status-dot offline" id="ai-dot"></div>
+                <span id="ai-status-text">Checking AI...</span>
+            </div>
+            <div class="panel-content">
+                <div class="ai-msgs" id="ai-msgs">
+                    <div class="ai-msg ai">Hello! I'm your AI assistant. Ask me about system optimization or troubleshooting.</div>
+                </div>
+            </div>
+            <div class="ai-input-area">
+                <div class="ai-input-row">
+                    <textarea class="ai-input" id="ai-input" rows="2" placeholder="Ask AI..."></textarea>
+                    <button class="ai-send" id="ai-send" onclick="sendAi()">Send</button>
+                </div>
+            </div>
+
+            <!-- Processes -->
+            <div class="panel-header" style="margin-top: 0;">Top Processes</div>
+            <select id="proc-sort" onchange="loadProcs()" style="width: calc(100% - 20px); margin: 8px 10px; padding: 4px 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-size: 11px; border-radius: 4px;">
+                <option value="cpu">By CPU</option>
+                <option value="memory">By Memory</option>
+            </select>
+            <div class="proc-list" id="proc-list"></div>
+
+            <!-- System Info -->
+            <div class="sys-grid" id="sys-info"></div>
+        </div>
+    </div>
+
+    <!-- STATUS BAR -->
+    <div class="statusbar">
+        <div class="statusbar-left">
+            <div class="status-item">⚠️ No Problems</div>
+            <div class="status-item" id="status-cpu">CPU: 0%</div>
+            <div class="status-item" id="status-ram">RAM: 0%</div>
+        </div>
+        <div class="statusbar-right">
+            <div class="status-item" id="status-time"></div>
+        </div>
+    </div>
+
+    <script>
+        const API = '';
+        let currentAi = 'ollama';
+        let aiBusy = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAll();
+            checkAi();
+            setInterval(() => {
+                loadQuick();
+                updateTime();
+            }, 3000);
+
+            document.getElementById('ai-input').addEventListener('keydown', e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendAi();
+                }
+            });
+        });
+
+        async function api(url) {
+            try { return await (await fetch(API + url)).json(); }
+            catch { return null; }
+        }
+
+        async function loadAll() {
+            const [sys, cpu, mem, disk, net, gpu, temp, procs, sugg] = await Promise.all([
+                api('/api/system'), api('/api/cpu'), api('/api/memory'), api('/api/disk'),
+                api('/api/network'), api('/api/gpu'), api('/api/temperature'),
+                api('/api/processes/cpu'), api('/api/optimize')
+            ]);
+            if (sys) { updateSys(sys); }
+            if (cpu) { updateCpu(cpu); }
+            if (mem) { updateMem(mem); }
+            if (disk) { updateDisk(disk); }
+            if (net) { updateNet(net); }
+            if (gpu) { updateGpu(gpu); }
+            if (temp) { updateTemp(temp); }
+            if (procs) { updateProcs(procs.processes || []); }
+            if (sugg) { updateSugg(sugg.suggestions || []); }
+        }
+
+        async function loadQuick() {
+            const [cpu, mem] = await Promise.all([api('/api/cpu'), api('/api/memory')]);
+            if (cpu) updateCpu(cpu);
+            if (mem) updateMem(mem);
+        }
+
+        function updateSys(d) {
+            document.getElementById('cpu-info').textContent = `${d.cpu_count} Cores / ${d.cpu_count_logical} Threads`;
+            document.getElementById('sys-info').innerHTML = `
+                <div class="sys-item"><div class="sys-lbl">OS</div><div class="sys-val">${d.platform}</div></div>
+                <div class="sys-item"><div class="sys-lbl">Uptime</div><div class="sys-val">${d.uptime_str}</div></div>
+                <div class="sys-item"><div class="sys-lbl">Host</div><div class="sys-val">${d.hostname}</div></div>
+                <div class="sys-item"><div class="sys-lbl">Arch</div><div class="sys-val">${d.architecture}</div></div>
+            `;
+        }
+
+        function updateCpu(d) {
+            const p = Math.round(d.average);
+            const off = 264 - (264 * p / 100);
+            document.getElementById('cpu-ring').style.strokeDashoffset = off;
+            document.getElementById('cpu-val').textContent = p + '%';
+            document.getElementById('status-cpu').textContent = 'CPU: ' + p + '%';
+            document.getElementById('cpu-cores').innerHTML = (d.per_cpu || []).map(c =>
+                `<div class="core"><div class="core-fill" style="width:${c.usage}%;background:var(--cpu)"></div></div>`
+            ).join('');
+        }
+
+        function updateMem(d) {
+            const p = Math.round(d.percent);
+            const off = 264 - (264 * p / 100);
+            document.getElementById('ram-ring').style.strokeDashoffset = off;
+            document.getElementById('ram-val').textContent = p + '%';
+            document.getElementById('ram-info').textContent = d.total_gb + ' GB Total';
+            document.getElementById('ram-used').textContent = d.used_gb + ' GB';
+            document.getElementById('ram-avail').textContent = d.available_gb + ' GB';
+            document.getElementById('status-ram').textContent = 'RAM: ' + p + '%';
+        }
+
+        function updateDisk(d) {
+            document.getElementById('disk-list').innerHTML = d.map(dk =>
+                `<div class="disk-item">
+                    <div class="disk-top"><span>${dk.mountpoint}</span><span>${dk.free_gb}GB free</span></div>
+                    <div class="disk-bar"><div class="disk-fill" style="width:${dk.percent}%;background:var(--disk)"></div></div>
+                </div>`
+            ).join('');
+        }
+
+        function updateNet(d) {
+            document.getElementById('net-sent').textContent = d.bytes_sent_mb + ' MB';
+            document.getElementById('net-received').textContent = d.bytes_recv_mb + ' MB';
+        }
+
+        function updateGpu(d) {
+            document.getElementById('gpu-name').textContent = d.name.substring(0, 25);
+            document.getElementById('gpu-stats').innerHTML = `
+                <div class="mini-stat"><div class="mini-val">${d.available ? '✅' : '❌'}</div><div class="mini-lbl">Status</div></div>
+                <div class="mini-stat"><div class="mini-val">${d.memory_total > 0 ? d.memory_total + 'GB' : 'N/A'}</div><div class="mini-lbl">Memory</div></div>
+            `;
+        }
+
+        function updateTemp(d) {
+            let h = '';
+            let c = 0;
+            for (const [n, ts] of Object.entries(d)) {
+                for (const t of ts) {
+                    if (c++ < 6) {
+                        const col = t.current < 50 ? 'var(--success)' : t.current < 70 ? 'var(--warning)' : 'var(--danger)';
+                        h += `<div class="temp-item"><div class="temp-val" style="color:${col}">${Math.round(t.current)}°C</div><div class="temp-lbl">${t.label || n}</div></div>`;
+                    }
+                }
+            }
+            document.getElementById('temp-grid').innerHTML = h || '<div class="temp-item"><div class="temp-val">N/A</div><div class="temp-lbl">Not Available</div></div>';
+        }
+
+        function updateProcs(ps) {
+            const s = document.getElementById('proc-sort').value;
+            document.getElementById('proc-list').innerHTML = ps.slice(0, 12).map(p => {
+                const v = s === 'cpu' ? p.cpu_percent : p.memory_mb;
+                const u = s === 'cpu' ? '%' : 'MB';
+                const c = v > 50 ? 'high' : v > 20 ? 'med' : '';
+                return `<div class="proc-item" onclick="kill(${p.pid})"><span class="proc-pid">${p.pid}</span><span class="proc-name">${p.name}</span><span class="proc-val ${c}">${v.toFixed(1)}${u}</span></div>`;
+            }).join('');
+        }
+
+        function updateSugg(ss) {
+            if (!ss.length) ss = [{type: 'success', msg: '✅ System is running optimally!'}];
+            document.getElementById('suggestions').innerHTML = ss.map(s =>
+                `<div class="suggestion ${s.type}"><span>${s.msg}</span></div>`
+            ).join('');
+        }
+
+        // AI
+        async function checkAi() {
+            const dot = document.getElementById('ai-dot');
+            const txt = document.getElementById('ai-status-text');
+            dot.className = 'status-dot loading';
+            txt.textContent = 'Checking...';
+            if (currentAi === 'ollama') {
+                const r = await api('/api/all');
+                dot.className = 'status-dot ' + (r?.ollama?.running ? 'online' : 'offline');
+                txt.textContent = r?.ollama?.running ? '🦙 Ollama connected' : '🦙 Ollama offline';
+            } else {
+                dot.className = 'status-dot online';
+                txt.textContent = '🔮 OPUS 4.7 ready';
+            }
+        }
+
+        function switchAiTab(ai) {
+            currentAi = ai;
+            document.querySelectorAll('.panel-tab').forEach(t => t.classList.toggle('active', t.dataset.ai === ai));
+            checkAi();
+        }
+
+        async function sendAi() {
+            const inp = document.getElementById('ai-input');
+            const btn = document.getElementById('ai-send');
+            const msgs = document.getElementById('ai-msgs');
+            const m = inp.value.trim();
+            if (!m || aiBusy) return;
+
+            aiBusy = true;
+            btn.disabled = true;
+            msgs.innerHTML += `<div class="ai-msg user">${m}</div>`;
+            inp.value = '';
+            msgs.innerHTML += `<div class="ai-msg ai" id="load">Thinking...</div>`;
+            msgs.scrollTop = msgs.scrollHeight;
+
+            try {
+                const r = await fetch(API + '/api/ai/' + currentAi, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: m, model: 'llama3:8b'})
+                });
+                const d = await r.json();
+                document.getElementById('load').remove();
+                if (d.success) msgs.innerHTML += `<div class="ai-msg ai">${d.response}</div>`;
+                else msgs.innerHTML += `<div class="ai-msg error">Error: ${d.error}</div>`;
+            } catch (e) {
+                document.getElementById('load').remove();
+                msgs.innerHTML += `<div class="ai-msg error">Connection failed</div>`;
+            }
+
+            aiBusy = false;
+            btn.disabled = false;
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        async function kill(pid) {
+            if (!confirm('Kill PID ' + pid + '?')) return;
+            const d = await (await fetch(API + '/api/kill', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({pid})})).json();
+            if (d.success) { loadProcs(); alert('Killed!'); } else alert('Failed: ' + d.error);
+        }
+
+        function loadProcs() {
+            api('/api/processes/' + document.getElementById('proc-sort').value).then(d => d && updateProcs(d.processes || []));
+        }
+
+        // UI
+        function toggleSidebar() { document.getElementById('sidebar').style.display = document.getElementById('sidebar').style.display === 'none' ? '' : 'none'; }
+        function togglePanel() { document.getElementById('panel').style.display = document.getElementById('panel').style.display === 'none' ? '' : 'none'; }
+        function toggleSection(el) { el.classList.toggle('open'); el.nextElementSibling.style.display = el.classList.contains('open') ? '' : 'none'; }
+        function scrollTo(id) { document.getElementById('card-' + id)?.scrollIntoView({behavior:'smooth'}); }
+        function updateTime() { document.getElementById('status-time').textContent = new Date().toLocaleTimeString(); }
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# Environment variables - DO NOT COMMIT
+.env
+.env.local
+.env.production
+*.log
+__pycache__/
+*.pyc
