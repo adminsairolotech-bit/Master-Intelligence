@@ -2,6 +2,9 @@
   "permissions": {
     "additionalDirectories": [
       "c:\\Users\\SAIROL~1\\Code-Fixer\\sai-rolotech-ai"
+    ],
+    "allow": [
+      "Edit(~/.claude/skills/scripts/**)"
     ]
   }
 }
