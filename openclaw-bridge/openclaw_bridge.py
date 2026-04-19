@@ -147,98 +147,105 @@ class TelegramConnector:
         return None
 
 # ============================================
-# AI BRAIN - Multi-Provider Cascade
-# Priority: OpenRouter (Opus 4.7) → Groq (fast) → NVIDIA
+# AI BRAIN - Smart Cascade System
+# 1. Gemini 2.0 Flash (FREE) - Light tasks
+# 2. Groq Llama 3.3 (FREE) - Medium tasks (auto when Flash limit ends)
+# 3. Opus 4.7 (PAID) - Heavy tasks only
 # ============================================
 class AIBrain:
-    """
-    AI Brain with cascade fallback:
-    1. OpenRouter: Claude Opus 4.7 (muskil kaam)
-    2. Groq: Llama 3.3 (fast work)
-    3. NVIDIA: Nemotron (backup)
-    """
+    """Smart AI cascade: Flash → Groq → Opus (heaviest)"""
 
     def __init__(self):
-        # Provider configs
         self.providers = {
-            "openrouter": {
-                "key": os.getenv("OPENROUTER_API_KEY", ""),
-                "endpoint": "https://openrouter.ai/api/v1/chat/completions",
-                "model": "anthropic/claude-opus-4.7",
-                "use_opus": True,
+            "gemini": {
+                "key": os.getenv("GEMINI_API_KEY", ""),
+                "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent",
+                "model": "gemini-2.0-flash-exp",
+                "free": True,
                 "priority": 1
             },
             "groq": {
                 "key": os.getenv("GROQ_API_KEY", ""),
                 "endpoint": "https://api.groq.com/openai/v1/chat/completions",
                 "model": "llama-3.3-70b-versatile",
-                "use_opus": False,
+                "free": True,
                 "priority": 2
             },
-            "nvidia_free": {
+            "opus": {
                 "key": os.getenv("OPENROUTER_API_KEY", ""),
                 "endpoint": "https://openrouter.ai/api/v1/chat/completions",
-                "model": "nvidia/nemotron-3-super-120b-a12b:free",
-                "use_opus": False,
-                "priority": 2
+                "model": "anthropic/claude-opus-4.7",
+                "free": False,
+                "priority": 3
             }
         }
 
-    def query(self, message: str, system_prompt: str = "", use_opus: bool = False) -> Dict[str, Any]:
+    def query(self, message: str, system_prompt: str = "", task: str = "light") -> Dict[str, Any]:
         """
-        Query AI with cascade fallback.
-        use_opus=True: Try hard for Opus 4.7
-        use_opus=False: Use fastest available
+        Smart cascade based on task type:
+        - light: Gemini → Groq → Opus
+        - medium: Groq → Gemini → Opus
+        - heavy: Opus → Groq → Gemini
         """
-        # Sort by priority (skip if no key)
-        providers = []
-        for name, cfg in sorted(self.providers.items(), key=lambda x: x[1]["priority"]):
-            if cfg["key"]:
-                providers.append((name, cfg))
-
-        if not providers:
-            return {"error": "No API keys configured!"}
+        if task == "heavy":
+            priority_order = ["opus", "groq", "gemini"]
+        elif task == "medium":
+            priority_order = ["groq", "gemini", "opus"]
+        else:
+            priority_order = ["gemini", "groq", "opus"]
 
         errors = []
-        for name, cfg in providers:
-            try:
-                headers = {"Content-Type": "application/json", "Authorization": f"Bearer {cfg['key']}"}
-                if name == "openrouter":
-                    headers["HTTP-Referer"] = "https://sairolotech.com"
-                    headers["X-Title"] = "OpenClaw Bridge"
+        for name in priority_order:
+            cfg = self.providers[name]
+            if not cfg["key"]:
+                continue
 
+            try:
+                headers = {"Content-Type": "application/json"}
                 messages = []
                 if system_prompt:
                     messages.append({"role": "system", "content": system_prompt})
                 messages.append({"role": "user", "content": message})
 
-                payload = {"model": cfg["model"], "messages": messages, "temperature": 0.7}
-                resp = requests.post(cfg["endpoint"], headers=headers, json=payload, timeout=60)
+                if name == "gemini":
+                    payload = {
+                        "contents": [{"parts": [{"text": m["content"]} for m in messages]}],
+                        "generationConfig": {"temperature": 0.7}
+                    }
+                    resp = requests.post(f"{cfg['endpoint']}?key={cfg['key']}", headers=headers, json=payload, timeout=60)
+                else:
+                    headers["Authorization"] = f"Bearer {cfg['key']}"
+                    if name == "opus":
+                        headers["HTTP-Referer"] = "https://sairolotech.com"
+                        headers["X-Title"] = "OpenClaw Bridge"
+                    payload = {"model": cfg["model"], "messages": messages, "temperature": 0.7}
+                    resp = requests.post(cfg["endpoint"], headers=headers, json=payload, timeout=60)
 
                 if resp.ok:
                     data = resp.json()
-                    if "choices" in data:
-                        text = data["choices"][0]["message"]["content"]
-                    else:
+                    if name == "gemini":
                         text = data["candidates"][0]["content"]["parts"][0]["text"]
-                    return {
-                        "success": True,
-                        "response": text,
-                        "model": cfg["model"],
-                        "provider": name
-                    }
+                    else:
+                        text = data["choices"][0]["message"]["content"]
+                    return {"success": True, "response": text, "model": cfg["model"], "provider": name}
                 else:
+                    # Auto-fallback on quota/limit
+                    if resp.status_code == 429 or "quota" in resp.text.lower():
+                        errors.append(f"{name}: QUOTA - trying next")
+                        continue
                     errors.append(f"{name}: {resp.status_code}")
             except Exception as e:
                 errors.append(f"{name}: {str(e)[:50]}")
 
-        return {"error": f"All providers failed: {'; '.join(errors)}"}
+        return {"error": f"All failed: {'; '.join(errors)}"}
 
-    def chat(self, message: str, use_opus: bool = True) -> str:
-        """Chat with best available provider"""
-        result = self.query(message, use_opus=use_opus)
+    def chat(self, message: str, task: str = "light") -> str:
+        """Chat with smart cascade - default light tasks use Gemini Flash"""
+        result = self.query(message, task=task)
         if result.get("success"):
-            return f"[{result.get('provider', 'AI')}] {result.get('response', '')}"
+            provider = result.get('provider', 'AI')
+            emoji = {"gemini": "⚡", "groq": "🚀", "opus": "🧠"}.get(provider, "")
+            return f"{emoji}[{provider.upper()}] {result.get('response', '')}"
         return f"[ERROR] {result.get('error', 'Unknown')}"
 
     def available_providers(self) -> list:
@@ -401,21 +408,25 @@ class OpenClawBridge:
         }
 
     def cli(self):
-        print("=" * 50)
-        print("OpenClaw Bridge (Separate from Cloud AI)")
-        print("=" * 50)
-        print(f"Config: openclaw-bridge/openclaw.env")
-        print(f"AI: {'Connected' if self.ai.api_key else 'NOT SET'}")
+        print("=" * 60)
+        print("OpenClaw Bridge - Smart AI Cascade")
+        print("=" * 60)
+        print("Config: openclaw-bridge/openclaw.env")
+        print("\nAI Cascade:")
+        print("  ⚡ Gemini 2.0 Flash (FREE)  - Light tasks (default)")
+        print("  🚀 Groq Llama 3.3 (FREE)   - Medium tasks")
+        print("  🧠 Opus 4.7 (PAID)         - Heavy/Complex tasks")
         print("\nCommands:")
-        print("  /ai <message>    - Chat with Claude")
-        print("  /memory status   - Check vector memory")
-        print("  /memory unlock   - Unlock vector memory")
-        print("  /memory add <text>- Add memory entry")
-        print("  /memory search <q>- Search memories")
-        print("  /telegram        - Get Telegram chat ID")
-        print("  /status          - Full system status")
-        print("  /quit            - Exit")
-        print("=" * 50)
+        print("  /ai <msg>          - Chat (light - Gemini Flash)")
+        print("  /ai heavy <msg>    - Chat (heavy - Opus 4.7)")
+        print("  /ai medium <msg>   - Chat (medium - Groq)")
+        print("  /memory status     - Check vector memory")
+        print("  /memory unlock     - Unlock vector memory")
+        print("  /memory add <txt>  - Add memory entry")
+        print("  /memory search <q> - Search memories")
+        print("  /status            - Full system status")
+        print("  /quit              - Exit")
+        print("=" * 60)
 
         while True:
             try:
@@ -427,7 +438,15 @@ class OpenClawBridge:
                 elif cmd.startswith("/memory"):
                     self._handle_memory_cmd(cmd[8:])
                 elif cmd.startswith("/ai "):
-                    print(self.ai.chat(cmd[4:]))
+                    msg = cmd[4:]
+                    task = "light"
+                    if msg.startswith("heavy "):
+                        task = "heavy"
+                        msg = msg[6:]
+                    elif msg.startswith("medium "):
+                        task = "medium"
+                        msg = msg[7:]
+                    print(self.ai.chat(msg, task=task))
                 elif cmd == "/telegram":
                     print("\n1. Message @sairolotech_ai_bot on Telegram")
                     print("2. Press Enter here...")
