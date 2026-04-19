@@ -11,9 +11,14 @@ Supports:
 import argparse
 import sys
 import json
+import os
 from pathlib import Path
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from typing import Dict
+
+# Load environment variables
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).parent / ".env")
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -43,6 +48,8 @@ class APIHandler(SimpleHTTPRequestHandler):
             self.handle_demo_generate(data)
         elif self.path == '/api/verify':
             self.handle_demo_verify(data)
+        elif self.path == '/api/github/repos':
+            self.handle_github_repos()
         else:
             self.send_error(404, 'Not Found')
 
@@ -170,6 +177,45 @@ class APIHandler(SimpleHTTPRequestHandler):
             'issues': [],
             'summary': 'Demo mode - simulated verification'
         })
+
+    def handle_github_repos(self):
+        """Fetch GitHub repos for Hunting Mode."""
+        try:
+            token = os.environ.get('GITHUB_TOKEN') or os.environ.get('GH_TOKEN')
+            if not token:
+                # Try using gh CLI
+                import subprocess
+                result = subprocess.run(['gh', 'auth', 'token'], capture_output=True, text=True)
+                token = result.stdout.strip()
+
+            headers = {
+                'Authorization': f'token {token}',
+                'Accept': 'application/vnd.github.v3+json'
+            }
+
+            import urllib.request
+            req = urllib.request.Request(
+                'https://api.github.com/user/repos?per_page=100&sort=updated',
+                headers=headers
+            )
+
+            with urllib.request.urlopen(req, timeout=10) as response:
+                repos = json.loads(response.read().decode())
+
+            repo_list = [{
+                'name': r['name'],
+                'full_name': r['full_name'],
+                'url': r['html_url'],
+                'description': r['description'] or '',
+                'language': r['language'] or '',
+                'stars': r['stargazers_count'],
+                'forks': r['fork']
+            } for r in repos]
+
+            self.send_json({'repos': repo_list})
+
+        except Exception as e:
+            self.send_json({'error': str(e), 'repos': []}, 500)
 
     def send_json(self, data: Dict, status: int = 200):
         """Send JSON response."""
