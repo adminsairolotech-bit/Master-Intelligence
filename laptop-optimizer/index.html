@@ -17,8 +17,7 @@
             --text-2: #a1a1aa;
             --text-3: #71717a;
             --green: #22c55e;
-            --blue: #3b82f6;
-            --orange: #f97316;
+            --yellow: #eab308;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -39,21 +38,10 @@
 
         /* SIDEBAR */
         .sidebar {
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
             border-right: 1px solid rgba(139, 92, 246, 0.2);
             display: flex;
             flex-direction: column;
-            position: relative;
-        }
-
-        .sidebar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--purple), transparent);
         }
 
         .logo {
@@ -61,73 +49,77 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .logo-icon {
             width: 40px;
             height: 40px;
             background: linear-gradient(135deg, var(--purple), var(--purple-dark));
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
         }
 
         .logo-text h1 {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
-            background: linear-gradient(135deg, #fff, var(--purple-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--text);
         }
 
         .logo-text span {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--text-3);
         }
 
+        .tabs {
+            display: flex;
+            padding: 0 16px;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-2);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab:hover { border-color: var(--purple); }
+        .tab.active { background: var(--purple); border-color: var(--purple); color: white; }
+
         .nav {
             flex: 1;
-            padding: 16px 12px;
+            padding: 8px 12px;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             padding: 12px 16px;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s;
-            margin-bottom: 4px;
             color: var(--text-2);
             font-size: 14px;
+            margin-bottom: 4px;
         }
 
-        .nav-item:hover {
-            background: rgba(139, 92, 246, 0.1);
-            color: var(--text);
-        }
+        .nav-item:hover { background: rgba(139, 92, 246, 0.1); color: var(--text); }
+        .nav-item.active { background: rgba(139, 92, 246, 0.2); color: var(--purple-light); }
 
-        .nav-item.active {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.1));
-            color: var(--purple-light);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-        }
-
-        .nav-icon { font-size: 18px; width: 24px; text-align: center; }
+        .nav-icon { font-size: 16px; width: 20px; text-align: center; }
         .nav-text { flex: 1; }
-
-        .nav-badge {
-            background: var(--purple);
-            color: white;
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
+        .nav-arrow { font-size: 12px; color: var(--text-3); }
 
         .user-section {
             padding: 16px;
@@ -147,12 +139,13 @@
         .user-avatar {
             width: 36px;
             height: 36px;
-            background: linear-gradient(135deg, var(--purple), var(--blue));
+            background: linear-gradient(135deg, var(--purple), #ec4899);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 14px;
+            font-weight: 600;
         }
 
         .user-info h3 { font-size: 13px; font-weight: 600; }
@@ -169,17 +162,40 @@
         .header {
             padding: 24px 32px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .header h2 {
+        .header-left h2 {
             font-size: 24px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
-        .header p {
+        .header-left p {
             color: var(--text-2);
             font-size: 14px;
+        }
+
+        .create-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
         }
 
         .content {
@@ -188,124 +204,11 @@
             padding: 24px 32px;
         }
 
-        /* STATS ROW */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            border-radius: 16px 16px 0 0;
-        }
-
-        .stat-card.cpu::before { background: linear-gradient(90deg, var(--purple), #ec4899); }
-        .stat-card.ram::before { background: linear-gradient(90deg, var(--blue), #06b6d4); }
-        .stat-card.disk::before { background: linear-gradient(90deg, var(--orange), #eab308); }
-        .stat-card.net::before { background: linear-gradient(90deg, var(--green), #10b981); }
-
-        .stat-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .stat-card.cpu .stat-icon { background: rgba(139, 92, 246, 0.15); }
-        .stat-card.ram .stat-icon { background: rgba(59, 130, 246, 0.15); }
-        .stat-card.disk .stat-icon { background: rgba(249, 115, 22, 0.15); }
-        .stat-card.net .stat-icon { background: rgba(34, 197, 94, 0.15); }
-
-        .stat-title { font-size: 13px; color: var(--text-2); }
-        .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .stat-bar {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .stat-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.5s ease;
-        }
-
-        .stat-card.cpu .stat-fill { background: linear-gradient(90deg, var(--purple), #ec4899); }
-        .stat-card.ram .stat-fill { background: linear-gradient(90deg, var(--blue), #06b6d4); }
-        .stat-card.disk .stat-fill { background: linear-gradient(90deg, var(--orange), #eab308); }
-        .stat-card.net .stat-fill { background: linear-gradient(90deg, var(--green), #10b981); }
-
-        .stat-detail { font-size: 12px; color: var(--text-3); margin-top: 8px; }
-
-        /* AGENTS SECTION */
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .section-tabs {
-            display: flex;
-            gap: 8px;
-        }
-
-        .tab {
-            padding: 8px 16px;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: var(--text-2);
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .tab:hover { border-color: var(--purple); color: var(--purple-light); }
-        .tab.active { background: var(--purple); border-color: var(--purple); color: white; }
-
         /* AGENT GRID */
         .agent-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
         }
 
         .agent-card {
@@ -315,89 +218,149 @@
             padding: 20px;
             transition: all 0.3s;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
         }
 
         .agent-card:hover {
             border-color: rgba(139, 92, 246, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        .agent-card.active {
-            border-color: var(--purple);
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), transparent);
+        .agent-card.running {
+            border-color: rgba(34, 197, 94, 0.3);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), transparent);
         }
 
         .agent-header {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             margin-bottom: 16px;
         }
 
         .agent-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 28px;
         }
 
-        .agent-info h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-        .agent-info span { font-size: 12px; color: var(--text-3); }
+        .agent-info {
+            flex: 1;
+        }
 
-        .agent-status {
-            position: absolute;
-            top: 16px;
-            right: 16px;
+        .agent-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .agent-provider {
+            font-size: 12px;
+            color: var(--text-3);
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 11px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             padding: 4px 10px;
             border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .status-badge.running {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--green);
+        }
+
+        .status-badge.stopped {
             background: rgba(255, 255, 255, 0.05);
+            color: var(--text-3);
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
+            background: currentColor;
         }
 
-        .status-dot.active { background: var(--green); box-shadow: 0 0 10px var(--green); }
-        .status-dot.stopped { background: var(--text-3); }
+        .status-badge.running .status-dot {
+            box-shadow: 0 0 8px var(--green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .agent-badges {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            font-size: 11px;
+            color: var(--text-2);
+        }
+
+        .badge.memory { background: rgba(139, 92, 246, 0.15); color: var(--purple-light); }
+        .badge.reasoning { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .badge.tools { background: rgba(249, 115, 22, 0.15); color: #fb923c; }
 
         .agent-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             margin-bottom: 16px;
         }
 
-        .agent-stat {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 10px;
-            border-radius: 8px;
+        .stat-item {
+            text-align: center;
         }
 
-        .agent-stat-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; }
-        .agent-stat-value { font-size: 14px; font-weight: 600; }
+        .stat-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
 
-        .agent-card-footer {
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-3);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .agent-footer {
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .agent-time { font-size: 11px; color: var(--text-3); }
+        .agent-time {
+            font-size: 11px;
+            color: var(--text-3);
+        }
 
-        .use-btn {
-            padding: 8px 20px;
+        .run-btn {
+            padding: 10px 24px;
             background: linear-gradient(135deg, var(--purple), var(--purple-dark));
             border: none;
             border-radius: 8px;
@@ -408,101 +371,20 @@
             transition: all 0.2s;
         }
 
-        .use-btn:hover {
+        .run-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
         }
 
-        .use-btn.stopped {
+        .run-btn.stopped {
             background: transparent;
             border: 1px solid var(--purple);
             color: var(--purple-light);
         }
 
-        /* AI CHAT */
-        .chat-section {
-            margin-top: 32px;
-            background: var(--bg-card);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            overflow: hidden;
+        .run-btn.stopped:hover {
+            background: rgba(139, 92, 246, 0.1);
         }
-
-        .chat-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .chat-header h3 { font-size: 15px; font-weight: 600; }
-        .chat-model {
-            font-size: 11px;
-            color: var(--text-3);
-            padding: 4px 10px;
-            background: rgba(139, 92, 246, 0.15);
-            border-radius: 20px;
-        }
-
-        .chat-messages {
-            padding: 20px;
-            min-height: 200px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .chat-msg {
-            margin-bottom: 16px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .chat-msg.user {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.1));
-            margin-left: 40px;
-        }
-
-        .chat-msg.ai {
-            background: rgba(255, 255, 255, 0.03);
-            margin-right: 40px;
-        }
-
-        .chat-input-area {
-            padding: 16px 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            gap: 12px;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            color: var(--text);
-            font-size: 13px;
-            resize: none;
-            font-family: inherit;
-        }
-
-        .chat-input:focus { outline: none; border-color: var(--purple); }
-
-        .chat-send {
-            padding: 12px 24px;
-            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .chat-send:hover { box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); }
 
         /* SCROLLBAR */
         ::-webkit-scrollbar { width: 8px; }
@@ -512,15 +394,13 @@
         /* RESPONSIVE */
         @media (max-width: 1200px) {
             .app { grid-template-columns: 80px 1fr; }
-            .nav-text, .user-info, .logo-text { display: none; }
+            .logo-text, .nav-text, .tabs, .user-info { display: none; }
             .nav-item { justify-content: center; padding: 14px; }
-            .stats-row { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 768px) {
             .app { grid-template-columns: 1fr; }
             .sidebar { display: none; }
-            .stats-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -536,35 +416,29 @@
                 </div>
             </div>
 
+            <div class="tabs">
+                <button class="tab active">Brains</button>
+                <button class="tab">Agents</button>
+                <button class="tab">Sessions</button>
+            </div>
+
             <nav class="nav">
-                <div class="nav-item active" onclick="showSection('dashboard')">
+                <div class="nav-item active">
                     <span class="nav-icon">🏠</span>
-                    <span class="nav-text">Dashboard</span>
+                    <span class="nav-text">Home</span>
+                    <span class="nav-arrow">›</span>
                 </div>
-                <div class="nav-item" onclick="showSection('cpu')">
-                    <span class="nav-icon">🖥️</span>
-                    <span class="nav-text">CPU</span>
+                <div class="nav-item">
+                    <span class="nav-icon">🧠</span>
+                    <span class="nav-text">My Brains</span>
                 </div>
-                <div class="nav-item" onclick="showSection('memory')">
-                    <span class="nav-icon">💾</span>
-                    <span class="nav-text">Memory</span>
-                </div>
-                <div class="nav-item" onclick="showSection('agents')">
+                <div class="nav-item">
                     <span class="nav-icon">🤖</span>
-                    <span class="nav-text">AI Agents</span>
-                    <span class="nav-badge">2</span>
+                    <span class="nav-text">Templates</span>
                 </div>
-                <div class="nav-item" onclick="showSection('processes')">
+                <div class="nav-item">
                     <span class="nav-icon">📊</span>
-                    <span class="nav-text">Processes</span>
-                </div>
-                <div class="nav-item">
-                    <span class="nav-icon">⚡</span>
-                    <span class="nav-text">Optimization</span>
-                </div>
-                <div class="nav-item">
-                    <span class="nav-icon">💬</span>
-                    <span class="nav-text">AI Chat</span>
+                    <span class="nav-text">Analytics</span>
                 </div>
                 <div class="nav-item">
                     <span class="nav-icon">⚙️</span>
@@ -586,204 +460,242 @@
         <!-- MAIN CONTENT -->
         <main class="main">
             <div class="header">
-                <h2>Your System Dashboard</h2>
-                <p>Monitor and optimize your laptop performance with AI-powered insights</p>
+                <div class="header-left">
+                    <h2>My Brains</h2>
+                    <p>Manage your AI agents and system monitors</p>
+                </div>
+                <button class="create-btn">
+                    <span>+</span>
+                    Create Brain
+                </button>
             </div>
 
             <div class="content">
-                <!-- STATS ROW -->
-                <div class="stats-row">
-                    <div class="stat-card cpu">
-                        <div class="stat-header">
-                            <div class="stat-icon">🖥️</div>
-                            <span class="stat-title">CPU Usage</span>
-                        </div>
-                        <div class="stat-value" id="cpu-value">0%</div>
-                        <div class="stat-bar">
-                            <div class="stat-fill" id="cpu-bar" style="width: 0%"></div>
-                        </div>
-                        <div class="stat-detail" id="cpu-detail">Loading...</div>
-                    </div>
-
-                    <div class="stat-card ram">
-                        <div class="stat-header">
-                            <div class="stat-icon">💾</div>
-                            <span class="stat-title">Memory</span>
-                        </div>
-                        <div class="stat-value" id="ram-value">0%</div>
-                        <div class="stat-bar">
-                            <div class="stat-fill" id="ram-bar" style="width: 0%"></div>
-                        </div>
-                        <div class="stat-detail" id="ram-detail">Loading...</div>
-                    </div>
-
-                    <div class="stat-card disk">
-                        <div class="stat-header">
-                            <div class="stat-icon">💿</div>
-                            <span class="stat-title">Disk Usage</span>
-                        </div>
-                        <div class="stat-value" id="disk-value">0%</div>
-                        <div class="stat-bar">
-                            <div class="stat-fill" id="disk-bar" style="width: 0%"></div>
-                        </div>
-                        <div class="stat-detail" id="disk-detail">Loading...</div>
-                    </div>
-
-                    <div class="stat-card net">
-                        <div class="stat-header">
-                            <div class="stat-icon">🌐</div>
-                            <span class="stat-title">Network</span>
-                        </div>
-                        <div class="stat-value" id="net-value">0 MB</div>
-                        <div class="stat-bar">
-                            <div class="stat-fill" id="net-bar" style="width: 50%"></div>
-                        </div>
-                        <div class="stat-detail" id="net-detail">Active connection</div>
-                    </div>
-                </div>
-
-                <!-- AI AGENTS -->
-                <div class="section-header">
-                    <h3 class="section-title">AI Assistants</h3>
-                    <div class="section-tabs">
-                        <button class="tab active">All</button>
-                        <button class="tab">Active</button>
-                        <button class="tab">Offline</button>
-                    </div>
-                </div>
-
-                <div class="agent-grid" id="agent-grid">
-                    <!-- CPU Agent -->
-                    <div class="agent-card active" onclick="useAgent('cpu')">
-                        <div class="agent-status">
-                            <span class="status-dot active"></span>
-                            <span>Active</span>
-                        </div>
+                <div class="agent-grid">
+                    <!-- CPU Monitor - Running -->
+                    <div class="agent-card running" onclick="useBrain('cpu')">
                         <div class="agent-header">
                             <div class="agent-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">🖥️</div>
                             <div class="agent-info">
                                 <h3>CPU Monitor</h3>
-                                <span>System</span>
+                                <div class="agent-provider">System • Real-time</div>
                             </div>
+                            <div class="status-badge running">
+                                <span class="status-dot"></span>
+                                Running
+                            </div>
+                        </div>
+                        <div class="agent-badges">
+                            <span class="badge memory">Memory</span>
+                            <span class="badge reasoning">Live Stats</span>
+                            <span class="badge tools">Alerts</span>
                         </div>
                         <div class="agent-stats">
-                            <div class="agent-stat">
-                                <div class="agent-stat-label">Usage</div>
-                                <div class="agent-stat-value" id="agent-cpu">0%</div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="cpu-value">0%</div>
+                                <div class="stat-label">CPU</div>
                             </div>
-                            <div class="agent-stat">
-                                <div class="agent-stat-label">Cores</div>
-                                <div class="agent-stat-value" id="agent-cores">-</div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="cores-value">-</div>
+                                <div class="stat-label">Cores</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="freq-value">-</div>
+                                <div class="stat-label">MHz</div>
                             </div>
                         </div>
-                        <div class="agent-card-footer">
-                            <span class="agent-time">Real-time</span>
-                            <button class="use-btn">Use</button>
+                        <div class="agent-footer">
+                            <span class="agent-time">Live monitoring</span>
+                            <button class="run-btn">Use</button>
                         </div>
                     </div>
 
-                    <!-- Ollama Agent -->
-                    <div class="agent-card active" onclick="useAgent('ollama')">
-                        <div class="agent-status">
-                            <span class="status-dot active"></span>
-                            <span>Active</span>
+                    <!-- Memory Monitor - Running -->
+                    <div class="agent-card running" onclick="useBrain('memory')">
+                        <div class="agent-header">
+                            <div class="agent-icon" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">💾</div>
+                            <div class="agent-info">
+                                <h3>Memory Monitor</h3>
+                                <div class="agent-provider">System • Real-time</div>
+                            </div>
+                            <div class="status-badge running">
+                                <span class="status-dot"></span>
+                                Running
+                            </div>
                         </div>
+                        <div class="agent-badges">
+                            <span class="badge memory">History</span>
+                            <span class="badge reasoning">Analysis</span>
+                            <span class="badge tools">Cleanup</span>
+                        </div>
+                        <div class="agent-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="ram-percent">0%</div>
+                                <div class="stat-label">Usage</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="ram-used">0 GB</div>
+                                <div class="stat-label">Used</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="ram-total">0 GB</div>
+                                <div class="stat-label">Total</div>
+                            </div>
+                        </div>
+                        <div class="agent-footer">
+                            <span class="agent-time">Live monitoring</span>
+                            <button class="run-btn">Use</button>
+                        </div>
+                    </div>
+
+                    <!-- Ollama AI - Running -->
+                    <div class="agent-card running" onclick="useBrain('ollama')">
                         <div class="agent-header">
                             <div class="agent-icon" style="background: linear-gradient(135deg, #22c55e, #10b981);">🦙</div>
                             <div class="agent-info">
                                 <h3>Ollama AI</h3>
-                                <span>Local • Offline</span>
+                                <div class="agent-provider">Local • llama3:8b</div>
                             </div>
+                            <div class="status-badge running">
+                                <span class="status-dot"></span>
+                                Running
+                            </div>
+                        </div>
+                        <div class="agent-badges">
+                            <span class="badge memory">Context</span>
+                            <span class="badge reasoning">Reasoning</span>
+                            <span class="badge tools">Code</span>
                         </div>
                         <div class="agent-stats">
-                            <div class="agent-stat">
-                                <div class="agent-stat-label">Model</div>
-                                <div class="agent-stat-value">llama3:8b</div>
+                            <div class="stat-item">
+                                <div class="stat-value">Local</div>
+                                <div class="stat-label">Mode</div>
                             </div>
-                            <div class="agent-stat">
-                                <div class="agent-stat-label">Status</div>
-                                <div class="agent-stat-value" id="ollama-status">Ready</div>
+                            <div class="stat-item">
+                                <div class="stat-value">8B</div>
+                                <div class="stat-label">Params</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">4.5</div>
+                                <div class="stat-label">Rating</div>
                             </div>
                         </div>
-                        <div class="agent-card-footer">
+                        <div class="agent-footer">
                             <span class="agent-time">No internet needed</span>
-                            <button class="use-btn">Chat</button>
+                            <button class="run-btn">Chat</button>
                         </div>
                     </div>
 
-                    <!-- OPUS Agent -->
-                    <div class="agent-card" onclick="useAgent('opus')">
-                        <div class="agent-status">
-                            <span class="status-dot stopped"></span>
-                            <span>Online</span>
-                        </div>
+                    <!-- OPUS 4.7 - Stopped -->
+                    <div class="agent-card" onclick="useBrain('opus')">
                         <div class="agent-header">
-                            <div class="agent-icon" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🔮</div>
+                            <div class="agent-icon" style="background: linear-gradient(135deg, #ec4899, #be185d);">🔮</div>
                             <div class="agent-info">
                                 <h3>OPUS 4.7</h3>
-                                <span>Cloud • Online</span>
+                                <div class="agent-provider">OpusMax • Claude</div>
                             </div>
+                            <div class="status-badge stopped">
+                                <span class="status-dot"></span>
+                                Stopped
+                            </div>
+                        </div>
+                        <div class="agent-badges">
+                            <span class="badge memory">Large Context</span>
+                            <span class="badge reasoning">Advanced</span>
+                            <span class="badge tools">Multi-tool</span>
                         </div>
                         <div class="agent-stats">
-                            <div class="agent-stat">
-                                <div class="agent-stat-label">Model</div>
-                                <div class="agent-stat-value">claude-opus-4-7</div>
+                            <div class="stat-item">
+                                <div class="stat-value">Cloud</div>
+                                <div class="stat-label">Mode</div>
                             </div>
-                            <div class="agent-stat">
-                                <div class="agent-stat-label">Provider</div>
-                                <div class="agent-stat-value">OpusMax</div>
+                            <div class="stat-item">
+                                <div class="stat-value">200K</div>
+                                <div class="stat-label">Context</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">4.7</div>
+                                <div class="stat-label">Rating</div>
                             </div>
                         </div>
-                        <div class="agent-card-footer">
+                        <div class="agent-footer">
                             <span class="agent-time">Requires API key</span>
-                            <button class="use-btn stopped">Connect</button>
+                            <button class="run-btn stopped">Connect</button>
                         </div>
                     </div>
 
-                    <!-- Process Manager -->
-                    <div class="agent-card" onclick="useAgent('processes')">
-                        <div class="agent-status">
-                            <span class="status-dot active"></span>
-                            <span>Active</span>
-                        </div>
+                    <!-- Disk Manager -->
+                    <div class="agent-card" onclick="useBrain('disk')">
                         <div class="agent-header">
-                            <div class="agent-icon" style="background: linear-gradient(135deg, #f97316, #ea580c);">📊</div>
+                            <div class="agent-icon" style="background: linear-gradient(135deg, #f97316, #ea580c);">💿</div>
                             <div class="agent-info">
-                                <h3>Process Manager</h3>
-                                <span>System</span>
+                                <h3>Disk Manager</h3>
+                                <div class="agent-provider">System • Storage</div>
                             </div>
+                            <div class="status-badge stopped">
+                                <span class="status-dot"></span>
+                                Stopped
+                            </div>
+                        </div>
+                        <div class="agent-badges">
+                            <span class="badge memory">Analysis</span>
+                            <span class="badge tools">Cleanup</span>
                         </div>
                         <div class="agent-stats">
-                            <div class="agent-stat">
-                                <div class="agent-stat-label">Processes</div>
-                                <div class="agent-stat-value" id="proc-count">-</div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="disk-percent">0%</div>
+                                <div class="stat-label">Usage</div>
                             </div>
-                            <div class="agent-stat">
-                                <div class="agent-stat-label">Top CPU</div>
-                                <div class="agent-stat-value" id="top-cpu">-</div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="disk-free">0 GB</div>
+                                <div class="stat-label">Free</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">4.2</div>
+                                <div class="stat-label">Rating</div>
                             </div>
                         </div>
-                        <div class="agent-card-footer">
-                            <span class="agent-time">Live monitoring</span>
-                            <button class="use-btn">Manage</button>
+                        <div class="agent-footer">
+                            <span class="agent-time">Click to analyze</span>
+                            <button class="run-btn stopped">Run</button>
                         </div>
                     </div>
-                </div>
 
-                <!-- AI CHAT -->
-                <div class="chat-section">
-                    <div class="chat-header">
-                        <h3>AI Assistant</h3>
-                        <span class="chat-model" id="ai-model">Ollama • llama3:8b</span>
-                    </div>
-                    <div class="chat-messages" id="chat-messages">
-                        <div class="chat-msg ai">
-                            Hello! I'm your AI assistant. Ask me anything about system optimization, troubleshooting, or general help.
+                    <!-- Network Monitor -->
+                    <div class="agent-card" onclick="useBrain('network')">
+                        <div class="agent-header">
+                            <div class="agent-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">🌐</div>
+                            <div class="agent-info">
+                                <h3>Network Monitor</h3>
+                                <div class="agent-provider">System • Connection</div>
+                            </div>
+                            <div class="status-badge stopped">
+                                <span class="status-dot"></span>
+                                Stopped
+                            </div>
                         </div>
-                    </div>
-                    <div class="chat-input-area">
-                        <textarea class="chat-input" id="chat-input" rows="2" placeholder="Ask me anything..."></textarea>
-                        <button class="chat-send" onclick="sendChat()">Send</button>
+                        <div class="agent-badges">
+                            <span class="badge memory">Stats</span>
+                            <span class="badge tools">Speed Test</span>
+                        </div>
+                        <div class="agent-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="net-sent">0 MB</div>
+                                <div class="stat-label">Sent</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="net-recv">0 MB</div>
+                                <div class="stat-label">Received</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">4.0</div>
+                                <div class="stat-label">Rating</div>
+                            </div>
+                        </div>
+                        <div class="agent-footer">
+                            <span class="agent-time">Click to monitor</span>
+                            <button class="run-btn stopped">Run</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -792,18 +704,10 @@
 
     <script>
         const API = '';
-        let currentAI = 'ollama';
 
         document.addEventListener('DOMContentLoaded', () => {
             loadAll();
             setInterval(loadStats, 3000);
-
-            document.getElementById('chat-input').addEventListener('keydown', e => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendChat();
-                }
-            });
         });
 
         async function api(url) {
@@ -812,107 +716,48 @@
         }
 
         async function loadAll() {
-            const [cpu, ram, disk, net, sys, procs] = await Promise.all([
-                api('/api/cpu'), api('/api/memory'), api('/api/disk'),
-                api('/api/network'), api('/api/system'), api('/api/processes/cpu')
+            const [cpu, mem, disk, net] = await Promise.all([
+                api('/api/cpu'), api('/api/memory'), api('/api/disk'), api('/api/network')
             ]);
             if (cpu) updateCPU(cpu);
-            if (ram) updateRAM(ram);
+            if (mem) updateRAM(mem);
             if (disk) updateDisk(disk);
             if (net) updateNet(net);
-            if (sys) updateSys(sys);
-            if (procs) updateProcs(procs.processes || []);
         }
 
         async function loadStats() {
-            const [cpu, ram] = await Promise.all([api('/api/cpu'), api('/api/memory')]);
+            const [cpu, mem] = await Promise.all([api('/api/cpu'), api('/api/memory')]);
             if (cpu) updateCPU(cpu);
-            if (ram) updateRAM(ram);
+            if (mem) updateRAM(mem);
         }
 
         function updateCPU(d) {
-            const p = Math.round(d.average);
-            document.getElementById('cpu-value').textContent = p + '%';
-            document.getElementById('cpu-bar').style.width = p + '%';
-            document.getElementById('cpu-detail').textContent = `${d.freq_current} MHz • ${d.per_cpu?.length || 0} cores`;
-            document.getElementById('agent-cpu').textContent = p + '%';
-            document.getElementById('agent-cores').textContent = d.per_cpu?.length || '-';
+            document.getElementById('cpu-value').textContent = Math.round(d.average) + '%';
+            document.getElementById('cores-value').textContent = d.per_cpu?.length || '-';
+            document.getElementById('freq-value').textContent = Math.round(d.freq_current) || '-';
         }
 
         function updateRAM(d) {
-            const p = Math.round(d.percent);
-            document.getElementById('ram-value').textContent = p + '%';
-            document.getElementById('ram-bar').style.width = p + '%';
-            document.getElementById('ram-detail').textContent = `${d.used_gb} GB / ${d.total_gb} GB`;
+            document.getElementById('ram-percent').textContent = Math.round(d.percent) + '%';
+            document.getElementById('ram-used').textContent = d.used_gb + ' GB';
+            document.getElementById('ram-total').textContent = d.total_gb + ' GB';
         }
 
         function updateDisk(d) {
             if (d && d.length > 0) {
                 const main = d[0];
-                document.getElementById('disk-value').textContent = main.percent + '%';
-                document.getElementById('disk-bar').style.width = main.percent + '%';
-                document.getElementById('disk-detail').textContent = `${main.free_gb} GB free`;
+                document.getElementById('disk-percent').textContent = main.percent + '%';
+                document.getElementById('disk-free').textContent = main.free_gb + ' GB';
             }
         }
 
         function updateNet(d) {
-            document.getElementById('net-value').textContent = d.bytes_sent_mb + ' MB';
-            document.getElementById('net-detail').textContent = '↑ ' + d.bytes_sent_mb + ' MB • ↓ ' + d.bytes_recv_mb + ' MB';
+            document.getElementById('net-sent').textContent = d.bytes_sent_mb + ' MB';
+            document.getElementById('net-recv').textContent = d.bytes_recv_mb + ' MB';
         }
 
-        function updateSys(d) {
-            document.getElementById('proc-count').textContent = '~' + (d.cpu_count_logical * 15);
-        }
-
-        function updateProcs(procs) {
-            if (procs.length > 0) {
-                const top = procs[0];
-                document.getElementById('top-cpu').textContent = top.cpu_percent.toFixed(1) + '%';
-            }
-        }
-
-        function useAgent(name) {
-            document.querySelectorAll('.agent-card').forEach(c => c.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            currentAI = name;
-            document.getElementById('ai-model').textContent = name === 'ollama' ? 'Ollama • llama3:8b' : 'OPUS 4.7 • Claude';
-        }
-
-        async function sendChat() {
-            const input = document.getElementById('chat-input');
-            const msgs = document.getElementById('chat-messages');
-            const msg = input.value.trim();
-            if (!msg) return;
-
-            msgs.innerHTML += `<div class="chat-msg user">${msg}</div>`;
-            input.value = '';
-            msgs.innerHTML += `<div class="chat-msg ai" id="loading">Thinking...</div>`;
-            msgs.scrollTop = msgs.scrollHeight;
-
-            try {
-                const res = await fetch(API + '/api/ai/' + currentAI, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({message: msg, model: 'llama3:8b'})
-                });
-                const data = await res.json();
-                document.getElementById('loading').remove();
-                if (data.success) {
-                    msgs.innerHTML += `<div class="chat-msg ai">${data.response}</div>`;
-                } else {
-                    msgs.innerHTML += `<div class="chat-msg ai" style="color: #ef4444;">Error: ${data.error}</div>`;
-                }
-            } catch (e) {
-                document.getElementById('loading').remove();
-                msgs.innerHTML += `<div class="chat-msg ai" style="color: #ef4444;">Connection failed</div>`;
-            }
-
-            msgs.scrollTop = msgs.scrollHeight;
-        }
-
-        function showSection(name) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+        function useBrain(name) {
+            alert('Opening ' + name + ' agent...');
         }
     </script>
 </body>
