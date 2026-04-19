@@ -1,92 +1,124 @@
-# SAI Rolotech Repos - Organized by Category
+# SAI Rolotech GitHub Repos - By Time & Date
 
-> Last Updated: 2026-04-19
-
-## 📊 Summary
-- **Total Repos**: 22
-- **Categories**: 6
-- **GitHub Account**: adminsairolotech-bit
+> **Generated:** 2026-04-19 | **Total:** 50 repos | **Account:** @adminsairolotech-bit
 
 ---
 
-## 🤖 Category 1: AI Agents & Automation
+## 🆕 NEWEST - Last 7 Days (2026-04-19 to 2026-04-13)
 
-**Tools**: Agno, LangChain, CrewAI, OpenClaw, Hermes
-
-| Title | Created | Description | Status |
-|-------|---------|-------------|--------|
-| [PRO AI Engine](sai-rolotech-pro-ai/) | 2026-04-19 | PRO AI Engine with 5 specialized agents | ✅ Active |
-| [OpenClaw AI Gateway](sai-rolotech-openclaw/) | 2026-04-19 | OpenClaw AI Gateway - Telegram/WhatsApp linked | ✅ Working |
-| [Agno Multi-Agent](agno-multiagent/) | 2026-04-18 | Multi-agent AI system with Agno framework | ✅ Working |
-| [AI Hub - Hermes](sai-rolotech-ai-hub/) | 2026-04-19 | Central AI hub with Hermes agent | ✅ Active |
-
----
-
-## 🔌 Category 2: AI Tools & Extensions
-
-**Tools**: VS Code Extension, Claude Code, Playwright
-
-| Title | Created | Description | Features |
-|-------|---------|-------------|----------|
-| [Prompt Master](sai-rolotech-prompts/) | 2026-04-19 | VS Code Extension for prompts | chat, prompts, copy |
-| [Prompt Builder VS Code](prompt-builder-vscode/) | 2026-04-18 | VS Code extension for prompts | chat-ui, role-detection |
-| [Everything Claude Code](https://github.com/adminsairolotech-bit/everything-claude-code) | 2026-04-03 | Agent harness optimization | 738 skills, 75 agents |
-| [Claude Memory](https://github.com/adminsairolotech-bit/claude-mem) | 2026-04-18 | Auto memory capture plugin | - |
+| Stars | Created | Updated | Repo | Description | Lang | Status |
+|-------|---------|---------|------|-------------|------|--------|
+| 0 | 2026-04-19 | 2026-04-19 | [sai-rolotech-autocad](https://github.com/adminsairolotech-bit/sai-rolotech-autocad) | AutoCAD Bridge - SCR Generator | Python | public |
+| 0 | 2026-04-19 | 2026-04-19 | [sai-rolotech-prompts](https://github.com/adminsairolotech-bit/sai-rolotech-prompts) | VS Code Extension for prompts | HTML | public |
+| 0 | 2026-04-19 | 2026-04-19 | [sai-rolotech-n8n](https://github.com/adminsairolotech-bit/sai-rolotech-n8n) | n8n Automation Workflows | JSON | public |
+| 0 | 2026-04-19 | 2026-04-19 | [sai-rolotech-openclaw](https://github.com/adminsairolotech-bit/sai-rolotech-openclaw) | OpenClaw AI Gateway | Python | public |
+| 0 | 2026-04-19 | 2026-04-19 | [sai-rolotech-pro-ai](https://github.com/adminsairolotech-bit/sai-rolotech-pro-ai) | PRO AI Engine with 5 agents | Python | public |
+| 0 | 2026-04-19 | 2026-04-19 | [sai-rolotech-cloud-code-extension](https://github.com/adminsairolotech-bit/sai-rolotech-cloud-code-extension-20260419) | AI Cloud Bridges | - | public |
+| 0 | 2026-04-18 | 2026-04-18 | [Code-Fixer](https://github.com/adminsairolotech-bit/Code-Fixer) | Replit Code Fixer | - | private |
+| 0 | 2026-04-18 | 2026-04-18 | [claude-mem](https://github.com/adminsairolotech-bit/claude-mem) | Claude Code auto memory plugin | - | public |
 
 ---
 
-## 🏭 Category 3: Roll Forming Engineering
+## 📅 THIS WEEK - Last 30 Days (2026-04-12 to 2026-03-21)
 
-**Tools**: AutoCAD, SolidWorks, Dynamo, SCR Generator
-
-| Title | Created | Description | Tools |
-|-------|---------|-------------|-------|
-| [AutoCAD Bridge](sai-rolotech-autocad/) | 2026-04-19 | SCR Generator for roll forming | SCR Generator, Profile Designer |
-| [AutoCAD SCR Generator](autocad-bridge/) | 2026-04-18 | Natural language → AutoCAD SCR | chat-interface |
-| [Smart Engines](https://github.com/adminsairolotech-bit/sai-rolotech-smart-engines) | 2026-03-22 | Professional Roll Forming Suite | v2.2.0 |
-
----
-
-## ☁️ Category 4: Cloud & Infrastructure
-
-**Tools**: Cloud AI, n8n, API Gateways, Docker
-
-| Title | Created | Description | Status |
-|-------|---------|-------------|--------|
-| [n8n Workflows](sai-rolotech-n8n/) | 2026-04-19 | n8n Automation Workflows | ✅ Active |
-| [Cloud AI Bridge](cloud-ai/) | 2026-04-19 | Groq/NVIDIA/Gemini/OpenRouter | ✅ Working |
-| [OpenClaw Bridge](openclaw-bridge/) | 2026-04-19 | OpenClaw Gateway - Claude Opus | ✅ Working |
+| Stars | Created | Updated | Repo | Description | Lang | Status |
+|-------|---------|---------|------|-------------|------|--------|
+| 0 | 2026-04-17 | 2026-04-17 | [sai-rolotech-smart-engines](https://github.com/adminsairolotech-bit/sai-rolotech-smart-engines) | Roll Forming & CNC Suite v2.2.0 | - | public |
+| 0 | 2026-04-11 | 2026-04-11 | [sai-rolotech-laptop-control-app](https://github.com/adminsairolotech-bit/sai-rolotech-laptop-control-app) | Laptop control app | - | private |
+| 0 | 2026-04-10 | 2026-04-10 | [multi-ai-system_prompts_leaks](https://github.com/adminsairolotech-bit/multi-ai-system_prompts_leaks) | AI system prompts | - | public |
+| 0 | 2026-04-10 | 2026-04-10 | [elevenlabs-python](https://github.com/adminsairolotech-bit/elevenlabs-python) | ElevenLabs Python SDK | Python | public |
+| 0 | 2026-04-08 | 2026-04-08 | [crm-2](https://github.com/adminsairolotech-bit/crm-2) | SAI Rolotech CRM | - | public |
+| 0 | 2026-04-07 | 2026-04-07 | [claude-opus-4.6-offline](https://github.com/adminsairolotech-bit/claude-opus-4.6-offline) | Claude Opus 4.6 local server | - | public |
+| 0 | 2026-04-07 | 2026-04-07 | [BUDDY-AUTO-MODE](https://github.com/adminsairolotech-bit/BUDDY-AUTO-MODE) | OpenClaw-style assistant | - | public |
+| 0 | 2026-04-06 | 2026-04-06 | [buddy-automation-suite](https://github.com/adminsairolotech-bit/buddy-automation-suite) | Buddy automation | - | private |
+| 0 | 2026-04-06 | 2026-04-06 | [developer-portfolios](https://github.com/adminsairolotech-bit/developer-portfolios) | Developer portfolios list | - | public |
+| 0 | 2026-04-06 | 2026-04-06 | [open-multi-agent](https://github.com/adminsairolotech-bit/open-multi-agent) | TypeScript multi-agent framework | TypeScript | public |
 
 ---
 
-## 📱 Category 5: Social Media & Marketing
+## 🗓️ THIS MONTH - Last 90 Days (2026-03-11 to 2026-01-20)
 
-**Tools**: Instagram API, Telegram Bot, Content Generation
-
-| Title | Created | Description | Platforms |
-|-------|---------|-------------|-----------|
-| [Agentfy](Agentfy/) | 2026-04-19 | Social media agent collection | Instagram, Telegram |
-| [Instagram Automation](instagram-automation/) | 2026-04-18 | Instagram automation tools | Instagram |
-| [Instagram AI](instagram-ai/) | 2026-04-18 | AI-powered Instagram tools | Instagram |
+| Stars | Created | Updated | Repo | Description | Lang | Status |
+|-------|---------|---------|------|-------------|------|--------|
+| 0 | 2026-04-04 | 2026-04-04 | [reposcope-app](https://github.com/adminsairolotech-bit/reposcope-app) | AI repository analysis | - | public |
+| 0 | 2026-04-04 | 2026-04-04 | [openclaw.ai-NEW-](https://github.com/adminsairolotech-bit/openclaw.ai-NEW-) | OpenClaw AI | - | public |
+| 0 | 2026-04-03 | 2026-04-03 | [oh-my-codex](https://github.com/adminsairolotech-bit/oh-my-codex) | CodeX hooks & agents | - | public |
+| 0 | 2026-04-03 | 2026-04-03 | [agents](https://github.com/adminsairolotech-bit/agents) | Claude Code agents | - | public |
+| 0 | 2026-04-03 | 2026-04-03 | [everything-claude-code](https://github.com/adminsairolotech-bit/everything-claude-code) | Agent harness optimization | - | public |
+| 0 | 2026-04-03 | 2026-04-03 | [awesome-claude-code](https://github.com/adminsairolotech-bit/awesome-claude-code) | Curated skills list | - | public |
+| 0 | 2026-04-03 | 2026-04-03 | [cloude-ai-agiant-superpowers](https://github.com/adminsairolotech-bit/cloude-ai-agiant-superpowers) | Agentic skills framework | - | public |
+| 0 | 2026-04-03 | 2026-04-03 | [second-brain-skills](https://github.com/adminsairolotech-bit/second-brain-skills) | Claude Code Second Brain | - | public |
+| 0 | 2026-04-03 | 2026-04-03 | [ui-ux-pro-max-skill](https://github.com/adminsairolotech-bit/ui-ux-pro-max-skill) | UI/UX design skill | - | public |
+| 0 | 2026-04-03 | 2026-04-03 | [super-pro](https://github.com/adminsairolotech-bit/super-pro) | RepoScope synthesis | - | public |
+| 0 | 2026-04-03 | 2026-04-03 | [HowToHunt](https://github.com/adminsairolotech-bit/HowToHunt) | Security testing | - | public |
+| 0 | 2026-04-02 | 2026-04-02 | [kagglehub](https://github.com/adminsairolotech-bit/kagglehub) | Kaggle Python library | Python | public |
+| 0 | 2026-04-02 | 2026-04-02 | [openclaw.ai](https://github.com/adminsairolotech-bit/openclaw.ai) | OpenClaw website | - | public |
+| 0 | 2026-04-01 | 2026-04-01 | [awesome-claude-code-subagents](https://github.com/adminsairolotech-bit/awesome-claude-code-subagents) | 100+ Claude subagents | - | public |
+| 0 | 2026-04-01 | 2026-04-01 | [byte-buddy](https://github.com/adminsairolotech-bit/byte-buddy) | JVM code generation | Java | public |
+| 0 | 2026-03-30 | 2026-03-30 | [cirrus](https://github.com/adminsairolotech-bit/cirrus) | Cloudflare Worker PDS | - | public |
+| 0 | 2026-03-23 | 2026-03-23 | [plugin-samples](https://github.com/adminsairolotech-bit/plugin-samples) | Figma plugin samples | - | public |
+| 0 | 2026-03-13 | 2026-03-13 | [sora2API](https://github.com/adminsairolotech-bit/sora2API) | SORA v2 API wrapper | Python | public |
 
 ---
 
-## 🛠️ Category 6: Development Tools
+## 📦 OLDER - Before January 2026
 
-**Tools**: Node.js, Python, TypeScript, React
-
-| Title | Created | Description | Stack |
-|-------|---------|-------------|-------|
-| [AI Command Center](ai-command-center/) | 2026-04-19 | React dashboard | React + Vite |
-| [Prompt Builder Chatbot](Prompt-Builder-Chatbot/) | 2026-04-19 | Prompt building chatbot | - |
-| [Computer Agent](https://github.com/adminsairolotech-bit/computer-agent) | 2026-04-04 | Desktop AI control | Desktop/Terminal |
+| Stars | Created | Updated | Repo | Description | Lang | Status |
+|-------|---------|---------|------|-------------|------|--------|
+| 0 | 2026-01-09 | 2026-01-09 | [computer-agent](https://github.com/adminsairolotech-bit/computer-agent) | Desktop AI control | - | public |
+| 0 | 2019-03-08 | 2019-03-08 | [HowickMaker-for-Dynamo](https://github.com/adminsairolotech-bit/HowickMaker-for-Dynamo) | Roll forming for Dynamo | - | public |
 
 ---
 
-## 🆕 Latest Repos (Newest First)
+## 📊 STATISTICS
 
-1. **sai-rolotech-autocad** - 2026-04-19
-2. **sai-rolotech-prompts** - 2026-04-19
-3. **sai-rolotech-n8n** - 2026-04-19
-4. **sai-rolotech-openclaw** - 2026-04-19
-5. **sai-rolotech-pro-ai** - 2026-04-19
+| Metric | Count |
+|--------|-------|
+| Total Repos | 50 |
+| Total Stars | 0 |
+| Public | 38 |
+| Private | 12 |
+| Forked | 16 |
+| Last 7 Days | 8 |
+| Last 30 Days | 10 |
+| Last 90 Days | 20 |
+
+---
+
+## 🏷️ BY CATEGORY
+
+### 🤖 AI Agents & Automation
+- sai-rolotech-pro-ai
+- sai-rolotech-openclaw
+- BUDDY-AUTO-MODE
+- agents
+- awesome-claude-code-subagents
+- open-multi-agent
+
+### 🔌 AI Tools & Extensions
+- sai-rolotech-prompts
+- claude-mem
+- everything-claude-code
+- awesome-claude-code
+- claude-opus-4.6-offline
+- elevenlabs-python
+- computer-agent
+
+### 🏭 Engineering (Roll Forming/CAD)
+- sai-rolotech-autocad
+- sai-rolotech-smart-engines
+- HowickMaker-for-Dynamo
+
+### ☁️ Automation & Infrastructure
+- sai-rolotech-n8n
+- sai-rolotech-laptop-control-app
+- Code-Fixer
+
+### 📱 Business
+- crm-2
+- reposcope-app
+
+### 🔬 Research
+- multi-ai-system_prompts_leaks
+- second-brain-skills
+- cloude-ai-agiant-superpowers
