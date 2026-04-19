@@ -2,15 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>ChatGPT + Codex Hub - SAI ROLO TECH</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* ===== CSS Variables ===== */
         :root {
             --bg-primary: #0a0a0f;
             --bg-secondary: #12121a;
@@ -25,18 +23,54 @@
             --success: #10a37f;
             --warning: #f7df1e;
             --error: #ef4444;
+
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+
+            /* Transitions */
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.3s ease;
+        }
+
+        /* ===== Base Styles ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
+            min-height: 100dvh;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== Desktop Background ===== */
+        .bg-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
         }
 
         .bg-grid {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -45,19 +79,15 @@
                 linear-gradient(rgba(16, 163, 127, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(16, 163, 127, 0.03) 1px, transparent 1px);
             background-size: 50px 50px;
-            pointer-events: none;
-            z-index: 0;
         }
 
         .bg-glow {
-            position: fixed;
+            position: absolute;
             width: 600px;
             height: 600px;
             border-radius: 50%;
             filter: blur(150px);
             opacity: 0.15;
-            pointer-events: none;
-            z-index: 0;
         }
 
         .bg-glow-1 {
@@ -79,45 +109,47 @@
             50% { transform: translate(50px, 50px); }
         }
 
+        /* ===== Container ===== */
         .container {
             position: relative;
             z-index: 1;
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: var(--space-md);
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
         }
 
+        /* ===== Header ===== */
         .header {
             text-align: center;
-            padding: 2rem 0;
-            animation: fadeIn 0.6s ease-out;
+            padding: var(--space-lg) 0;
         }
 
         .logo {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
         }
 
         .logo-icon {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, var(--accent-chatgpt), var(--accent-codex));
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 20px;
             box-shadow: 0 4px 20px var(--accent-glow);
         }
 
         .logo-text {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
             background: linear-gradient(135deg, var(--accent-chatgpt), var(--accent-codex));
             -webkit-background-clip: text;
@@ -127,59 +159,190 @@
 
         .tagline {
             color: var(--text-secondary);
-            font-size: 1.1rem;
+            font-size: 0.875rem;
         }
 
-        /* Connection Status */
+        /* ===== Connection Bar ===== */
         .connection-bar {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 2rem;
-            padding: 1rem;
+            gap: var(--space-md);
+            padding: var(--space-sm) var(--space-md);
             background: var(--bg-secondary);
             border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            margin-bottom: 1rem;
+            border-radius: 10px;
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
         }
 
         .connection-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: var(--space-xs);
+            font-size: 0.875rem;
         }
 
         .connection-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: var(--text-muted);
         }
 
         .connection-dot.connected {
             background: var(--success);
-            box-shadow: 0 0 10px var(--success);
+            box-shadow: 0 0 8px var(--success);
         }
 
         .connection-dot.error {
             background: var(--error);
         }
 
-        /* Flow Diagram */
+        /* ===== API Config Panel ===== */
+        .api-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            margin-bottom: var(--space-md);
+        }
+
+        .api-panel-header {
+            padding: var(--space-sm) var(--space-md);
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .api-panel-body {
+            padding: var(--space-md);
+        }
+
+        .provider-tabs {
+            display: flex;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-md);
+            background: var(--bg-tertiary);
+            padding: var(--space-xs);
+            border-radius: 8px;
+        }
+
+        .provider-tab {
+            flex: 1;
+            padding: var(--space-sm);
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: var(--transition-fast);
+        }
+
+        .provider-tab.active {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .provider-tab .tab-icon {
+            display: block;
+            font-size: 1.25rem;
+            margin-bottom: 2px;
+        }
+
+        .provider-tab .tab-label {
+            display: block;
+            font-size: 0.75rem;
+        }
+
+        .api-key-input {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .api-key-input input {
+            flex: 1;
+            padding: var(--space-sm) var(--space-md);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .model-select {
+            margin-top: var(--space-sm);
+        }
+
+        .model-select label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: var(--space-xs);
+        }
+
+        .model-select select {
+            width: 100%;
+            padding: var(--space-sm);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        /* ===== Stats Grid ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: var(--space-sm);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .stat-value.chatgpt { color: var(--accent-chatgpt); }
+        .stat-value.codex { color: var(--accent-codex); }
+
+        .stat-label {
+            font-size: 0.625rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== Flow Diagram ===== */
         .flow-container {
             background: var(--bg-secondary);
             border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 2rem;
-            margin: 1rem 0;
-            animation: slideUp 0.6s ease-out 0.2s backwards;
+            border-radius: 12px;
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
         }
 
         .flow-diagram {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: var(--space-xs);
             flex-wrap: wrap;
         }
 
@@ -187,58 +350,33 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
-            padding: 1rem 1.5rem;
+            gap: 4px;
+            padding: var(--space-sm) var(--space-md);
             background: var(--bg-tertiary);
-            border-radius: 12px;
+            border-radius: 10px;
             border: 2px solid transparent;
-            transition: all 0.3s ease;
-            min-width: 120px;
+            transition: var(--transition-normal);
+            min-width: 90px;
         }
 
-        .flow-node.chatgpt {
-            border-color: var(--accent-chatgpt);
-        }
-
-        .flow-node.codex {
-            border-color: var(--accent-codex);
-        }
-
-        .flow-node.verify {
-            border-color: var(--accent-chatgpt);
-        }
+        .flow-node.chatgpt { border-color: var(--accent-chatgpt); }
+        .flow-node.codex { border-color: var(--accent-codex); }
+        .flow-node.verify { border-color: var(--accent-chatgpt); }
 
         .flow-node.active {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(16, 163, 127, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(16, 163, 127, 0.4);
         }
 
-        .flow-node.error {
-            border-color: var(--error);
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
-        }
+        .flow-node.success { border-color: var(--success); box-shadow: 0 0 20px rgba(16, 163, 127, 0.4); }
+        .flow-node.error { border-color: var(--error); box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
 
-        .flow-node.success {
-            border-color: var(--success);
-            box-shadow: 0 0 30px rgba(16, 163, 127, 0.4);
-        }
-
-        .flow-node-icon {
-            font-size: 2rem;
-        }
-
-        .flow-node-label {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .flow-node-status {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
+        .flow-node-icon { font-size: 1.5rem; }
+        .flow-node-label { font-weight: 600; font-size: 0.75rem; }
+        .flow-node-status { font-size: 0.625rem; color: var(--text-muted); }
 
         .flow-arrow {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             color: var(--text-muted);
             animation: pulse 1.5s ease-in-out infinite;
         }
@@ -248,143 +386,149 @@
             50% { opacity: 1; }
         }
 
+        /* ===== Main Grid ===== */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            gap: var(--space-md);
             flex: 1;
-            animation: slideUp 0.6s ease-out 0.4s backwards;
-        }
-
-        @media (max-width: 900px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
+            min-height: 0;
         }
 
         .panel {
             background: var(--bg-secondary);
             border: 1px solid var(--border-subtle);
-            border-radius: 16px;
+            border-radius: 12px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
         .panel-header {
-            padding: 1rem 1.5rem;
+            padding: var(--space-sm) var(--space-md);
             background: var(--bg-tertiary);
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: var(--space-sm);
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
         }
 
         .panel-header-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            font-size: 0.875rem;
         }
 
-        .panel-header-icon.chatgpt {
-            background: var(--accent-chatgpt);
-        }
+        .panel-header-icon.chatgpt { background: var(--accent-chatgpt); }
+        .panel-header-icon.codex { background: var(--accent-codex); color: #000; }
 
-        .panel-header-icon.codex {
-            background: var(--accent-codex);
-            color: #000;
-        }
-
-        .panel-header-title {
+        .status-badge {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
-        .panel-body {
-            padding: 1.5rem;
-            flex: 1;
-            overflow-y: auto;
-            max-height: 500px;
+        .status-badge.pending { background: rgba(139,139,154,0.2); color: var(--text-secondary); }
+        .status-badge.running { background: rgba(247,223,30,0.2); color: var(--accent-codex); }
+        .status-badge.success { background: rgba(16,163,127,0.2); color: var(--accent-chatgpt); }
+        .status-badge.error { background: rgba(239,68,68,0.2); color: var(--error); }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
         }
 
+        .status-badge.running .status-dot {
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .panel-body {
+            padding: var(--space-md);
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+
+        /* ===== Form Elements ===== */
         .input-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: var(--space-md);
         }
 
         .input-label {
             display: block;
-            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            margin-bottom: var(--space-xs);
         }
 
-        .input-field {
+        .input-field, .select-field {
             width: 100%;
-            padding: 1rem;
+            padding: var(--space-sm) var(--space-md);
             background: var(--bg-tertiary);
             border: 1px solid var(--border-subtle);
-            border-radius: 10px;
+            border-radius: 8px;
             color: var(--text-primary);
             font-size: 1rem;
             font-family: inherit;
-            transition: all 0.3s ease;
+            transition: var(--transition-fast);
         }
 
-        .input-field:focus {
+        .input-field:focus, .select-field:focus {
             outline: none;
             border-color: var(--accent-chatgpt);
             box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.1);
         }
 
         textarea.input-field {
-            min-height: 120px;
+            min-height: 100px;
             resize: vertical;
         }
 
-        .select-field {
-            width: 100%;
-            padding: 1rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-family: inherit;
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238b8b9a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1rem;
-        }
-
+        /* ===== Buttons ===== */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            padding: 1rem 2rem;
+            gap: var(--space-xs);
+            padding: var(--space-sm) var(--space-md);
             border: none;
-            border-radius: 10px;
-            font-size: 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
             font-weight: 600;
             font-family: inherit;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition-fast);
+            white-space: nowrap;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--accent-chatgpt), #0d8d66);
             color: white;
-            box-shadow: 0 4px 15px rgba(16, 163, 127, 0.3);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 163, 127, 0.4);
+            box-shadow: 0 6px 16px rgba(16, 163, 127, 0.4);
         }
 
         .btn-secondary {
@@ -406,27 +550,36 @@
 
         .btn-group {
             display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+            margin-top: var(--space-md);
         }
 
+        .btn-full {
+            flex: 1;
+            min-width: 100%;
+        }
+
+        /* ===== Code Output ===== */
         .code-output {
             background: #1e1e1e;
-            border-radius: 10px;
-            padding: 1rem;
-            font-family: 'Fira Code', 'Monaco', monospace;
-            font-size: 0.875rem;
-            line-height: 1.6;
+            border-radius: 8px;
+            padding: var(--space-sm);
+            font-family: 'Fira Code', 'SF Mono', Monaco, monospace;
+            font-size: 0.75rem;
+            line-height: 1.5;
             overflow-x: auto;
             white-space: pre-wrap;
+            word-break: break-word;
             color: #d4d4d4;
-            min-height: 200px;
-            position: relative;
+            min-height: 150px;
+            max-height: 350px;
+            overflow-y: auto;
         }
 
         .code-line {
             display: flex;
-            gap: 1rem;
+            gap: var(--space-sm);
         }
 
         .code-line-number {
@@ -436,222 +589,72 @@
             text-align: right;
         }
 
+        /* ===== Log Panel ===== */
         .log-entry {
             display: flex;
             align-items: flex-start;
-            gap: 0.75rem;
-            padding: 0.75rem;
+            gap: var(--space-sm);
+            padding: var(--space-sm);
             background: var(--bg-tertiary);
             border-radius: 8px;
-            margin-bottom: 0.5rem;
+            margin-bottom: var(--space-xs);
             animation: slideIn 0.3s ease-out;
         }
 
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .log-entry-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
+            width: 24px;
+            height: 24px;
+            border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             flex-shrink: 0;
         }
 
-        .log-entry-icon.chatgpt {
-            background: var(--accent-chatgpt);
-        }
+        .log-entry-icon.chatgpt { background: var(--accent-chatgpt); }
+        .log-entry-icon.codex { background: var(--accent-codex); color: #000; }
+        .log-entry-icon.system { background: var(--bg-primary); border: 1px solid var(--border-subtle); }
 
-        .log-entry-icon.codex {
-            background: var(--accent-codex);
-            color: #000;
-        }
+        .log-entry-content { flex: 1; min-width: 0; }
+        .log-entry-time { font-size: 0.625rem; color: var(--text-muted); margin-bottom: 2px; }
+        .log-entry-message { font-size: 0.75rem; color: var(--text-secondary); }
 
-        .log-entry-content {
-            flex: 1;
-        }
-
-        .log-entry-time {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-bottom: 0.25rem;
-        }
-
-        .log-entry-message {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
-
-        .status-badge.pending {
-            background: rgba(139, 139, 154, 0.2);
-            color: var(--text-secondary);
-        }
-
-        .status-badge.running {
-            background: rgba(247, 223, 30, 0.2);
-            color: var(--accent-codex);
-        }
-
-        .status-badge.success {
-            background: rgba(16, 163, 127, 0.2);
-            color: var(--accent-chatgpt);
-        }
-
-        .status-badge.error {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--error);
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-
-        .status-badge.running .status-dot {
-            animation: blink 1s ease-in-out infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 1.25rem;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-value.chatgpt {
-            color: var(--accent-chatgpt);
-        }
-
-        .stat-value.codex {
-            color: var(--accent-codex);
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .scenario-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .scenario-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .scenario-card:hover {
-            border-color: var(--accent-chatgpt);
-            transform: translateY(-4px);
-        }
-
-        .scenario-card-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .scenario-card-desc {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
+        /* ===== Verification ===== */
         .verification-result {
             background: var(--bg-tertiary);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 1rem;
+            border-radius: 10px;
+            padding: var(--space-md);
+            margin-top: var(--space-md);
         }
 
         .verification-score {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: var(--space-md);
+            margin-bottom: var(--space-sm);
         }
 
         .score-circle {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.125rem;
             font-weight: 700;
-            background: conic-gradient(
-                var(--accent-chatgpt) calc(var(--score) * 1%),
-                var(--bg-primary) calc(var(--score) * 1%)
-            );
+            background: conic-gradient(var(--accent-chatgpt) calc(var(--score) * 1%), var(--bg-primary) calc(var(--score) * 1%));
         }
 
         .score-inner {
-            width: 60px;
-            height: 60px;
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
             background: var(--bg-tertiary);
             display: flex;
@@ -662,38 +665,122 @@
         .issue-item {
             display: flex;
             align-items: flex-start;
-            gap: 0.75rem;
-            padding: 0.75rem;
+            gap: var(--space-sm);
+            padding: var(--space-sm);
             background: var(--bg-secondary);
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            margin-bottom: var(--space-xs);
         }
 
         .issue-severity {
-            padding: 0.25rem 0.5rem;
+            padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.625rem;
             font-weight: 600;
         }
 
-        .issue-severity.high {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--error);
+        .issue-severity.high { background: rgba(239,68,68,0.2); color: var(--error); }
+        .issue-severity.medium { background: rgba(247,223,30,0.2); color: var(--accent-codex); }
+        .issue-severity.low { background: rgba(139,139,154,0.2); color: var(--text-secondary); }
+
+        /* ===== Scenarios ===== */
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
         }
 
-        .issue-severity.medium {
-            background: rgba(247, 223, 30, 0.2);
-            color: var(--accent-codex);
+        .scenario-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: var(--space-sm);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            text-align: center;
         }
 
-        .issue-severity.low {
-            background: rgba(139, 139, 154, 0.2);
+        .scenario-card:hover {
+            border-color: var(--accent-chatgpt);
+            transform: translateY(-2px);
+        }
+
+        .scenario-card-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 2px;
+        }
+
+        .scenario-card-desc {
+            font-size: 0.625rem;
             color: var(--text-secondary);
         }
 
+        /* ===== Comparison ===== */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-sm);
+        }
+
+        .comparison-panel {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: var(--space-sm);
+        }
+
+        .comparison-title {
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin-bottom: var(--space-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.625rem;
+            font-weight: 600;
+        }
+
+        .badge.real { background: var(--accent-chatgpt); color: white; }
+        .badge.demo { background: var(--accent-codex); color: #000; }
+        .badge.ollama { background: #9333ea; color: white; }
+
+        .comparison-list {
+            list-style: none;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .comparison-list li {
+            padding: 2px 0;
+        }
+
+        /* ===== Animations ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header { animation: fadeIn 0.4s ease-out; }
+        .api-panel { animation: slideUp 0.4s ease-out 0.1s backwards; }
+        .stats-grid { animation: slideUp 0.4s ease-out 0.15s backwards; }
+        .flow-container { animation: slideUp 0.4s ease-out 0.2s backwards; }
+        .main-grid { animation: slideUp 0.4s ease-out 0.25s backwards; }
+
+        /* ===== Spinner ===== */
         .spinner {
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             border: 2px solid transparent;
             border-top-color: currentColor;
             border-radius: 50%;
@@ -704,18 +791,19 @@
             to { transform: rotate(360deg); }
         }
 
+        /* ===== Copy Button ===== */
         .copy-btn {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.5rem 1rem;
+            top: var(--space-sm);
+            right: var(--space-sm);
+            padding: 4px 8px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-subtle);
-            border-radius: 6px;
+            border-radius: 4px;
             color: var(--text-secondary);
-            font-size: 0.75rem;
+            font-size: 0.625rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition-fast);
         }
 
         .copy-btn:hover {
@@ -723,67 +811,150 @@
             color: white;
         }
 
-        /* Comparison View */
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 1rem;
+        /* ===== Mobile Responsive ===== */
+        @media (max-width: 768px) {
+            html {
+                font-size: 14px;
+            }
+
+            .container {
+                padding: var(--space-sm);
+            }
+
+            .logo-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+
+            .logo-text {
+                font-size: 1.125rem;
+            }
+
+            .connection-bar {
+                padding: var(--space-xs) var(--space-sm);
+                gap: var(--space-sm);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-value {
+                font-size: 1rem;
+            }
+
+            .flow-container {
+                padding: var(--space-sm);
+            }
+
+            .flow-node {
+                min-width: 70px;
+                padding: var(--space-xs) var(--space-sm);
+            }
+
+            .flow-node-icon {
+                font-size: 1.25rem;
+            }
+
+            .flow-node-label {
+                font-size: 0.625rem;
+            }
+
+            .flow-arrow {
+                font-size: 1rem;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-sm);
+            }
+
+            .panel-body {
+                padding: var(--space-sm);
+                max-height: 300px;
+            }
+
+            .scenario-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .btn {
+                padding: var(--space-sm);
+                font-size: 0.75rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn-full {
+                min-width: auto;
+            }
+
+            .code-output {
+                font-size: 0.625rem;
+                max-height: 250px;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .panel[style*="margin-top"] {
+                margin-top: var(--space-sm) !important;
+            }
         }
 
-        .comparison-panel {
-            background: var(--bg-tertiary);
-            border-radius: 10px;
-            padding: 1rem;
-        }
+        /* ===== Small Mobile ===== */
+        @media (max-width: 400px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-xs);
+            }
 
-        .comparison-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+            .stat-card {
+                padding: var(--space-xs);
+            }
 
-        .real-badge {
-            background: var(--accent-chatgpt);
-            color: white;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-        }
+            .stat-value {
+                font-size: 0.875rem;
+            }
 
-        .demo-badge {
-            background: var(--accent-codex);
-            color: #000;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-        }
+            .flow-diagram {
+                gap: 2px;
+            }
 
-        .api-key-input {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
+            .flow-node {
+                min-width: 55px;
+                padding: var(--space-xs);
+            }
 
-        .api-key-input input {
-            flex: 1;
+            .flow-arrow {
+                font-size: 0.75rem;
+            }
+
+            .scenario-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="bg-grid"></div>
-    <div class="bg-glow bg-glow-1"></div>
-    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-effects">
+        <div class="bg-grid"></div>
+        <div class="bg-glow bg-glow-1"></div>
+        <div class="bg-glow bg-glow-2"></div>
+    </div>
 
     <div class="container">
+        <!-- Header -->
         <header class="header">
             <div class="logo">
                 <div class="logo-icon">⚡</div>
                 <span class="logo-text">ChatGPT + Codex Hub</span>
             </div>
-            <p class="tagline">Real AI Collaboration Loop • SAI ROLO TECH</p>
+            <p class="tagline">AI Collaboration Loop • SAI ROLO TECH</p>
         </header>
 
         <!-- Connection Status -->
@@ -794,41 +965,93 @@
             </div>
             <div class="connection-item">
                 <div class="connection-dot" id="api-status"></div>
-                <span>OpenAI API</span>
+                <span id="api-status-label">API</span>
             </div>
             <div class="connection-item">
-                <button class="btn btn-secondary" onclick="checkConnections()" style="padding: 0.5rem 1rem;">
-                    🔄 Check
+                <button class="btn btn-secondary" onclick="checkConnections()" style="padding: 4px 8px; font-size: 0.75rem;">
+                    🔄
                 </button>
             </div>
         </div>
 
-        <!-- API Key Input -->
-        <div class="panel" style="margin-bottom: 1rem;">
-            <div class="panel-header">
-                <div class="panel-header-icon chatgpt">🔑</div>
-                <span class="panel-header-title">API Configuration</span>
+        <!-- API Configuration -->
+        <div class="api-panel">
+            <div class="api-panel-header">
+                <span>🔑</span>
+                <span>API Configuration</span>
             </div>
-            <div class="panel-body">
-                <div class="api-key-input">
-                    <input type="password" class="input-field" id="api-key" placeholder="Enter OpenAI API Key (sk-...)">
-                    <button class="btn btn-primary" onclick="saveApiKey()">Save</button>
+            <div class="api-panel-body">
+                <div class="provider-tabs">
+                    <button class="provider-tab active" data-provider="openai" onclick="switchProvider('openai')">
+                        <span class="tab-icon">🤖</span>
+                        <span class="tab-label">OpenAI</span>
+                    </button>
+                    <button class="provider-tab" data-provider="ollama" onclick="switchProvider('ollama')">
+                        <span class="tab-icon">🦙</span>
+                        <span class="tab-label">Ollama</span>
+                    </button>
+                    <button class="provider-tab" data-provider="demo" onclick="switchProvider('demo')">
+                        <span class="tab-icon">🎭</span>
+                        <span class="tab-label">Demo</span>
+                    </button>
                 </div>
-                <p style="color: var(--text-muted); font-size: 0.875rem;">
-                    Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank" style="color: var(--accent-chatgpt);">platform.openai.com</a>
-                </p>
+
+                <div id="openai-config">
+                    <div class="api-key-input">
+                        <input type="password" class="input-field" id="api-key" placeholder="OpenAI API Key (sk-...)">
+                        <button class="btn btn-primary" onclick="saveApiKey('openai')">Save</button>
+                    </div>
+                    <div class="model-select">
+                        <label>Model</label>
+                        <select class="select-field" id="openai-model">
+                            <option value="gpt-4o">GPT-4o (Recommended)</option>
+                            <option value="gpt-4">GPT-4</option>
+                            <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="ollama-config" style="display: none;">
+                    <div class="api-key-input">
+                        <input type="text" class="input-field" id="ollama-url" placeholder="Ollama URL (http://localhost:11434)" value="http://localhost:11434">
+                        <button class="btn btn-primary" onclick="saveApiKey('ollama')">Save</button>
+                    </div>
+                    <div class="model-select">
+                        <label>Model (Llama 3.1/3.2)</label>
+                        <select class="select-field" id="ollama-model">
+                            <option value="llama3.1:8b">Llama 3.1 8B (Fast)</option>
+                            <option value="llama3.1:70b">Llama 3.1 70B (Large)</option>
+                            <option value="llama3.2:3b">Llama 3.2 3B (Mobile)</option>
+                            <option value="llama3.2:1b">Llama 3.2 1B (Lightest)</option>
+                            <option value="mistral">Mistral 7B</option>
+                            <option value="codellama:13b">CodeLlama 13B</option>
+                            <option value="qwen2.5:14b">Qwen 2.5 14B</option>
+                            <option value="nomic-embed-text">Nomic Embed (for embeddings)</option>
+                        </select>
+                    </div>
+                    <p style="margin-top: var(--space-sm); font-size: 0.75rem; color: var(--text-muted);">
+                        💡 Install Ollama from <a href="https://ollama.com" target="_blank" style="color: var(--accent-chatgpt);">ollama.com</a>
+                    </p>
+                </div>
+
+                <div id="demo-config" style="display: none;">
+                    <p style="color: var(--text-secondary); font-size: 0.875rem;">
+                        🎭 Demo mode - No API key needed. Uses pre-generated code.
+                    </p>
+                </div>
             </div>
         </div>
 
         <!-- Stats -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-value chatgpt">ChatGPT</div>
-                <div class="stat-label">Analysis & Plan</div>
+                <div class="stat-value chatgpt">🧠</div>
+                <div class="stat-label">ChatGPT</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value codex">Codex</div>
-                <div class="stat-label">Code Generation</div>
+                <div class="stat-value codex">💻</div>
+                <div class="stat-label">Codex</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="iterations-count">0</div>
@@ -857,7 +1080,7 @@
                 <span class="flow-arrow">→</span>
                 <div class="flow-node verify" id="node-chatgpt-2">
                     <span class="flow-node-icon">🔍</span>
-                    <span class="flow-node-label">ChatGPT</span>
+                    <span class="flow-node-label">Verify</span>
                     <span class="flow-node-status">Verifying...</span>
                 </div>
                 <span class="flow-arrow">→</span>
@@ -869,13 +1092,13 @@
             </div>
         </div>
 
-        <!-- Main Grid -->
+        <!-- Main Content -->
         <div class="main-grid">
             <!-- Input Panel -->
             <div class="panel">
                 <div class="panel-header">
                     <div class="panel-header-icon chatgpt">📝</div>
-                    <span class="panel-header-title">Enter Request</span>
+                    <span>Enter Request</span>
                 </div>
                 <div class="panel-body">
                     <div class="input-group">
@@ -890,24 +1113,22 @@
                         <label class="input-label">Your Request</label>
                         <textarea class="input-field" id="user-request" placeholder="Describe what you want to build...">Create a Python calculator with add, subtract, multiply, divide functions</textarea>
                     </div>
+
                     <div class="btn-group">
-                        <button class="btn btn-primary" id="run-btn" onclick="runLoop()">
-                            <span>▶</span> Run (REAL API)
-                        </button>
-                        <button class="btn btn-secondary" id="demo-btn" onclick="runDemo()">
-                            <span>🎭</span> Run Demo
+                        <button class="btn btn-primary btn-full" id="run-btn" onclick="runLoop()">
+                            <span>▶</span> Run Loop
                         </button>
                         <button class="btn btn-secondary" onclick="clearAll()">
-                            <span>🗑</span> Clear
+                            <span>🗑</span>
                         </button>
                     </div>
 
-                    <!-- Demo Scenarios -->
-                    <h3 style="margin-top: 2rem; color: var(--text-secondary);">Quick Scenarios:</h3>
+                    <!-- Scenarios -->
+                    <h3 style="margin-top: var(--space-lg); font-size: 0.75rem; color: var(--text-secondary);">Quick Scenarios:</h3>
                     <div class="scenario-grid">
                         <div class="scenario-card" onclick="loadScenario('calculator')">
                             <div class="scenario-card-title">🧮 Calculator</div>
-                            <div class="scenario-card-desc">Basic math operations</div>
+                            <div class="scenario-card-desc">Basic math</div>
                         </div>
                         <div class="scenario-card" onclick="loadScenario('rest_api')">
                             <div class="scenario-card-title">🌐 REST API</div>
@@ -915,7 +1136,7 @@
                         </div>
                         <div class="scenario-card" onclick="loadScenario('bug_fix')">
                             <div class="scenario-card-title">🐛 Bug Fix</div>
-                            <div class="scenario-card-desc">Security fix demo</div>
+                            <div class="scenario-card-desc">Security fix</div>
                         </div>
                     </div>
                 </div>
@@ -925,30 +1146,19 @@
             <div class="panel">
                 <div class="panel-header">
                     <div class="panel-header-icon codex">📤</div>
-                    <span class="panel-header-title">Generated Code</span>
-                    <div style="margin-left: auto;">
-                        <span class="status-badge pending" id="status-badge">
-                            <span class="status-dot"></span>
-                            <span id="status-text">Ready</span>
-                        </span>
-                    </div>
+                    <span>Generated Code</span>
+                    <span class="status-badge pending" id="status-badge">
+                        <span class="status-dot"></span>
+                        <span id="status-text">Ready</span>
+                    </span>
                 </div>
                 <div class="panel-body">
-                    <div id="output-area">
-                        <div class="code-output" style="color: var(--text-muted);">
-# Generated code will appear here...
-
-# The loop works like this:
-# 1. ChatGPT analyzes your request
-# 2. Codex generates the code
-# 3. ChatGPT verifies the code
-# 4. If issues found, Codex revises (up to 3 times)
-                        </div>
+                    <div id="output-area" style="position: relative;">
+                        <div class="code-output"># Generated code will appear here...
+# Run the loop to generate code</div>
                     </div>
 
-                    <!-- Verification Result -->
                     <div class="verification-result" id="verification-panel" style="display: none;">
-                        <h4 style="margin-bottom: 1rem;">Verification Result</h4>
                         <div class="verification-score">
                             <div class="score-circle" id="score-circle" style="--score: 0">
                                 <div class="score-inner">
@@ -956,68 +1166,67 @@
                                 </div>
                             </div>
                             <div>
-                                <div id="verification-status" style="font-weight: 600; font-size: 1.25rem;">PASS</div>
-                                <div id="verification-summary" style="color: var(--text-secondary);">All checks passed</div>
+                                <div id="verification-status" style="font-weight: 600; font-size: 1rem;">PASS</div>
+                                <div id="verification-summary" style="color: var(--text-secondary); font-size: 0.75rem;">All checks passed</div>
                             </div>
                         </div>
-                        <div class="verification-issues" id="issues-list"></div>
+                        <div id="issues-list"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Comparison Section -->
-        <div class="panel" style="margin-top: 2rem;">
+        <!-- Comparison -->
+        <div class="panel" style="margin-top: var(--space-md);">
             <div class="panel-header">
-                <div class="panel-header-icon chatgpt">⚖️</div>
-                <span class="panel-header-title">Real API vs Demo Comparison</span>
+                <span>⚖️</span>
+                <span>Provider Comparison</span>
             </div>
             <div class="panel-body">
                 <div class="comparison-grid">
                     <div class="comparison-panel">
                         <div class="comparison-title">
-                            <span class="real-badge">REAL API</span>
-                            Uses your actual OpenAI API key
+                            <span class="badge ollama">🦙 Ollama</span>
+                            Desktop (Local LLM)
                         </div>
-                        <ul style="color: var(--text-secondary); font-size: 0.875rem; margin-left: 1rem;">
-                            <li>✅ Real GPT-4 responses</li>
-                            <li>✅ Actual code generation</li>
-                            <li>✅ Real verification</li>
-                            <li>⚠️ Costs API credits</li>
+                        <ul class="comparison-list">
+                            <li>✅ Free - No API costs</li>
+                            <li>✅ Private - Data stays local</li>
+                            <li>✅ Fast on modern hardware</li>
+                            <li>✅ Llama 3.1/3.2 support</li>
+                            <li>⚠️ Needs good GPU/CPU</li>
                         </ul>
                     </div>
                     <div class="comparison-panel">
                         <div class="comparison-title">
-                            <span class="demo-badge">DEMO</span>
-                            Simulated responses
+                            <span class="badge real">🤖 OpenAI</span>
+                            Cloud API
                         </div>
-                        <ul style="color: var(--text-secondary); font-size: 0.875rem; margin-left: 1rem;">
-                            <li>✅ No API costs</li>
-                            <li>✅ Fast responses</li>
-                            <li>✅ Works offline</li>
-                            <li>⚠️ Pre-generated code only</li>
+                        <ul class="comparison-list">
+                            <li>✅ GPT-4 powered</li>
+                            <li>✅ Works on any device</li>
+                            <li>✅ No local setup</li>
+                            <li>✅ Always up-to-date</li>
+                            <li>⚠️ Uses API credits</li>
                         </ul>
                     </div>
                 </div>
-                <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.875rem;">
-                    Click "Run (REAL API)" to use real ChatGPT/Codex, or "Run Demo" for quick preview.
-                </p>
             </div>
         </div>
 
         <!-- Log Panel -->
-        <div class="panel" style="margin-top: 2rem;">
+        <div class="panel" style="margin-top: var(--space-md);">
             <div class="panel-header">
-                <div class="panel-header-icon chatgpt">📋</div>
-                <span class="panel-header-title">Session Log</span>
+                <span>📋</span>
+                <span>Session Log</span>
             </div>
-            <div class="panel-body">
+            <div class="panel-body" style="max-height: 150px;">
                 <div id="log-area">
                     <div class="log-entry">
-                        <div class="log-entry-icon chatgpt">ℹ️</div>
+                        <div class="log-entry-icon system">ℹ️</div>
                         <div class="log-entry-content">
                             <div class="log-entry-time">Just now</div>
-                            <div class="log-entry-message">System ready. Enter a request or try a demo scenario.</div>
+                            <div class="log-entry-message">System ready. Select provider and enter a request.</div>
                         </div>
                     </div>
                 </div>
@@ -1028,58 +1237,80 @@
     <script>
         // Config
         const API_BASE = 'http://localhost:8080';
+        let currentProvider = localStorage.getItem('provider') || 'demo';
         let apiKey = localStorage.getItem('openai_api_key') || '';
-        let isDemoMode = false;
+        let ollamaUrl = localStorage.getItem('ollama_url') || 'http://localhost:11434';
 
         // Scenarios
         const scenarios = {
-            calculator: {
-                request: "Create a Python calculator with add, subtract, multiply, divide functions",
-                type: "generate_feature"
-            },
-            rest_api: {
-                request: "Create a FastAPI REST API with CRUD operations for items",
-                type: "generate_feature"
-            },
-            bug_fix: {
-                request: "Fix a bug where the login function allows any password",
-                type: "fix_bug"
-            }
+            calculator: { request: "Create a Python calculator with add, subtract, multiply, divide functions", type: "generate_feature" },
+            rest_api: { request: "Create a FastAPI REST API with CRUD operations for items", type: "generate_feature" },
+            bug_fix: { request: "Fix a bug where the login function allows any password", type: "fix_bug" }
         };
 
-        // Check connections on load
+        // Initialize
         checkConnections();
+        switchProvider(currentProvider);
+
+        function switchProvider(provider) {
+            currentProvider = provider;
+            localStorage.setItem('provider', provider);
+
+            document.querySelectorAll('.provider-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.provider === provider);
+            });
+
+            document.getElementById('openai-config').style.display = provider === 'openai' ? 'block' : 'none';
+            document.getElementById('ollama-config').style.display = provider === 'ollama' ? 'block' : 'none';
+            document.getElementById('demo-config').style.display = provider === 'demo' ? 'block' : 'none';
+
+            const statusLabel = document.getElementById('api-status-label');
+            if (provider === 'openai') statusLabel.textContent = 'OpenAI';
+            else if (provider === 'ollama') statusLabel.textContent = 'Ollama';
+            else statusLabel.textContent = 'Demo';
+
+            document.getElementById('api-key').value = apiKey;
+            document.getElementById('ollama-url').value = ollamaUrl;
+        }
+
+        function saveApiKey(type) {
+            if (type === 'openai') {
+                apiKey = document.getElementById('api-key').value.trim();
+                localStorage.setItem('openai_api_key', apiKey);
+                addLog('system', 'OpenAI API key saved');
+            } else if (type === 'ollama') {
+                ollamaUrl = document.getElementById('ollama-url').value.trim();
+                localStorage.setItem('ollama_url', ollamaUrl);
+                addLog('system', 'Ollama URL saved: ' + ollamaUrl);
+            }
+            checkConnections();
+        }
 
         function checkConnections() {
             const backendStatus = document.getElementById('backend-status');
             const apiStatus = document.getElementById('api-status');
 
             // Check backend
-            fetch(`${API_BASE}/health`)
-                .then(() => {
-                    backendStatus.classList.add('connected');
-                    addLog('system', 'Backend connected successfully');
-                })
-                .catch(() => {
-                    backendStatus.classList.add('error');
-                    addLog('system', 'Backend not running. Run: python main.py');
-                });
+            fetch(`${API_BASE}/health`).then(() => {
+                backendStatus.classList.add('connected');
+            }).catch(() => {
+                backendStatus.classList.remove('connected');
+            });
 
-            // Check API key
-            if (apiKey) {
+            // Check API based on provider
+            if (currentProvider === 'openai' && apiKey) {
+                apiStatus.classList.add('connected');
+            } else if (currentProvider === 'ollama') {
+                fetch(`${ollamaUrl}/api/tags`).then(() => {
+                    apiStatus.classList.add('connected');
+                    addLog('system', 'Ollama connected');
+                }).catch(() => {
+                    apiStatus.classList.remove('connected');
+                });
+            } else if (currentProvider === 'demo') {
                 apiStatus.classList.add('connected');
             } else {
                 apiStatus.classList.remove('connected');
-            }
-        }
-
-        function saveApiKey() {
-            const input = document.getElementById('api-key');
-            apiKey = input.value.trim();
-            if (apiKey) {
-                localStorage.setItem('openai_api_key', apiKey);
-                document.getElementById('api-status').classList.add('connected');
-                addLog('chatgpt', 'API key saved');
             }
         }
 
@@ -1088,7 +1319,7 @@
             if (scenario) {
                 document.getElementById('user-request').value = scenario.request;
                 document.getElementById('task-type').value = scenario.type;
-                addLog('system', `Loaded scenario: ${name}`);
+                addLog('system', `Loaded: ${name}`);
             }
         }
 
@@ -1097,13 +1328,7 @@
             const entry = document.createElement('div');
             entry.className = 'log-entry';
             const icon = type === 'chatgpt' ? '🧠' : type === 'codex' ? '💻' : 'ℹ️';
-            entry.innerHTML = `
-                <div class="log-entry-icon ${type}">${icon}</div>
-                <div class="log-entry-content">
-                    <div class="log-entry-time">${new Date().toLocaleTimeString()}</div>
-                    <div class="log-entry-message">${message}</div>
-                </div>
-            `;
+            entry.innerHTML = `<div class="log-entry-icon ${type}">${icon}</div><div class="log-entry-content"><div class="log-entry-time">${new Date().toLocaleTimeString()}</div><div class="log-entry-message">${message}</div></div>`;
             logArea.appendChild(entry);
             logArea.scrollTop = logArea.scrollHeight;
         }
@@ -1128,9 +1353,23 @@
         }
 
         async function runLoop() {
-            if (!apiKey) {
-                alert('Please enter your OpenAI API key first!');
+            if (currentProvider === 'demo') {
+                await runDemo();
                 return;
+            }
+
+            if (currentProvider === 'openai' && !apiKey) {
+                alert('Please enter OpenAI API key first!');
+                return;
+            }
+
+            if (currentProvider === 'ollama') {
+                try {
+                    await fetch(`${ollamaUrl}/api/tags`);
+                } catch {
+                    alert('Ollama not running! Start it first: ollama serve');
+                    return;
+                }
             }
 
             const request = document.getElementById('user-request').value;
@@ -1141,76 +1380,74 @@
                 return;
             }
 
-            isDemoMode = false;
             const runBtn = document.getElementById('run-btn');
-            const demoBtn = document.getElementById('demo-btn');
             runBtn.disabled = true;
-            demoBtn.disabled = true;
             runBtn.innerHTML = '<span class="spinner"></span> Running...';
 
-            // Reset nodes
-            updateNode('node-chatgpt-1', false, '🧠', 'ChatGPT', 'Waiting...');
-            updateNode('node-codex', false, '💻', 'Codex', 'Waiting...');
-            updateNode('node-chatgpt-2', false, '🔍', 'ChatGPT', 'Waiting...');
-            updateNode('node-result', false, '⏳', 'Result', 'Processing...');
             updateStatus('running', 'Processing...');
+            updateNode('node-chatgpt-1', true, '🧠', 'ChatGPT', 'Analyzing...');
+            updateNode('node-codex', false, '💻', 'Codex', 'Waiting...');
+            updateNode('node-chatgpt-2', false, '🔍', 'Verify', 'Waiting...');
+            updateNode('node-result', false, '⏳', 'Result', 'Processing...');
 
             try {
-                // Step 1: ChatGPT analyzes
-                addLog('chatgpt', 'Starting ChatGPT analysis...');
-                updateNode('node-chatgpt-1', true, '🧠', 'ChatGPT', 'Analyzing...');
-
-                const analyzeRes = await fetch(`${API_BASE}/api/analyze`, {
+                // Step 1: Analyze
+                addLog('chatgpt', 'Starting analysis...');
+                const analyzeRes = await fetch(`${API_BASE}/api/${currentProvider}/analyze`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ request, task_type: taskType, api_key: apiKey })
+                    body: JSON.stringify({
+                        request,
+                        task_type: taskType,
+                        api_key: currentProvider === 'openai' ? apiKey : null,
+                        model: currentProvider === 'ollama' ? document.getElementById('ollama-model').value : null,
+                        ollama_url: currentProvider === 'ollama' ? ollamaUrl : null
+                    })
                 }).then(r => r.json());
 
-                updateNode('node-chatgpt-1', false, '✅', 'ChatGPT', 'Plan Ready');
-                addLog('chatgpt', `Analysis complete: ${analyzeRes.components?.length || 0} components`);
+                updateNode('node-chatgpt-1', false, '✅', 'ChatGPT', 'Done');
+                addLog('chatgpt', 'Analysis complete');
 
-                // Step 2: Codex generates
-                await sleep(500);
+                // Step 2: Generate
                 updateNode('node-codex', true, '💻', 'Codex', 'Generating...');
                 addLog('codex', 'Generating code...');
 
-                const codeRes = await fetch(`${API_BASE}/api/generate`, {
+                const codeRes = await fetch(`${API_BASE}/api/${currentProvider}/generate`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        plan: analyzeRes.plan,
+                        plan: analyzeRes.plan || analyzeRes.response,
                         context: request,
-                        api_key: apiKey
+                        api_key: currentProvider === 'openai' ? apiKey : null,
+                        model: currentProvider === 'ollama' ? document.getElementById('ollama-model').value : null,
+                        ollama_url: currentProvider === 'ollama' ? ollamaUrl : null
                     })
                 }).then(r => r.json());
 
-                updateNode('node-codex', false, '✅', 'Codex', 'Code Ready');
-                addLog('codex', `Generated ${codeRes.files?.length || 0} files`);
+                updateNode('node-codex', false, '✅', 'Codex', 'Done');
+                showCode(codeRes.code || codeRes.response || '');
+                addLog('codex', 'Code generated');
 
-                // Show code
-                showCode(codeRes.code || '');
-
-                // Step 3: ChatGPT verifies
-                await sleep(500);
-                updateNode('node-chatgpt-2', true, '🔍', 'ChatGPT', 'Verifying...');
+                // Step 3: Verify
+                updateNode('node-chatgpt-2', true, '🔍', 'Verify', 'Verifying...');
                 addLog('chatgpt', 'Verifying code...');
 
-                const verifyRes = await fetch(`${API_BASE}/api/verify`, {
+                const verifyRes = await fetch(`${API_BASE}/api/${currentProvider}/verify`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        code: codeRes.code,
+                        code: codeRes.code || codeRes.response,
                         original_request: request,
-                        api_key: apiKey
+                        api_key: currentProvider === 'openai' ? apiKey : null,
+                        model: currentProvider === 'ollama' ? document.getElementById('ollama-model').value : null,
+                        ollama_url: currentProvider === 'ollama' ? ollamaUrl : null
                     })
                 }).then(r => r.json());
 
-                updateNode('node-chatgpt-2', false, '✅', 'ChatGPT', 'Verified');
-
-                // Show verification
+                updateNode('node-chatgpt-2', false, '✅', 'Verify', 'Done');
                 showVerification(verifyRes);
 
-                // Final result
+                // Result
                 if (verifyRes.status === 'PASS') {
                     updateStatus('success', 'PASS');
                     updateNode('node-result', true, '✅', 'Complete', 'Success!', 'success');
@@ -1231,51 +1468,39 @@
             }
 
             runBtn.disabled = false;
-            demoBtn.disabled = false;
-            runBtn.innerHTML = '<span>▶</span> Run (REAL API)';
+            runBtn.innerHTML = '<span>▶</span> Run Loop';
         }
 
         async function runDemo() {
-            isDemoMode = true;
             const request = document.getElementById('user-request').value;
             const runBtn = document.getElementById('run-btn');
-            const demoBtn = document.getElementById('demo-btn');
             runBtn.disabled = true;
-            demoBtn.disabled = true;
-            demoBtn.innerHTML = '<span class="spinner"></span> Running...';
+            runBtn.innerHTML = '<span class="spinner"></span> Demo...';
 
             updateStatus('running', 'Demo Mode...');
             updateNode('node-chatgpt-1', true, '🧠', 'ChatGPT', 'Analyzing...');
             addLog('chatgpt', 'Demo: Simulating ChatGPT analysis...');
 
-            await sleep;
-            updateNode('node-chatgpt-1', false, '✅', 'ChatGPT', 'Plan Ready');
-
             await sleep(500);
+            updateNode('node-chatgpt-1', false, '✅', 'ChatGPT', 'Done');
+
+            await sleep(300);
             updateNode('node-codex', true, '💻', 'Codex', 'Generating...');
             addLog('codex', 'Demo: Generating code...');
 
-            await sleep;
-            updateNode('node-codex', false, '✅', 'Codex', 'Code Ready');
-
+            await sleep(500);
             const code = generateDemoCode(request);
             showCode(code);
-            addLog('codex', `Demo: Generated ${code.split('\n').length} lines`);
+            updateNode('node-codex', false, '✅', 'Codex', 'Done');
 
-            await sleep(500);
-            updateNode('node-chatgpt-2', true, '🔍', 'ChatGPT', 'Verifying...');
+            await sleep(300);
+            updateNode('node-chatgpt-2', true, '🔍', 'Verify', 'Verifying...');
             addLog('chatgpt', 'Demo: Verifying...');
 
-            await sleep;
-            updateNode('node-chatgpt-2', false, '✅', 'ChatGPT', 'Verified');
+            await sleep(400);
+            updateNode('node-chatgpt-2', false, '✅', 'Verify', 'Done');
 
-            const verification = {
-                status: 'PASS',
-                score: 85,
-                issues: [],
-                summary: 'Demo mode - no real verification'
-            };
-            showVerification(verification);
+            showVerification({ status: 'PASS', score: 85, issues: [], summary: 'Demo mode - no real verification' });
 
             updateStatus('success', 'DEMO');
             updateNode('node-result', true, '✅', 'Demo', 'Complete', 'success');
@@ -1285,113 +1510,72 @@
             document.getElementById('score-display').textContent = '85';
 
             runBtn.disabled = false;
-            demoBtn.disabled = false;
-            demoBtn.innerHTML = '<span>🎭</span> Run Demo';
+            runBtn.innerHTML = '<span>▶</span> Run Loop';
         }
 
         function generateDemoCode(request) {
             const req = request.toLowerCase();
-
             if (req.includes('calculator')) {
-                return `"""
-Calculator Module - Generated by Codex
-SAI ROLO TECH - DEMO MODE
-"""
-
+                return `"""Calculator - SAI ROLO TECH"""
 from typing import Union
 
-
 class Calculator:
-    """Simple calculator with basic operations."""
-
     def __init__(self):
         self.history = []
 
-    def add(self, a: Union[int, float], b: Union[int, float]) -> Union[int, float]:
-        """Add two numbers."""
+    def add(self, a: Union[int,float], b: Union[int,float]) -> Union[int,float]:
         result = a + b
-        self.history.append(f"add({a}, {b}) = {result}")
+        self.history.append(f"add({a},{b})={result}")
         return result
 
-    def subtract(self, a: Union[int, float], b: Union[int, float]) -> Union[int, float]:
-        """Subtract b from a."""
-        result = a - b
-        self.history.append(f"subtract({a}, {b}) = {result}")
-        return result
+    def subtract(self, a: Union[int,float], b: Union[int,float]) -> Union[int,float]:
+        return a - b
 
-    def multiply(self, a: Union[int, float], b: Union[int, float]) -> Union[int, float]:
-        """Multiply two numbers."""
-        result = a * b
-        self.history.append(f"multiply({a}, {b}) = {result}")
-        return result
+    def multiply(self, a: Union[int,float], b: Union[int,float]) -> Union[int,float]:
+        return a * b
 
-    def divide(self, a: Union[int, float], b: Union[int, float]) -> Union[int, float]:
-        """Divide a by b."""
-        if b == 0:
-            raise ValueError("Cannot divide by zero")
-        result = a / b
-        self.history.append(f"divide({a}, {b}) = {result}")
-        return result
-
+    def divide(self, a: Union[int,float], b: Union[int,float]) -> Union[int,float]:
+        if b == 0: raise ValueError("Cannot divide by zero")
+        return a / b
 
 if __name__ == "__main__":
     calc = Calculator()
-    print(f"2 + 3 = {calc.add(2, 3)}")
-    print(f"10 / 4 = {calc.divide(10, 4)}")`;
+    print(f"2+3={calc.add(2,3)}")
+    print(f"10/4={calc.divide(10,4)}")`;
             }
-
-            if (req.includes('api') || req.includes('rest')) {
-                return `"""
-REST API - Generated by Codex
-SAI ROLO TECH - DEMO MODE
-"""
-
-from fastapi import FastAPI, HTTPException
+            if (req.includes('api')) {
+                return `"""REST API - SAI ROLO TECH"""
+from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional
 
-
-app = FastAPI(title="SAI Rolotech API")
-
+app = FastAPI(title="SAI API")
 
 class Item(BaseModel):
     id: Optional[int] = None
     name: str
     price: float
 
-
 items = []
-item_id = 1
-
 
 @app.get("/")
 async def root():
     return {"message": "API Running", "version": "1.0.0"}
 
-
 @app.get("/items", response_model=List[Item])
 async def list_items():
     return items
 
-
 @app.post("/items", status_code=201)
 async def create_item(item: Item):
-    global item_id
-    new_item = Item(id=item_id, name=item.name, price=item.price)
-    item_id += 1
-    items.append(new_item)
-    return new_item`;
+    item.id = len(items) + 1
+    items.append(item)
+    return item`;
             }
-
-            return `"""
-Generated Code - DEMO MODE
-SAI ROLO TECH
-"""
-
+            return `"""Generated Code - SAI ROLO TECH"""
 class GeneratedModule:
     def __init__(self):
         self.data = None
-
     def process(self, input_data):
         self.data = input_data
         return {"status": "processed", "data": self.data}`;
@@ -1400,13 +1584,7 @@ class GeneratedModule:
         function showCode(code) {
             const outputArea = document.getElementById('output-area');
             const lines = code.split('\n');
-            outputArea.innerHTML = `
-                <div style="position: relative;">
-                    <button class="copy-btn" onclick="copyCode('${escapeHtml(code).replace(/'/g, "\\'")}')">📋 Copy</button>
-                    <div class="code-output">${lines.map((line, i) =>
-                        `<div class="code-line"><span class="code-line-number">${i + 1}</span><span class="code-line-content">${escapeHtml(line)}</span></div>`
-                    ).join('')}</div>
-                </div>`;
+            outputArea.innerHTML = `<button class="copy-btn" onclick="copyCode()">📋 Copy</button><div class="code-output">${lines.map((line, i) => `<div class="code-line"><span class="code-line-number">${i + 1}</span><span class="code-line-content">${escapeHtml(line)}</span></div>`).join('')}</div>`;
         }
 
         function showVerification(result) {
@@ -1422,61 +1600,35 @@ class GeneratedModule:
             document.getElementById('verification-summary').textContent = result.summary || '';
 
             const issuesList = document.getElementById('issues-list');
-            issuesList.innerHTML = (result.issues || []).map(issue => `
-                <div class="issue-item">
-                    <span class="issue-severity ${issue.severity?.toLowerCase() || 'low'}">${issue.severity || 'LOW'}</span>
-                    <div>
-                        <div style="font-weight: 600;">${issue.message || ''}</div>
-                        ${issue.suggestion ? `<div style="font-size: 0.875rem; color: var(--text-muted);">Fix: ${issue.suggestion}</div>` : ''}
-                    </div>
-                </div>
-            `).join('') || '<p style="color: var(--success);">✅ No issues found!</p>';
+            issuesList.innerHTML = (result.issues || []).map(issue => `<div class="issue-item"><span class="issue-severity ${issue.severity?.toLowerCase() || 'low'}">${issue.severity || 'LOW'}</span><div><div style="font-weight: 600; font-size: 0.75rem;">${issue.message || ''}</div>${issue.suggestion ? `<div style="font-size: 0.625rem; color: var(--text-muted);">Fix: ${issue.suggestion}</div>` : ''}</div></div>`).join('') || '<p style="color: var(--success); font-size: 0.875rem;">✅ No issues found!</p>';
         }
 
         function escapeHtml(text) {
-            return text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;');
+            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
-        function copyCode(code) {
+        function copyCode() {
+            const code = document.querySelector('.code-output')?.textContent || '';
             navigator.clipboard.writeText(code);
             alert('Code copied!');
         }
 
         function clearAll() {
             document.getElementById('user-request').value = '';
-            document.getElementById('output-area').innerHTML = `
-                <div class="code-output" style="color: var(--text-muted);">
-# Generated code will appear here...
-                </div>`;
+            document.getElementById('output-area').innerHTML = '<div class="code-output"># Generated code will appear here...</div>';
             document.getElementById('verification-panel').style.display = 'none';
-            document.getElementById('log-area').innerHTML = `
-                <div class="log-entry">
-                    <div class="log-entry-icon chatgpt">ℹ️</div>
-                    <div class="log-entry-content">
-                        <div class="log-entry-time">Just now</div>
-                        <div class="log-entry-message">System cleared.</div>
-                    </div>
-                </div>`;
+            document.getElementById('log-area').innerHTML = '<div class="log-entry"><div class="log-entry-icon system">ℹ️</div><div class="log-entry-content"><div class="log-entry-time">Just now</div><div class="log-entry-message">Cleared.</div></div></div>';
             updateStatus('pending', 'Ready');
             document.getElementById('score-display').textContent = '--';
             document.getElementById('iterations-count').textContent = '0';
             updateNode('node-chatgpt-1', false, '🧠', 'ChatGPT', 'Analyzing...');
             updateNode('node-codex', false, '💻', 'Codex', 'Generating...');
-            updateNode('node-chatgpt-2', false, '🔍', 'ChatGPT', 'Verifying...');
+            updateNode('node-chatgpt-2', false, '🔍', 'Verify', 'Verifying...');
             updateNode('node-result', false, '✅', 'Result', 'Waiting...');
         }
 
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        // Load saved API key
-        if (apiKey) {
-            document.getElementById('api-key').value = apiKey;
         }
     </script>
 </body>

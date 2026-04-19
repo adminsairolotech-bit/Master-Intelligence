@@ -1,6 +1,11 @@
 """
-ChatGPT + Codex Hub - Main Entry Point with Real API Support
+ChatGPT + Codex Hub - Main Entry Point with Multi-Provider Support
 SAI ROLO TECH
+
+Supports:
+- OpenAI (GPT-4)
+- Ollama (Local Llama 3.1/3.2)
+- Demo Mode
 """
 
 import argparse
@@ -8,12 +13,12 @@ import sys
 import json
 from pathlib import Path
 from http.server import HTTPServer, SimpleHTTPRequestHandler
+from typing import Dict
 
-# Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from chatgpt_codex_loop import ChatGPTCodexLoop, TaskType
-from scenarios.demo_scenario import DEMO_SCENARIOS, run_demo_scenario
+from chatgpt_codex_loop import ChatGPTCodexLoop
+from scenarios.demo_scenario import DEMO_SCENARIOS
 
 
 class APIHandler(SimpleHTTPRequestHandler):
@@ -27,12 +32,17 @@ class APIHandler(SimpleHTTPRequestHandler):
         body = self.rfile.read(content_length).decode('utf-8')
         data = json.loads(body) if body else {}
 
-        if self.path == '/api/analyze':
-            self.handle_analyze(data)
+        # Route based on path
+        if self.path.startswith('/api/openai/'):
+            self.handle_openai(self.path.replace('/api/openai/', ''), data)
+        elif self.path.startswith('/api/ollama/'):
+            self.handle_ollama(self.path.replace('/api/ollama/', ''), data)
+        elif self.path == '/api/analyze':
+            self.handle_demo_analyze(data)
         elif self.path == '/api/generate':
-            self.handle_generate(data)
+            self.handle_demo_generate(data)
         elif self.path == '/api/verify':
-            self.handle_verify(data)
+            self.handle_demo_verify(data)
         else:
             self.send_error(404, 'Not Found')
 
@@ -46,101 +56,154 @@ class APIHandler(SimpleHTTPRequestHandler):
         else:
             super().do_GET()
 
-    def handle_analyze(self, data):
-        """Handle analyze endpoint."""
+    def handle_openai(self, action: str, data: Dict):
+        """Handle OpenAI API calls."""
         try:
             api_key = data.get('api_key')
             if not api_key:
                 self.send_json({'error': 'API key required'}, 400)
                 return
 
-            client = self.loop.chatgpt if self.loop else None
-            if not client:
-                from models.chatgpt_client import ChatGPTClient
+            from models.chatgpt_client import ChatGPTClient
+            from models.codex_client import CodexClient
+
+            if action == 'analyze':
                 client = ChatGPTClient(api_key=api_key)
+                result = client.analyze(data['request'], data.get('task_type', 'generate_feature'))
+                self.send_json({
+                    'plan': result.get('plan', ''),
+                    'components': result.get('components', []),
+                    'dependencies': result.get('dependencies', [])
+                })
+                client.close()
 
-            result = client.analyze(data['request'], data.get('task_type', 'generate_feature'))
-
-            self.send_json({
-                'plan': result.get('plan', ''),
-                'components': result.get('components', []),
-                'dependencies': result.get('dependencies', []),
-                'verification_criteria': result.get('verification_criteria', [])
-            })
-        except Exception as e:
-            self.send_json({'error': str(e)}, 500)
-
-    def handle_generate(self, data):
-        """Handle generate endpoint."""
-        try:
-            api_key = data.get('api_key')
-            if not api_key:
-                self.send_json({'error': 'API key required'}, 400)
-                return
-
-            client = self.loop.codex if self.loop else None
-            if not client:
-                from models.codex_client import CodexClient
+            elif action == 'generate':
                 client = CodexClient(api_key=api_key)
+                result = client.generate(
+                    plan=data['plan'],
+                    context=data.get('context', ''),
+                    feedback=data.get('feedback', [])
+                )
+                self.send_json({
+                    'code': result.get('code', ''),
+                    'files': result.get('files', []),
+                    'language': result.get('language', 'python')
+                })
+                client.close()
 
-            result = client.generate(
-                plan=data['plan'],
-                context=data.get('context', ''),
-                feedback=data.get('feedback', [])
-            )
-
-            self.send_json({
-                'code': result.get('code', ''),
-                'files': result.get('files', []),
-                'language': result.get('language', 'python')
-            })
-        except Exception as e:
-            self.send_json({'error': str(e)}, 500)
-
-    def handle_verify(self, data):
-        """Handle verify endpoint."""
-        try:
-            api_key = data.get('api_key')
-            if not api_key:
-                self.send_json({'error': 'API key required'}, 400)
-                return
-
-            client = self.loop.chatgpt if self.loop else None
-            if not client:
-                from models.chatgpt_client import ChatGPTClient
+            elif action == 'verify':
                 client = ChatGPTClient(api_key=api_key)
+                result = client.verify(data['code'], data['original_request'])
+                self.send_json({
+                    'status': result.get('status', 'PASS'),
+                    'score': result.get('score', 100),
+                    'issues': result.get('issues', []),
+                    'summary': result.get('summary', '')
+                })
+                client.close()
 
-            result = client.verify(data['code'], data['original_request'])
-
-            self.send_json({
-                'status': result.get('status', 'PASS'),
-                'score': result.get('score', 100),
-                'issues': result.get('issues', []),
-                'verified_aspects': result.get('verified_aspects', []),
-                'summary': result.get('summary', '')
-            })
         except Exception as e:
             self.send_json({'error': str(e)}, 500)
 
-    def send_json(self, data, status=200):
+    def handle_ollama(self, action: str, data: Dict):
+        """Handle Ollama API calls."""
+        try:
+            url = data.get('ollama_url', 'http://localhost:11434')
+            model = data.get('model', 'llama3.1:8b')
+
+            from models.ollama_client import OllamaClient
+            client = OllamaClient(base_url=url, model=model)
+
+            if action == 'analyze':
+                result = client.analyze(data['request'], data.get('task_type', 'generate_feature'))
+                self.send_json({
+                    'plan': result.get('plan', ''),
+                    'components': result.get('components', []),
+                    'response': result.get('response', '')
+                })
+
+            elif action == 'generate':
+                result = client.generate(
+                    plan=data['plan'],
+                    context=data.get('context', ''),
+                    feedback=data.get('feedback', [])
+                )
+                self.send_json({
+                    'code': result.get('code', ''),
+                    'response': result.get('response', ''),
+                    'files': result.get('files', [])
+                })
+
+            elif action == 'verify':
+                result = client.verify(data['code'], data['original_request'])
+                self.send_json({
+                    'status': result.get('status', 'PASS'),
+                    'score': result.get('score', 100),
+                    'issues': result.get('issues', []),
+                    'summary': result.get('summary', '')
+                })
+
+            client.close()
+
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+
+    def handle_demo_analyze(self, data: Dict):
+        """Handle demo analyze."""
+        self.send_json({
+            'plan': f"## Plan for: {data.get('request', '')}\n\n1. Analyze requirements\n2. Create implementation\n3. Test",
+            'components': ['main.py', 'utils.py']
+        })
+
+    def handle_demo_generate(self, data: Dict):
+        """Handle demo generate."""
+        self.send_json({
+            'code': '# Demo code\nprint("Hello, World!")',
+            'files': ['demo.py']
+        })
+
+    def handle_demo_verify(self, data: Dict):
+        """Handle demo verify."""
+        self.send_json({
+            'status': 'PASS',
+            'score': 85,
+            'issues': [],
+            'summary': 'Demo mode - simulated verification'
+        })
+
+    def send_json(self, data: Dict, status: int = 200):
         """Send JSON response."""
         self.send_response(status)
         self.send_header('Content-Type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
         self.wfile.write(json.dumps(data).encode())
 
 
-def run_server(port=8080):
+def run_server(port: int = 8080):
     """Run the API server."""
     handler = APIHandler
     handler.loop = ChatGPTCodexLoop()
 
     server = HTTPServer(('localhost', port), handler)
-    print(f"\n{'='*60}")
-    print(f"API Server running at http://localhost:{port}")
-    print(f"Open http://localhost:{port}/index.html in browser")
-    print(f"{'='*60}\n")
+
+    print(f"""
+{'='*60}
+ChatGPT + Codex Hub Server
+{'='*60}
+Server:    http://localhost:{port}
+UI:        http://localhost:{port}/index.html
+
+Providers:
+- OpenAI:  Enter API key in UI
+- Ollama:  Run 'ollama serve' first
+- Demo:    No setup needed
+
+Press Ctrl+C to stop
+{'='*60}
+""")
 
     try:
         server.serve_forever()
@@ -156,37 +219,25 @@ def main():
         epilog="""
 Examples:
   python main.py serve        # Start API server (for UI)
-  python main.py run "Create a calculator"
-  python main.py demo calculator
-  python main.py list
+  python main.py serve --port 3000  # Custom port
+  python main.py list          # List scenarios
         """
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Commands")
 
-    # Serve command (for UI)
-    subparsers.add_parser("serve", help="Start API server for UI")
-
-    # Run command
-    run_parser = subparsers.add_parser("run", help="Run a task")
-    run_parser.add_argument("request", help="The task/request description")
-    run_parser.add_argument("--type", "-t", choices=["generate", "fix", "refactor"],
-                           default="generate", help="Task type")
-
-    # Demo command
-    demo_parser = subparsers.add_parser("demo", help="Run a demo scenario")
-    demo_parser.add_argument("scenario", nargs="?", help="Demo scenario name")
+    # Serve command
+    serve_parser = subparsers.add_parser("serve", help="Start API server")
+    serve_parser.add_argument("--port", "-p", type=int, default=8080, help="Port number")
 
     # List scenarios
     subparsers.add_parser("list", help="List available scenarios")
 
-    # Interactive mode
-    subparsers.add_parser("interactive", help="Start interactive mode")
-
     args = parser.parse_args()
 
     if not args.command or args.command == "serve":
-        run_server()
+        port = args.port if args.command == "serve" else 8080
+        run_server(port)
         return
 
     if args.command == "list":
@@ -198,70 +249,6 @@ Examples:
             print(f"  Type: {scenario['task_type']}")
             print(f"  {scenario['description']}")
         return
-
-    if args.command == "demo":
-        run_demo_scenario(args.scenario)
-        return
-
-    if args.command == "run":
-        loop = ChatGPTCodexLoop()
-
-        task_map = {
-            "generate": TaskType.GENERATE_FEATURE,
-            "fix": TaskType.FIX_BUG,
-            "refactor": TaskType.REFACTOR
-        }
-
-        print(f"\n{'='*60}")
-        print(f"CHATGPT + CODEX LOOP")
-        print(f"{'='*60}")
-        print(f"\nRequest: {args.request}")
-        print(f"Type: {args.type}")
-
-        result = loop.run(args.request, task_map[args.type])
-
-        print(f"\n{'='*60}")
-        print("RESULT")
-        print(f"{'='*60}")
-        print(f"Status: {result['status'].upper()}")
-        print(f"Iterations: {result['iterations']}")
-
-        if result.get('code'):
-            print(f"\nGenerated code:")
-            print("-" * 40)
-            print(result['code'][:500] + "..." if len(result.get('code', '')) > 500 else result.get('code', ''))
-        return
-
-    if args.command == "interactive":
-        print("\n" + "="*60)
-        print("INTERACTIVE MODE - ChatGPT + Codex Loop")
-        print("="*60)
-        print("\nType your request and press Enter.")
-        print("Type 'quit' or 'exit' to stop.")
-        print("-" * 60)
-
-        loop = ChatGPTCodexLoop()
-
-        while True:
-            try:
-                request = input("\n>>> ").strip()
-
-                if request.lower() in ['quit', 'exit', 'q']:
-                    print("Goodbye!")
-                    break
-
-                if not request:
-                    continue
-
-                result = loop.run(request)
-                print(f"\nResult: {result['status']}")
-                print(f"Iterations: {result['iterations']}")
-
-            except KeyboardInterrupt:
-                print("\n\nInterrupted. Goodbye!")
-                break
-            except Exception as e:
-                print(f"Error: {e}")
 
 
 if __name__ == "__main__":
