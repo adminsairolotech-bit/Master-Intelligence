@@ -44,7 +44,13 @@ class OpenClawConfig:
     TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "") or get_openclaw_config()
     TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
     OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
-    DEFAULT_MODEL = "anthropic/claude-opus-4.6"
+
+    # MODEL PRIORITY:
+    # - LIGHT tasks (small): Gemini 2.0 Flash (FREE)
+    # - HEAVY tasks: Opus 4.7 (Personal API key - Antigravity)
+    LIGHT_MODEL = "google/gemini-2.0-flash-exp"  # Free - chhote kaam
+    HEAVY_MODEL = "anthropic/opus-4.7"  # Personal key - bade kaam
+    DEFAULT_MODEL = LIGHT_MODEL  # Default: Flash 2.0
     TIMEOUT = 60
 
 # ============================================
