@@ -122,19 +122,30 @@ class CloudAIBrain:
         self._setup_providers()
 
     def _setup_providers(self):
-        """Setup all available cloud providers"""
+        """Setup all available cloud providers - PRIORITY ORDER:
+        1. OpenRouter (free limits first)
+        2. NVIDIA (free tier)
+        3. Groq (free tier)
+        4. Gemini Direct (free tier)
+        5. Personal Claude key (HEAVY TASKS ONLY - paid)
+        """
 
-        # 1. Groq (Fastest - FREE Tier)
-        groq_key = CloudConfig.GROQ_API_KEY
-        if groq_key:
+        # 1. OpenRouter - FREE LIMITS FIRST (Flash 2.0)
+        openrouter_key = CloudConfig.OPENROUTER_API_KEY
+        if openrouter_key:
             self.providers.append({
-                "name": "Groq (Llama 3.3)",
-                "endpoint": "https://api.groq.com/openai/v1/chat/completions",
-                "model": "llama-3.3-70b-versatile",
-                "headers": {"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"}
+                "name": "OpenRouter (Flash 2.0)",
+                "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+                "model": "google/gemini-2.0-flash-exp",
+                "headers": {
+                    "Authorization": f"Bearer {openrouter_key}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "https://sairolotech.com",
+                    "X-Title": "Cloud Bridge"
+                }
             })
 
-        # 2. NVIDIA (High Quality)
+        # 2. NVIDIA - FREE TIER
         nvidia_key = CloudConfig.NVIDIA_API_KEY
         if nvidia_key:
             self.providers.append({
@@ -144,7 +155,17 @@ class CloudAIBrain:
                 "headers": {"Authorization": f"Bearer {nvidia_key}", "Content-Type": "application/json"}
             })
 
-        # 3. Gemini Direct (Free Tier)
+        # 3. Groq - FREE TIER
+        groq_key = CloudConfig.GROQ_API_KEY
+        if groq_key:
+            self.providers.append({
+                "name": "Groq (Llama 3.3)",
+                "endpoint": "https://api.groq.com/openai/v1/chat/completions",
+                "model": "llama-3.3-70b-versatile",
+                "headers": {"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"}
+            })
+
+        # 4. Gemini Direct - FREE TIER
         gemini_key = CloudConfig.GEMINI_API_KEY
         if gemini_key:
             self.providers.append({
@@ -154,13 +175,12 @@ class CloudAIBrain:
                 "headers": {"Authorization": f"Bearer {gemini_key}", "Content-Type": "application/json"}
             })
 
-        # 4. OpenRouter (Claude Alternative)
-        openrouter_key = CloudConfig.OPENROUTER_API_KEY
+        # 5. Personal Claude Key - HEAVY TASKS ONLY (paid)
         if openrouter_key:
             self.providers.append({
-                "name": "OpenRouter (Claude Sonnet)",
+                "name": "OpenRouter (Claude Opus 4.7 - PERSONAL KEY)",
                 "endpoint": "https://openrouter.ai/api/v1/chat/completions",
-                "model": "anthropic/claude-sonnet-4.6",
+                "model": "anthropic/opus-4.7",
                 "headers": {
                     "Authorization": f"Bearer {openrouter_key}",
                     "Content-Type": "application/json",
